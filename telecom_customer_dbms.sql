@@ -21,7 +21,7 @@ BEGIN
         mobileNo CHAR(11),
         pass VARCHAR(50),
         balance DECIMAL(10,1),
-        account_type VARCHAR(50) CHECK(account_type IN('Post Paid','Prepaid','Pay_as_you_go')),
+        account_type VARCHAR(50) CHECK(account_type IN('Post Paid','Prepaid','Pay as you go')),
         start_date DATE NOT NULL,
         status VARCHAR(50) CHECK(status IN('active','onhold')),
         points INT DEFAULT 0,
@@ -509,14 +509,13 @@ AS
             Where B.mobileNo = @mobile_num AND O.SMS_offered > 0 
           );
 
-
 Go
 --Retrieve the number of accepted payment transactions initiated by the input account during 
 --the last year along with the total amount of earned points.
 CREATE PROCEDURE Account_Payment_Points
 @mobile_num char(11)
 AS
-    Select Count(P.paymentID), SUM(PG.pointsAmount)
+    Select Count(P.paymentID) AS 'Total Number of Transactions' , ISNULL(SUM(PG.pointsAmount), 0) AS 'Total Amount of Points'
     From Payment P 
     inner join Points_Group PG 
     ON P.paymentID = PG.PaymentID
@@ -1065,19 +1064,19 @@ INSERT INTO Customer_Account (mobileNo, pass, balance, account_type, start_date,
 VALUES
 ('01010101010', 'pass123', 150.0, 'Post Paid', '2023-01-01', 'active', 10, 101),
 ('01020202020', 'securepass', 75.5, 'Prepaid', '2023-06-01', 'active', 5, 102),
-('01030303030', 'mypassword', 0.0, 'Pay_as_you_go', '2023-07-15', 'onhold', 0, 103),
+('01030303030', 'mypassword', 0.0, 'Pay as you go', '2023-07-15', 'onhold', 0, 103),
 ('01040404040', 'bobpass', 250.0, 'Post Paid', '2023-08-01', 'active', 20, 104),
 ('01050505050', 'charliepass', 100.5, 'Prepaid', '2023-09-01', 'active', 15, 105),
 ('01060606060', 'evepass', 500.0, 'Post Paid', '2023-10-01', 'onhold', 30, 106),
 ('01070707070', 'frankpass', 200.0, 'Prepaid', '2023-11-01', 'active', 25, 107),
-('01080808080', 'gracepass', 50.0, 'Pay_as_you_go', '2023-12-01', 'active', 8, 108),
+('01080808080', 'gracepass', 50.0, 'Pay as you go', '2023-12-01', 'active', 8, 108),
 ('01090909090', 'hankpass', 150.0, 'Post Paid', '2023-01-15', 'active', 12, 109),
 ('01101010101', 'ivypass', 400.0, 'Prepaid', '2023-02-01', 'active', 18, 110),
 ('01111111111', 'jackpass', 300.0, 'Post Paid', '2023-03-01', 'active', 22, 111),
-('01121212121', 'kathy123', 150.0, 'Pay_as_you_go', '2023-04-01', 'active', 9, 112),
+('01121212121', 'kathy123', 150.0, 'Pay as you go', '2023-04-01', 'active', 9, 112),
 ('01131313131', 'liampass', 200.0, 'Post Paid', '2023-05-01', 'onhold', 10, 113),
 ('01141414141', 'monapass', 100.0, 'Prepaid', '2023-06-01', 'active', 5, 114),
-('01151515151', 'ninapass', 0.0, 'Pay_as_you_go', '2023-07-01', 'onhold', 0, 115),
+('01151515151', 'ninapass', 0.0, 'Pay as you go', '2023-07-01', 'onhold', 0, 115),
 ('01161616161', 'oscarpass', 600.0, 'Post Paid', '2023-08-01', 'active', 40, 116),
 ('01171717171', 'paulpass', 350.0, 'Prepaid', '2023-09-01', 'active', 35, 117),
 ('01181818181', 'quincy123', 120.0, 'Post Paid', '2023-10-01', 'active', 18, 118);

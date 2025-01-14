@@ -476,43 +476,13 @@ namespace Telecom_Customer_Application
                 {
                     HtmlTableRow row = new HtmlTableRow();
 
-                    // Hardcoding this since this table columns don't have names in the database and also because it might have null values
-                    if (currentTab == "TransactionsTab")
-                    {
-                        HtmlTableCell headerCell1 = new HtmlTableCell("th");
-                        headerCell1.InnerText = "Total Number of Transactions";
-                        row.Cells.Add(headerCell1);
-
-                        HtmlTableCell headerCell2 = new HtmlTableCell("th");
-                        headerCell2.InnerText = "Total Amount of Points";
-                        row.Cells.Add(headerCell2);
-
-                        TableBody.Controls.Add(row);
-
-                        if (reader.Read())
-                        {
-                            row = new HtmlTableRow();
-                            HtmlTableCell cell1 = new HtmlTableCell();
-                            cell1.InnerText = reader[0] != DBNull.Value ? reader[0].ToString() : "0";
-                            row.Cells.Add(cell1);
-
-                            HtmlTableCell cell2 = new HtmlTableCell();
-                            cell2.InnerText = reader[1] != DBNull.Value ? reader[1].ToString() : "0";
-                            row.Cells.Add(cell2);
-
-                            TableBody.Controls.Add(row);
-                        }
-                        return;
-                    }
-
-
                     // Generate headers dynamically
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
                         string columnName = reader.GetName(i); // Get column name
                         HtmlTableCell headerCell = new HtmlTableCell("th");
 
-                        // Replace "first_name" or "last_name" columns with "Name" in the header
+                        // Replace "first_name" columns with "Name" in the header
                         if (columnName.Equals("first_name", StringComparison.OrdinalIgnoreCase))
                         {
                             headerCell.InnerText = "Name";
@@ -520,6 +490,13 @@ namespace Telecom_Customer_Application
                         }
                         else if (!columnName.Equals("last_name", StringComparison.OrdinalIgnoreCase)) // Skip last_name column header
                         {
+                            // Split column name by both underscore and space
+                            var words = columnName.Split(new[] { '_', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+
+                            // Capitalize first character of each word
+                            columnName = string.Join(" ", words.Select(word => char.ToUpper(word[0]) + word.Substring(1)));
+
                             headerCell.InnerText = columnName;
                             row.Cells.Add(headerCell);
                         }
@@ -535,7 +512,7 @@ namespace Telecom_Customer_Application
                         {
                             HtmlTableCell cell = new HtmlTableCell();
 
-                            // Check if the current column is "status"
+                            // Status Column 
                             if (reader.GetName(i).Equals("status", StringComparison.OrdinalIgnoreCase))
                             {
                                 string statusValue = reader[i]?.ToString();
@@ -556,7 +533,7 @@ namespace Telecom_Customer_Application
                                 cell.InnerText = reader[i]?.ToString();
                                 row.Cells.Add(cell);
                             }
-                            // Check if the column name is "URL"
+                            // URL Column 
                             else if (reader.GetName(i).Equals("URL", StringComparison.OrdinalIgnoreCase))
                             {
                                 string url = reader[i]?.ToString();
@@ -573,7 +550,7 @@ namespace Telecom_Customer_Application
                                 }
                                 row.Cells.Add(cell);
                             }
-                            // Check if the current column is "first_name"
+                            // first_name Column 
                             else if (reader.GetName(i).Equals("first_name", StringComparison.OrdinalIgnoreCase))
                             {
                                 string firstName = reader[i]?.ToString();

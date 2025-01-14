@@ -99,7 +99,7 @@ namespace Telecom_Customer_Application
 
         protected void LoadCurrentMonthUsage(object sender, EventArgs e)
         {
-            DisplayContent("loadCurrentMonthActiveUsageTab"); 
+            DisplayContent("loadCurrentMonthActiveUsageTab");
 
             try
             {
@@ -524,7 +524,7 @@ namespace Telecom_Customer_Application
                     ConfigureSharedContent("Last 5 Months Subscribed Plans", false, false, false, false, false, false, false, false, false, false, false, false, "Search");
                     break;
                 case "loadRenewSubscriptionTab": // 4 Dropdown, Payment Amount, Plan ID, search , label1
-                    ConfigureSharedContent("Plan Renewal", false, false, false, true, true, true, false, false, false, true, true, false , "Renew");
+                    ConfigureSharedContent("Plan Renewal", false, false, false, true, true, true, false, false, false, true, true, false, "Renew");
                     break;
                 case "loadCurrentMonthActiveUsageTab": // 5 Start Date, End Date, Plan Name, search
                     ConfigureSharedContent("Current Month Usage", false, false, false, false, false, false, false, false, false, false, false, false, "Search");
@@ -630,6 +630,13 @@ namespace Telecom_Customer_Application
                         {
                             string columnName = reader.GetName(i); // Get column name
                             HtmlTableCell headerCell = new HtmlTableCell("th");
+
+                            // Split column name by both underscore and space
+                            var words = columnName.Split(new[] { '_', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            // Capitalize first character of each word
+                            columnName = string.Join(" ", words.Select(word => char.ToUpper(word[0]) + word.Substring(1)));
+
                             headerCell.InnerText = columnName;
                             row.Cells.Add(headerCell);
                         }
@@ -643,7 +650,7 @@ namespace Telecom_Customer_Application
                             {
                                 HtmlTableCell cell = new HtmlTableCell();
 
-                                // Check if the current column is "status"
+                                // Status Column 
                                 if (reader.GetName(i).Equals("status", StringComparison.OrdinalIgnoreCase))
                                 {
                                     string statusValue = reader[i]?.ToString();
@@ -664,7 +671,7 @@ namespace Telecom_Customer_Application
                                     cell.InnerText = reader[i]?.ToString();
                                     row.Cells.Add(cell);
                                 }
-                                // Check if the column name is "URL"
+                                // URL Column 
                                 else if (reader.GetName(i).Equals("URL", StringComparison.OrdinalIgnoreCase))
                                 {
                                     string url = reader[i]?.ToString();
@@ -681,8 +688,8 @@ namespace Telecom_Customer_Application
                                     }
                                     row.Cells.Add(cell);
                                 }
-     
-                                else 
+
+                                else
                                 {
                                     cell.InnerText = reader[i]?.ToString();
                                     row.Cells.Add(cell);

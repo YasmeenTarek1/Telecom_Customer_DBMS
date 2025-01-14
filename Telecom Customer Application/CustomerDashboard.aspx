@@ -227,68 +227,65 @@
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
 
-           /* Table Styling */
-         .table-responsive {
-             max-height: 720px;
-             max-width: 1340px;
-             overflow-y: auto;
-             overflow-x: auto;
-             border: none; 
-             box-shadow: none; 
-             position: relative;
-             margin: 0;
-             padding: 0;
-         }
+         /* Table Styling */
+        table {
+            border-collapse: collapse;
+            margin: 20px 0 170px 0;
+            font-size: 16px;
+            text-align: center;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
 
-         .table-responsive::-webkit-scrollbar {
-             width: 5px;
-             height: 5px;
-         }
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            color: #333;
+        }
 
-         .table-responsive::-webkit-scrollbar-thumb {   
-             background: rgba(200, 200, 200, 0.7);
-             border-radius: 4px;
-         }
+        table th {
+            font-weight: bold;
+            background-color: #e9f3ff;
+            color: #0056b3;
+            border: 1px solid #cce5ff;
+        }
+
+        .table-responsive {
+            max-height: 100%;
+            max-width: 100%;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: none; 
+            box-shadow: none; 
+            position: relative;
+            padding: 3px;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {   
+            background: rgba(200, 200, 200, 0.7);
+            border-radius: 4px;
+        }
 
         .table-responsive::-webkit-scrollbar-thumb:hover {
-             background: rgba(180, 180, 180, 0.8); 
-             border-radius: 4px;
+            background: rgba(180, 180, 180, 0.8); 
+            border-radius: 4px;
         }
- 
 
-         .table-responsive::-webkit-scrollbar-track {
-             background: rgba(220, 220, 220, 0.5);
-             border-radius: 4px;
-         }
+        .table-responsive::-webkit-scrollbar-track {
+            background: rgba(220, 220, 220, 0.5);
+            border-radius: 6px;
+            margin: 25px 0 174px 0;
+        }
 
-         .table-responsive {
-             scroll-behavior: smooth;
-         }
+        .table-responsive {
+            scroll-behavior: smooth;
+        }
 
-         table {
-             width: 100%;
-             border-collapse: collapse;
-             font-size: 16px;
-             text-align: center;
-             background-color: #ffffff;
-             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-             border: none;
-             margin: 0;
-             padding: 0;
-         }
-
-         table th, table td {
-             padding: 12px;
-             border: 1px solid #ddd;
-             color: #333;
-         }
-
-         table th {
-             font-weight: bold;
-             background-color: #e9f3ff;
-             color: #0056b3;
-             border: 1px solid #cce5ff;
-         }
 
         /* Status badges */
         .status-active {
