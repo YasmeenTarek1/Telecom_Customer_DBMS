@@ -754,13 +754,9 @@
                     <h4>TeleSphere</h4>
                 </div>
 
-                 <div class="dropdown">
-                    <a href="#" id="customersTabDropdown" class="dropdown-toggle" onclick="toggleDropdown(this)" ><i class="fa-solid fa-user sidebar-icon"></i>Customer<i class="fa-solid fa-chevron-down sidebar-icon2"></i> </a>
-                       <div class="dropdown-content">
-                           <a href="#" id="customersTab" runat="server" onserverclick="LoadCustomers" class="active">Customers Details</a>
-                           <a href="#" id="customersWalletTab" runat="server" onserverclick="LoadCustomersWallet">Customer linked Wallets</a>
-                       </div>
-                 </div>
+                <a href="#" id="customersTab" runat="server" onserverclick="LoadCustomers" >
+                    <i class="fa-solid fa-user sidebar-icon"></i>Customers
+                </a>
 
                 <a href="#" id="subscriptionsTab" runat="server" onserverclick="LoadSubscriptions">
                     <i class="fa-solid fa-sim-card sidebar-icon"></i>Subscribtions
@@ -772,8 +768,8 @@
                         <i class="fa-solid fa-chevron-down sidebar-icon2"></i>
                     </a>
                        <div class="dropdown-content">
-                         <a href="#" id="storesTab" runat="server" onserverclick="LoadStores">All Shops Details</a>
-                         <a href="#" id="E_shopsTab" runat="server" onserverclick="LoadE_shops">E-shops Details</a>
+                         <a href="#" id="physicalShopsTab" runat="server" onserverclick="LoadPhysicalShops">Physical Shops</a>
+                         <a href="#" id="E_shopsTab" runat="server" onserverclick="LoadE_shops">E-Shops</a>
                        </div>
                  </div>
 
