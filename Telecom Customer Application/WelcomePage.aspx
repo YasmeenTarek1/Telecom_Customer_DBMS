@@ -6,103 +6,191 @@
     <meta charset="UTF-8">
     <title>Home Page</title>
     <!-- Import Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(to bottom right, rgba(7, 156, 255, 0.2), rgba(7, 156, 255, 0.05)), #F5F7FA;
-            color: rgba(0, 0, 0, 0); /* Transparent black */
             height: 100vh;
             overflow: hidden;
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
+            background: linear-gradient(
+                    135deg,
+                    rgba(229, 232, 239, 1), /* Light Gray */
+                    rgba(92, 190, 255, 0.5) /* Light Blue */
+                ),
+                radial-gradient(
+                    circle at 20% 80%,
+                    rgba(255, 190, 0, 0.7), /* Yellow */
+                    transparent 60%
+                ),
+                radial-gradient(
+                    circle at 70% 20%,
+                    rgba(76, 198, 110, 0.6), /* Green */
+                    transparent 70%
+                ),
+                radial-gradient(
+                    circle at 50% 50%,
+                    rgba(255, 216, 12, 0.6), /* Bright Yellow */
+                    transparent 80%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(178, 68, 241, 0.5), /* Purple */
+                    transparent 80%
+                );
+            background-blend-mode: screen, overlay, multiply;
         }
-        .left-section {
-            position: relative;
-            width: 750px; 
-            height: auto;
-            margin-left: 50px; 
-        }
-        .left-section img {
+
+        .header {
+            position: fixed;
+            left:0;
+            top: 0;
             width: 100%;
-            height: auto;
-            transition: transform 0.5s ease, filter 0.5s ease; 
+            background-color: rgba(0, 123, 255, 0.9); /* New Header Color */
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
-        .left-section img:hover {
-            transform: scale(1.05) rotate(2deg); 
-            filter: brightness(1.09); 
+
+        .header img {
+            height: 50px;
+            margin-right: 10px;
         }
-        .left-section h2 {
-            position: absolute;
-            bottom: 30px; 
-            left: 50%;
-            transform: translateX(-50%);
+
+        .header h2 {
+            font-size: 24px;
+            color: #ffffff; /* White */
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nav {
+            margin-left: 1150px; /* Push navigation to the left */
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #ffffff; /* White */
+            font-size: 18px;
+            font-family: 'Arial', sans-serif;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: rgba(255, 255, 0, 0.8); /* Yellow hover effect */
+        }
+
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            height: 100%;
             color: rgba(7, 156, 255, 1); /* Blue */
-            font-size: 120px; 
-            z-index: 2;
+            padding: 40px;
+        }
+
+        .hero-section h1 {
+            font-size: 50px;
+            margin: 20px 0;
+            font-family: 'Poppins', sans-serif; /* Professional and Rounded Font */
             font-weight: bold;
-            text-align: center;
-            text-shadow: 2px 2px 5px rgba(7, 156, 255, 0.3); 
-            letter-spacing: 2px; 
-            font-family: 'Quicksand', sans-serif;
+            text-shadow: 2px 2px 6px rgba(7, 156, 255, 0.3);
         }
-        .button-container {
-            position: absolute;
-            top: 50%;
-            left: 65%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
-            padding: 60px 40px; /* Taller container */
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(7, 156, 255, 0.2); /* Blue shadow for subtle depth */
-            width: 400px;
-            text-align: center;
-        }
-        .button-container h1 {
-            margin-bottom: 10px;
-            color: rgba(7, 156, 255, 1); /* Blue */
-            font-size: 28px;
-        }
-        .button-container .sub-heading {
-            color: rgba(7, 156, 255, 0.8); /* Lighter blue */
-            font-size: 18px; /* Smaller text */
+
+        .hero-section p {
+            font-size: 22px;
             margin-bottom: 20px;
+            color: rgba(7, 156, 255, 0.8);
         }
+
+        .hero-section h2 {
+            font-size: 24px;
+            margin-bottom: 80px; /* Increased margin for spacing */
+            color: rgba(7, 156, 255, 0.6);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 400px; /* Increased gap for better spacing */
+        }
+
+        .icon-item {
+            text-align: center;
+        }
+
+        .icon-item img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px; /* Space between image and button */
+        }
+
         .btn {
             display: inline-block;
-            margin: 15px;
-            padding: 15px 30px;
+            padding: 10px 20px;
             border: 2px solid rgba(7, 156, 255, 1); /* Blue border */
-            border-radius: 5px;
-            background-color: transparent;
-            color: rgba(7, 156, 255, 1); /* Blue text */
-            font-size: 18px;
+            border-radius: 10px;
+            background-color: rgba(7, 156, 255, 1); /* Blue background */
+            color: #FFFFFF; /* White text */
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             text-align: center;
             text-decoration: none;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .btn:hover {
-            background-color: rgba(7, 156, 255, 1); /* Blue background */
-            color: #FFFFFF; /* White text */
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(7, 156, 255, 0.5);
         }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
-        <div class="left-section">
+        <div class="header">
             <img src="TeleSphere.png" alt="TeleSphere Logo" />
             <h2>TeleSphere</h2>
+            <div class="nav">
+                <a href="#">Home</a>
+                <a href="#">About</a>
+                <a href="#">Services</a>
+                <a href="#">Contact</a>
+            </div>
         </div>
-        <div class="button-container">
-            <h1>Welcome To TeleSphere</h1>
-            <p class="sub-heading">Fast, Reliable, Unlimited Connections</p>
+     <div class="hero-section">
+    <h1>Welcome to TeleSphere</h1>
+    <p>Fast, Reliable, Unlimited Connections</p>
+         <p></p>
+         <p></p>
+    <h2>Who Are You?</h2>
+    <div class="icon-container">
+        <div class="icon-item">
+            <img src="admin.png" alt="Admin Icon">
+            <p></p>
             <asp:Button ID="btnAdmin" runat="server" Text="Admin" CssClass="btn" OnClick="btnAdmin_Click" />
+        </div>
+        <div class="icon-item">
+            <img src="customer.png" alt="Customer Icon">
+            <p></p>
             <asp:Button ID="btnCustomer" runat="server" Text="Customer" CssClass="btn" OnClick="btnCustomer_Click" />
         </div>
+    </div>
+</div>
+
     </form>
 </body>
 </html>
