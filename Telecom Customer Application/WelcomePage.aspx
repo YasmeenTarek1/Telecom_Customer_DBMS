@@ -59,9 +59,8 @@
         }
 
         .header img {
-            height: 60px;
+            height: 50px;
             margin-right: 10px;
-            box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
         }
 
         .header h2 {
