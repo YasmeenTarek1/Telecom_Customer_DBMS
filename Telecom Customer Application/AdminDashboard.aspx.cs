@@ -27,7 +27,7 @@ namespace Telecom_Customer_Application
         {
             DisplayContent("customersTab");
 
-            string query = "SELECT * FROM allCustomerAccounts";
+            string query = "SELECT * FROM allCustomerAccounts ORDER BY status";
 
             ExecuteQueryWithHandling(query);
 
@@ -56,15 +56,15 @@ namespace Telecom_Customer_Application
             SetActiveTab("ticketsTab");
         }
 
-        protected void LoadStores(object sender, EventArgs e)
+        protected void LoadPhysicalShops(object sender, EventArgs e)
         {
-            DisplayContent("storesTab");
+            DisplayContent("physicalShopsTab");
 
             string query = "SELECT * FROM PhysicalStoreVouchers";
 
             ExecuteQueryWithHandling(query);
 
-            SetActiveTab("storesTab");
+            SetActiveTab("physicalShopsTab");
         }
         protected void LoadPlans(object sender, EventArgs e)
         {
@@ -149,12 +149,6 @@ namespace Telecom_Customer_Application
 
             SetActiveTab("AverageTransactionsTab");
         }
-        protected void LoadCustomersWallet(object sender, EventArgs e)
-        {
-            DisplayContent("customersWalletTab");
-
-            SetActiveTab("customersWalletTab");
-        }
         protected void LoadPoints(object sender, EventArgs e)
         {
             DisplayContent("PointsTab");
@@ -238,13 +232,6 @@ namespace Telecom_Customer_Application
                             cmd.Parameters.Add(new SqlParameter("@end_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput2.Text) });
                             break;
 
-                        case "customersWalletTab":
-                            cmd = new SqlCommand("SELECT dbo.Wallet_MobileNo(@mobile_num)", con);
-                            mobileNo = MobileEditText.Text;
-                            checkValidMobileNum(mobileNo);
-                            cmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11)).Value = mobileNo;
-                            break;
-
                         case "PointsTab":
 
                             cmd = new SqlCommand("Total_Points_Account", con);
@@ -269,9 +256,9 @@ namespace Telecom_Customer_Application
 
                     con.Open();
 
-                    if (currentTab == "CashbackAmountTab" || currentTab == "AverageTransactionsTab" || currentTab == "customersWalletTab") // output is label
+                    if (currentTab == "CashbackAmountTab" || currentTab == "AverageTransactionsTab") // output is label
                         LoadLabel(cmd);
-                    else if (currentTab == "PointsTab") // output is label but 2 consective commands
+                    else if (currentTab == "PointsTab") // output is label but 2 consecutive commands
                         LoadLabelPointsTab(cmd, updatedPoints);
                     else
                         LoadData(cmd); // output is data
@@ -341,10 +328,10 @@ namespace Telecom_Customer_Application
         private void SetActiveTab(string activeTabId)
         {
             string[] allTabs = {
-                "customersTab", "subscriptionsTab", "storesTab", "ticketsTab",
+                "customersTab", "subscriptionsTab", "physicalShopsTab", "ticketsTab",
                 "plansTab", "accountUsageTab", "benefitsTab", "offersTab",
                 "walletsTab","E_shopsTab","PaymentsTab","CashbackTab","TransactionsTab",
-                "CashbackAmountTab","AverageTransactionsTab","customersWalletTab","PointsTab"
+                "CashbackAmountTab","AverageTransactionsTab", "PointsTab"
             };
 
             // Loop through each tab and toggle the "active" class
@@ -378,8 +365,8 @@ namespace Telecom_Customer_Application
                 case "subscriptionsTab":
                     ConfigureSharedContent("Subscriptions", false, false, false, false, false, false, false);
                     break;
-                case "storesTab":
-                    ConfigureSharedContent("Stores", false, false, false, false, false, false, false);
+                case "physicalShopsTab":
+                    ConfigureSharedContent("Physical Shops", false, false, false, false, false, false, false);
                     break;
                 case "ticketsTab":
                     ConfigureSharedContent("Tickets", false, false, false, false, false, false, false);
@@ -400,7 +387,7 @@ namespace Telecom_Customer_Application
                     ConfigureSharedContent("Wallets", false, false, false, false, false, false, false);
                     break;
                 case "E_shopsTab":
-                    ConfigureSharedContent("E-shops", false, false, false, false, false, false, false);
+                    ConfigureSharedContent("E-Shops", false, false, false, false, false, false, false);
                     break;
                 case "PaymentsTab":
                     ConfigureSharedContent("Payments", false, false, false, false, false, false, false);
@@ -416,9 +403,6 @@ namespace Telecom_Customer_Application
                     break;
                 case "AverageTransactionsTab":
                     ConfigureSharedContent("Average Transaction", true, false, false, true, true, true, true);
-                    break;
-                case "customersWalletTab":
-                    ConfigureSharedContent("Customer Wallets", false, false, true, true, false, false, true);
                     break;
                 case "PointsTab":
                     ConfigureSharedContent("Points", false, false, true, true, false, false, true);
@@ -618,9 +602,7 @@ namespace Telecom_Customer_Application
 
             if (result != null && result != DBNull.Value)
             {
-                int data = 0;
-                if (currentTab != "customersWalletTab")
-                    data = Convert.ToInt32(result);
+                int data = Convert.ToInt32(result);
 
                 switch (currentTab)
                 {
@@ -631,11 +613,6 @@ namespace Telecom_Customer_Application
                     case "AverageTransactionsTab":
                         LabelOut.Text = $"Average Transactions Amount: {data}";
                         break;
-                    case "customersWalletTab":
-                        Boolean Linked = result != null && Convert.ToInt32(result) == 1;
-                        LabelOut.Text = $"Linked to a wallet: {(Linked ? "Yes" : "No")}";
-                        break;
-
                 }
 
             }

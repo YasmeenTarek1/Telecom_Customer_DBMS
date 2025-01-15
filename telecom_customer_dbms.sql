@@ -65,7 +65,7 @@ BEGIN
         CONSTRAINT FK_planID_Plan_Usage FOREIGN KEY(planID) REFERENCES Service_Plan(planID)
     );
 
-    CREATE TABLE Payment(
+    CREATE TABLE Payment(          -- Plan Subcribtions / Plan Renewals / Balance Recharging
         paymentID INT IDENTITY(1,1),
         amount DECIMAL(10,1) NOT NULL,
         date_of_payment DATE NOT NULL,
@@ -335,7 +335,6 @@ END;
 GO
 Exec createAllTables;
 
-
 GO
 CREATE VIEW allCustomerAccounts AS 
 SELECT 
@@ -345,19 +344,17 @@ SELECT
     a.status,
     a.start_date,
     a.balance,
-    a.points
+    a.points,
+    dbo.Wallet_MobileNo(a.mobileNo) AS 'Has Wallet'
 FROM Customer_profile p
 INNER JOIN Customer_Account a 
-ON p.nationalID = a.nationalID
-WHERE a.status = 'active';
-GO
+ON p.nationalID = a.nationalID;
 
 
 GO
 CREATE VIEW allServicePlans AS 
 SELECT *
 FROM Service_Plan;
-GO
 
 
 GO
@@ -403,18 +400,22 @@ where W.nationalID = C.nationalID;
 Go
 -- Fetch the list of all E-shops along with their redeemed vouchers's ids and values.
 CREATE VIEW E_shopVouchers As
-Select E.* ,V.voucherID, V.value
+Select E.shopId, S.name, E.URL, E.rating ,V.voucherID, V.value
 From  E_SHOP E 
 Inner join Voucher V 
-ON E.shopID = V.shopID;
+ON E.shopID = V.shopID
+Inner Join Shop S
+ON S.shopID = E.shopID;
 
 Go
 --Fetch the list of all physical stores along with their redeemed vouchers's ids and values.
 CREATE VIEW PhysicalStoreVouchers As
-Select P.* ,V.voucherID, V.value
+Select P.shopID, S.name, P.address, P.working_hours, V.voucherID, V.value
 From Physical_Shop P 
 Inner join Voucher V 
-ON P.shopID = V.shopID;
+ON P.shopID = V.shopID
+Inner Join Shop S
+ON S.shopID = P.shopID;
 
 Go
 --Fetch number of cashback transactions per each wallet.
@@ -559,24 +560,23 @@ BEGIN
     Return @Transaction_amount_average
 END;
 
-
 GO
 --Take mobileNo as an input, return true if this number is linked to a wallet, otherwise return false.
 CREATE FUNCTION Wallet_MobileNo
 (@mobile_num char(11))
-returns BIT
+returns VARCHAR(3)
 AS
 BEGIN
 
-    Declare @result BIT
+    Declare @result VARCHAR(3)
 
     if Exists(  Select * 
                 From Wallet W 
                 Where W.mobileNo = @mobile_num
              )
-        set @result = '1'
+        set @result = 'Yes'
     else
-        set @result = '0'
+        set @result = 'No'
 
 return @result
 END;
@@ -1423,3 +1423,4 @@ SELECT * FROM Physical_Shop;
 SELECT * FROM E_SHOP;
 SELECT * FROM Voucher;
 SELECT * FROM Technical_Support_Ticket;
+
