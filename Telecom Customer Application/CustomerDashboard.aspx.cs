@@ -651,7 +651,7 @@ namespace Telecom_Customer_Application
                                 HtmlTableCell cell = new HtmlTableCell();
 
                                 // Status Column 
-                                if (reader.GetName(i).Equals("status", StringComparison.OrdinalIgnoreCase))
+                                if (reader.GetName(i).IndexOf("status", StringComparison.OrdinalIgnoreCase) >= 0)
                                 {
                                     string statusValue = reader[i]?.ToString();
 
