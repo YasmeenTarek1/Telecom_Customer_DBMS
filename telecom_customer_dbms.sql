@@ -341,7 +341,7 @@ SELECT
     p.*,
     a.mobileNo,
     a.account_type,
-    a.status,
+    a.status AS 'Account_Status',
     a.start_date,
     a.balance,
     a.points,
@@ -372,9 +372,8 @@ WHERE status = 'active';
 Go
 ---Fetch details for all payments along with their corresponding Accounts.
 CREATE VIEW AccountPayments AS
-SELECT *
+SELECT paymentID, mobileNo, amount, payment_method, date_of_payment, status AS 'Payment_Status'
 FROM Payment;
-
 
 
 Go 
@@ -384,23 +383,22 @@ Select *
 From Shop;
 
 Go
---Fetch details for all resolved tickets.
-CREATE VIEW allResolvedTickets As
-Select *
-From  Technical_Support_Ticket
-where status = 'Resolved';
+--Fetch details for all tickets.
+CREATE VIEW allTickets As
+Select ticketID, mobileNo, Issue_description, priority_level, status AS 'Ticket_Status' 
+From Technical_Support_Ticket;
 
 Go
 --Fetch details of all wallets along with their customer names.
 CREATE VIEW CustomerWallet As
-Select W.*, C.first_name , C.last_name 
+Select W.walletID, C.first_name, C.last_name, W.mobileNo, W.current_balance, W.currency, W.last_modified_date
 From  Wallet W,Customer_profile C 
 where W.nationalID = C.nationalID;
 
 Go
 -- Fetch the list of all E-shops along with their redeemed vouchers's ids and values.
 CREATE VIEW E_shopVouchers As
-Select E.shopId, S.name, E.URL, E.rating ,V.voucherID, V.value
+Select E.shopID, S.name, E.URL, E.rating ,V.voucherID AS 'Redeemed Voucher ID', V.value AS 'Redeemed Voucher Value'
 From  E_SHOP E 
 Inner join Voucher V 
 ON E.shopID = V.shopID
@@ -410,7 +408,7 @@ ON S.shopID = E.shopID;
 Go
 --Fetch the list of all physical stores along with their redeemed vouchers's ids and values.
 CREATE VIEW PhysicalStoreVouchers As
-Select P.shopID, S.name, P.address, P.working_hours, V.voucherID, V.value
+Select P.shopID, S.name, P.address, P.working_hours, V.voucherID AS 'Redeemed Voucher ID', V.value AS 'Redeemed Voucher Value'
 From Physical_Shop P 
 Inner join Voucher V 
 ON P.shopID = V.shopID
@@ -424,16 +422,16 @@ Select walletID , count(*) AS 'count of transactions'
 From Cashback
 Group by walletID;
 
-
 Go 
 --List all accounts along with the service plans they are subscribed to
 CREATE PROCEDURE Account_Plan AS
-Select C.* , Sp.*
+Select S.mobileNo, S.planID, Sp.name AS 'Plan Name', Sp.description, Sp.SMS_offered, Sp.data_offered, Sp.minutes_offered, S.subscription_date, S.status AS 'Subscription Status'
 From Customer_Account C 
 Inner join Subscription S 
 ON C.mobileNo = S.mobileNo 
 Inner join Service_Plan Sp 
-ON S.planID = Sp.planID;
+ON S.planID = Sp.planID
+ORDER BY S.subscription_date DESC;
 
 
 
@@ -1305,63 +1303,48 @@ VALUES
 (14, 4),
 (15, 5);
 
-
 INSERT INTO Shop (name, category)
 VALUES
-('Shop 1', 'Electronics'),
-('Shop 2', 'Clothing'),
-('Shop 3', 'Groceries'),
-('Shop 4', 'Furniture'),
-('Shop 5', 'Books'),
-('Shop 6', 'Sports'),
-('Shop 7', 'Toys'),
-('Shop 8', 'Automotive'),
-('Shop 9', 'Jewelry'),
-('Shop 10', 'Beauty'),
-('Shop 11', 'Home Appliances'),
-('Shop 12', 'Furniture'),
-('Shop 13', 'Electronics'),
-('Shop 14', 'Clothing'),
-('Shop 15', 'Groceries');
-
+('Amazon', 'Electronics'),
+('Zara', 'Clothing'),
+('Whole Foods', 'Groceries'),
+('IKEA', 'Furniture'),
+('Barnes & Noble', 'Books'),
+('Decathlon', 'Sports'),
+('Toys R Us', 'Toys'),
+('AutoZone', 'Automotive'),
+('Pandora', 'Jewelry'),
+('Sephora', 'Beauty'),
+('Best Buy', 'Home Appliances'),
+('Ashley Furniture', 'Furniture'),
+('Apple Store', 'Electronics'),
+('H&M', 'Clothing'),
+('Kroger', 'Groceries');
 
 INSERT INTO Physical_Shop (shopID, address, working_hours)
 VALUES
-(1, '123 Main St', '9 AM - 9 PM'),
-(2, '456 Oak St', '10 AM - 6 PM'),
-(3, '789 Pine St', '8 AM - 10 PM'),
-(4, '101 Maple St', '9 AM - 9 PM'),
-(5, '202 Birch St', '9 AM - 5 PM'),
-(6, '303 Cedar St', '10 AM - 8 PM'),
-(7, '404 Elm St', '11 AM - 7 PM'),
-(8, '505 Redwood St', '10 AM - 6 PM'),
-(9, '606 Willow St', '9 AM - 9 PM'),
-(10, '707 Ash St', '8 AM - 8 PM'),
-(11, '808 Oak St', '9 AM - 9 PM'),
-(12, '909 Pine St', '10 AM - 7 PM'),
-(13, '1010 Maple St', '8 AM - 6 PM'),
-(14, '1111 Birch St', '9 AM - 9 PM'),
-(15, '1212 Cedar St', '10 AM - 8 PM');
-
+(2, '123 Main St', '9 AM - 9 PM'),
+(3, '456 Oak St', '8 AM - 10 PM'),  
+(4, '789 Pine St', '10 AM - 6 PM'),
+(5, '101 Maple St', '9 AM - 9 PM'), 
+(6, '202 Birch St', '9 AM - 5 PM'), 
+(7, '303 Cedar St', '10 AM - 8 PM'), 
+(8, '404 Elm St', '11 AM - 7 PM'),  
+(9, '505 Redwood St', '9 AM - 9 PM'), 
+(12, '606 Willow St', '10 AM - 7 PM'), 
+(13, '707 Ash St', '8 AM - 6 PM');  
 
 INSERT INTO E_SHOP (shopID, URL, rating)
 VALUES
-(1, 'https://www.amazon.com', 4),
-(2, 'https://www.ebay.com', 3),
-(3, 'https://www.etsy.com', 5),
-(4, 'https://www.walmart.com', 4),
-(5, 'https://www.bestbuy.com', 3),
-(6, 'https://www.target.com', 5),
-(7, 'https://www.aliexpress.com', 2),
-(8, 'https://www.newegg.com', 4),
-(9, 'https://www.zalando.com', 4),
-(10, 'https://www.shopify.com', 5),
-(11, 'https://www.overstock.com', 3),
-(12, 'https://www.costco.com', 2),
-(13, 'https://www.homedepot.com', 5),
-(14, 'https://www.samsclub.com', 3),
-(15, 'https://www.kohls.com', 4);
-
+(1, 'https://www.amazon.com', 5), 
+(3, 'https://www.wholefoods.com', 4), 
+(4, 'https://www.ikea.com', 5),
+(5, 'https://www.barnesandnoble.com', 4), 
+(10, 'https://www.sephora.com', 4),
+(11, 'https://www.bestbuy.com', 5), 
+(13, 'https://www.apple.com', 5), 
+(14, 'https://www.hm.com', 4), 
+(15, 'https://www.kroger.com', 4);
 
 
 INSERT INTO Voucher (value, expiry_date, points, mobileNo, shopID, redeem_date)
@@ -1384,24 +1367,24 @@ VALUES
 
 INSERT INTO Technical_Support_Ticket (mobileNo, Issue_description, priority_level, status)
 VALUES
-('01010101010', 'Network connectivity issue', 3, 'Resolved'),
-('01020202020', 'Account billing discrepancy', 2, 'Resolved'),
+('01010101010', 'Network connectivity issue', 3, 'Open'),
+('01020202020', 'Account billing discrepancy', 2, 'Open'),
 ('01030303030', 'Unable to make outgoing calls', 1, 'Resolved'),
 ('01040404040', 'Data not working', 2, 'Resolved'),
 ('01050505050', 'Overcharged for last month', 2, 'In Progress'),
-('01060606060', 'SIM card not activated', 1, 'Resolved'),
-('01070707070', 'Unable to top-up account', 3, 'Resolved'),
+('01060606060', 'SIM card not activated', 1, 'In Progress'),
+('01070707070', 'Unable to top-up account', 3, 'Open'),
 ('01080808080', 'Account suspended error', 2, 'Resolved'),
-('01090909090', 'Payment not reflected in balance', 3, 'Resolved'),
-('01101010101', 'Unable to use data services', 1, 'Resolved'),
+('01090909090', 'Payment not reflected in balance', 3, 'Open'),
+('01101010101', 'Unable to use data services', 1, 'Open'),
 ('01111111111', 'No signal in the area', 2, 'Resolved'),
 ('01121212121', 'Balance not updating after recharge', 3, 'In Progress'),
 ('01131313131', 'System outage', 1, 'Resolved'),
-('01141414141', 'Wrong plan applied', 2, 'Resolved'),
+('01141414141', 'Wrong plan applied', 2, 'Open'),
 ('01151515151', 'Service interruption', 3, 'Resolved'),
 ('01161616161', 'Account frozen due to suspicious activity', 1, 'In Progress'),
-('01171717171', 'Mobile number transfer issue', 2, 'Resolved'),
-('01181818181', 'No internet access', 1, 'Resolved');
+('01171717171', 'Mobile number transfer issue', 2, 'In Progress'),
+('01181818181', 'No internet access', 1, 'In Progress');
 
 
 SELECT * FROM Customer_profile;

@@ -10,7 +10,7 @@
      <style>
         /* General Body and Layout */
         body {
-            margin: 0;
+            margin: 0 30px 0 0;
             font-family: 'Arial', sans-serif;
             background-color: #f5f5f5;
             color: #333;
@@ -232,7 +232,7 @@
 
         table {
             border-collapse: collapse;
-            margin: 20px 0 170px 0;
+            margin: 20px 0 170px 10px;
             font-size: 16px;
             text-align: center;
             background-color: #ffffff;
@@ -380,35 +380,36 @@
                 border-left: none;
             }
         }
+
         .alert {
-        padding: 15px;
-        margin: 10px 0;
-        border-radius: 5px;
-        font-size: 14px;
-        color: white;
-        background-color: #dc3545;
-        border: 1px solid #dc3545;
-        position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999;
-        width: 70%;
-        max-width: 600px;
-        text-align: center;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 14px;
+            color: white;
+            background-color: #dc3545;
+            border: 1px solid #dc3545;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 70%;
+            max-width: 600px;
+            text-align: center;
         }
+
         .tab-heading {
-        font-family: "Arial", sans-serif;
-        font-size: 24px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 15px;
-        margin-top:40px;
-        display: inline-block; /* Ensures the underline is only under the text */
-        letter-spacing: 0.05em;
-        border-bottom: 2px solid #0056b3; /* Adds a blue underline */
-        padding-bottom: 5px;
-    }
+            font-family: "Arial", sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0px;
+            margin-top:40px;
+            display: inline-block; /* Ensures the underline is only under the text */
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #0056b3; /* Adds a blue underline */
+        }
         .date-container {
             margin-bottom: 20px;
             display: flex;
@@ -777,7 +778,9 @@
                     <i class="fa-solid fa-ticket sidebar-icon"></i>Tickets
                 </a>
 
-                <a href="#" id="plansTab" runat="server" onserverclick="LoadPlans"><i class="fa-solid fa-globe sidebar-icon"></i>Plans</a>
+                <a href="#" id="plansTab" runat="server" onserverclick="LoadPlans">
+                    <i class="fa-solid fa-globe sidebar-icon"></i>Plans
+                </a>
                 
                 <div class="dropdown">
                     <a href="#" id="BenefitsTabDropdown" class="dropdown-toggle" onclick="toggleDropdown(this)">

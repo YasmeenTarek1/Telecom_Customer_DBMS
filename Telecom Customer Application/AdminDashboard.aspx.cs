@@ -27,7 +27,7 @@ namespace Telecom_Customer_Application
         {
             DisplayContent("customersTab");
 
-            string query = "SELECT * FROM allCustomerAccounts ORDER BY status";
+            string query = "SELECT * FROM allCustomerAccounts ORDER BY Account_Status";
 
             ExecuteQueryWithHandling(query);
 
@@ -45,17 +45,6 @@ namespace Telecom_Customer_Application
             SetActiveTab("subscriptionsTab");
 
         }
-        protected void LoadTickets(object sender, EventArgs e)
-        {
-            DisplayContent("ticketsTab");
-
-            string query = "SELECT * FROM allResolvedTickets";
-
-            ExecuteQueryWithHandling(query);
-
-            SetActiveTab("ticketsTab");
-        }
-
         protected void LoadPhysicalShops(object sender, EventArgs e)
         {
             DisplayContent("physicalShopsTab");
@@ -65,41 +54,6 @@ namespace Telecom_Customer_Application
             ExecuteQueryWithHandling(query);
 
             SetActiveTab("physicalShopsTab");
-        }
-        protected void LoadPlans(object sender, EventArgs e)
-        {
-            DisplayContent("plansTab");
-
-            SetActiveTab("plansTab");
-        }
-        protected void LoadAccountUsage(object sender, EventArgs e)
-        {
-            DisplayContent("accountUsageTab");
-
-            SetActiveTab("accountUsageTab");
-        }
-        protected void LoadBenefits(object sender, EventArgs e)
-        {
-            DisplayContent("benefitsTab");
-
-            SetActiveTab("benefitsTab");
-        }
-        protected void LoadOffers(object sender, EventArgs e)
-        {
-            DisplayContent("offersTab");
-
-            SetActiveTab("offersTab");
-        }
-
-        protected void LoadWallets(object sender, EventArgs e)
-        {
-            DisplayContent("walletsTab");
-
-            string query = "SELECT * FROM CustomerWallet";
-
-            ExecuteQueryWithHandling(query);
-
-            SetActiveTab("walletsTab");
         }
         protected void LoadE_shops(object sender, EventArgs e)
         {
@@ -111,15 +65,27 @@ namespace Telecom_Customer_Application
 
             SetActiveTab("E_shopsTab");
         }
-        protected void LoadPayments(object sender, EventArgs e)
+        protected void LoadTickets(object sender, EventArgs e)
         {
-            DisplayContent("PaymentsTab");
+            DisplayContent("ticketsTab");
 
-            string query = "SELECT * FROM AccountPayments";
+            string query = "SELECT * FROM allTickets ORDER BY CASE Ticket_Status WHEN 'Open' THEN 1 WHEN 'In Progress' THEN 2 ELSE 3 END, priority_level DESC;";
 
             ExecuteQueryWithHandling(query);
 
-            SetActiveTab("PaymentsTab");
+            SetActiveTab("ticketsTab");
+        }
+        protected void LoadPlans(object sender, EventArgs e)
+        {
+            DisplayContent("plansTab");
+
+            SetActiveTab("plansTab");
+        }
+        protected void LoadBenefits(object sender, EventArgs e)
+        {
+            DisplayContent("benefitsTab");
+
+            SetActiveTab("benefitsTab");
         }
         protected void LoadCashback(object sender, EventArgs e)
         {
@@ -131,29 +97,62 @@ namespace Telecom_Customer_Application
 
             SetActiveTab("CashbackTab");
         }
-        protected void LoadTransactions(object sender, EventArgs e)
-        {
-            DisplayContent("TransactionsTab");
-
-            SetActiveTab("TransactionsTab");
-        }
         protected void LoadCashbackAmount(object sender, EventArgs e)
         {
             DisplayContent("CashbackAmountTab");
 
             SetActiveTab("CashbackAmountTab");
         }
-        protected void LoadAverageTransactions(object sender, EventArgs e)
+        protected void LoadOffers(object sender, EventArgs e)
         {
-            DisplayContent("AverageTransactionsTab");
+            DisplayContent("offersTab");
 
-            SetActiveTab("AverageTransactionsTab");
+            SetActiveTab("offersTab");
         }
         protected void LoadPoints(object sender, EventArgs e)
         {
             DisplayContent("PointsTab");
 
             SetActiveTab("PointsTab");
+        }
+        protected void LoadAccountUsage(object sender, EventArgs e)
+        {
+            DisplayContent("accountUsageTab");
+
+            SetActiveTab("accountUsageTab");
+        }
+        protected void LoadWallets(object sender, EventArgs e)
+        {
+            DisplayContent("walletsTab");
+
+            string query = "SELECT * FROM CustomerWallet";
+
+            ExecuteQueryWithHandling(query);
+
+            SetActiveTab("walletsTab");
+        }
+        protected void LoadPayments(object sender, EventArgs e)
+        {
+            DisplayContent("PaymentsTab");
+
+            string query = "SELECT * FROM AccountPayments ORDER BY CASE Payment_Status WHEN 'Successful' THEN 1 WHEN 'Pending' THEN 2 ELSE 3 END, date_of_payment DESC;";
+
+            ExecuteQueryWithHandling(query);
+
+            SetActiveTab("PaymentsTab");
+        }
+        protected void LoadTransactions(object sender, EventArgs e)
+        {
+            DisplayContent("TransactionsTab");
+
+            SetActiveTab("TransactionsTab");
+        }
+
+        protected void LoadAverageTransactions(object sender, EventArgs e)
+        {
+            DisplayContent("AverageTransactionsTab");
+
+            SetActiveTab("AverageTransactionsTab");
         }
 
         protected void SearchButton_Click(object sender, EventArgs e)
@@ -497,7 +496,7 @@ namespace Telecom_Customer_Application
                             HtmlTableCell cell = new HtmlTableCell();
 
                             // Status Column 
-                            if (reader.GetName(i).Equals("status", StringComparison.OrdinalIgnoreCase))
+                            if (reader.GetName(i).IndexOf("status", StringComparison.OrdinalIgnoreCase) >= 0)
                             {
                                 string statusValue = reader[i]?.ToString();
 
@@ -514,7 +513,10 @@ namespace Telecom_Customer_Application
                                     cell.Attributes.Add("class", "status-pending"); // yellow
                                 }
 
-                                cell.InnerText = reader[i]?.ToString();
+                                if (reader[i].ToString().Equals("onhold"))
+                                    cell.InnerText = "On-Hold";
+                                else
+                                    cell.InnerText = char.ToUpper(reader[i].ToString()[0]) + reader[i].ToString().Substring(1);
                                 row.Cells.Add(cell);
                             }
                             // URL Column 
