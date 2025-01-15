@@ -59,8 +59,9 @@
         }
 
         .header img {
-            height: 50px;
+            height: 60px;
             margin-right: 10px;
+            box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
         }
 
         .header h2 {
@@ -87,7 +88,6 @@
         .nav a:hover {
             color: rgba(255, 255, 0, 0.8); /* Yellow hover effect */
         }
-
         .hero-section {
             display: flex;
             flex-direction: column;
@@ -98,11 +98,18 @@
             height: 100%;
             color: rgba(7, 156, 255, 1); /* Blue */
             padding: 40px;
+            box-sizing: border-box; /* Ensure padding doesn't affect alignment */
+        }
+
+        .hero-section h1, 
+        .hero-section p, 
+        .hero-section h2 {
+            margin: 0;
         }
 
         .hero-section h1 {
             font-size: 50px;
-            margin: 20px 0;
+            margin-bottom: 20px;
             font-family: 'Poppins', sans-serif; /* Professional and Rounded Font */
             font-weight: bold;
             text-shadow: 2px 2px 6px rgba(7, 156, 255, 0.3);
@@ -110,13 +117,13 @@
 
         .hero-section p {
             font-size: 22px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             color: rgba(7, 156, 255, 0.8);
         }
 
         .hero-section h2 {
             font-size: 24px;
-            margin-bottom: 80px; /* Increased margin for spacing */
+            margin-bottom: 40px; /* Reduced margin for better centering */
             color: rgba(7, 156, 255, 0.6);
             font-family: 'Poppins', sans-serif;
         }
@@ -125,7 +132,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 400px; /* Increased gap for better spacing */
+            gap: 160px; /* Balanced gap between icons */
+            margin-top: 20px; /* Add spacing from the header text */
         }
 
         .icon-item {
@@ -133,9 +141,9 @@
         }
 
         .icon-item img {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 20px; /* Space between image and button */
+            width: 175px;
+            height: 175px;
+            margin-bottom: 10px; /* Space between image and button */
         }
 
         .btn {
@@ -172,10 +180,8 @@
             </div>
         </div>
      <div class="hero-section">
-    <h1>Welcome to TeleSphere</h1>
-    <p>Fast, Reliable, Unlimited Connections</p>
-         <p></p>
-         <p></p>
+    <h1 style="margin-bottom:50px;">Welcome to TeleSphere</h1>
+    <p style="margin-bottom:120px;">Fast, Reliable, Unlimited Connections</p>
     <h2>Who Are You?</h2>
     <div class="icon-container">
         <div class="icon-item">
