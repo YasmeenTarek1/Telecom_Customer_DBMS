@@ -12,8 +12,15 @@ namespace Telecom_Customer_Application
     public partial class AdminDashboard : System.Web.UI.Page
     {
 
+        public int CustomerCount { get; set; }
+        public int PaymentCount { get; set; }
+        public int TransferCount { get; set; }
+        public int ServicePlanCount { get; set; }
+
         private string connectionString = WebConfigurationManager.ConnectionStrings["TelecomDatabaseConnection"].ToString();
+
         private static string currentTab = "";
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -28,8 +35,37 @@ namespace Telecom_Customer_Application
             DisplayContent("customersTab");
 
             string query = "SELECT * FROM allCustomerAccounts ORDER BY Account_Status";
-
             ExecuteQueryWithHandling(query);
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            { 
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_profile", con))
+                {
+                    CustomerCount = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+
+                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Payment", con))
+                {
+                    PaymentCount = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+
+                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Transfer_money", con))
+                {
+                    TransferCount = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+
+                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Service_Plan", con))
+                {
+                    ServicePlanCount =  Convert.ToInt32(cmd.ExecuteScalar());
+                }
+            }
+
+            customerCount.InnerText = CustomerCount.ToString();
+            paymentCount.InnerText = PaymentCount.ToString();
+            transferCount.InnerText = TransferCount.ToString();
+            servicePlanCount.InnerText = ServicePlanCount.ToString();
 
             SetActiveTab("customersTab");
         }
@@ -359,7 +395,7 @@ namespace Telecom_Customer_Application
             switch (currentTab)
             {
                 case "customersTab":
-                    ConfigureSharedContent("Customers", false, false, false, false, false, false, false);
+                    ConfigureSharedContent("Dashboard", false, false, false, false, false, false, false);
                     break;
                 case "subscriptionsTab":
                     ConfigureSharedContent("Subscriptions", false, false, false, false, false, false, false);
@@ -406,7 +442,6 @@ namespace Telecom_Customer_Application
                 case "PointsTab":
                     ConfigureSharedContent("Points", false, false, true, true, false, false, true);
                     break;
-
             }
         }
 
@@ -435,16 +470,20 @@ namespace Telecom_Customer_Application
             LabelOut.Style["display"] = showLabelOut ? "block" : "none";
             LabelOut.Text = "";
 
+            if (currentTab == "PointsTab")
+                SearchButton.Text = "Update";
+            else
+                SearchButton.Text = "Search";
+            
 
             if (currentTab != "benefitsTab")
-            {
                 DeleteButton.Style["display"] = "none";
-            }
 
-            if (currentTab == "PointsTab")
-            {
-                SearchButton.Text = "Update";
-            }
+
+            if (currentTab == "customersTab")
+                cardBox.Style["display"] = "block";
+            else
+                cardBox.Style["display"] = "none";
         }
 
         protected void LoadData(SqlCommand cmd)
@@ -495,28 +534,30 @@ namespace Telecom_Customer_Application
                         {
                             HtmlTableCell cell = new HtmlTableCell();
 
-                            // Status Column 
+                            // Status Column
                             if (reader.GetName(i).IndexOf("status", StringComparison.OrdinalIgnoreCase) >= 0)
                             {
                                 string statusValue = reader[i]?.ToString();
+                                string statusClass = "";
 
                                 if (statusValue.Equals("active", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("successful", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("Resolved", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    cell.Attributes.Add("class", "status-active"); // green
+                                    statusClass = "status-active"; // green
                                 }
                                 else if (statusValue.Equals("onhold", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("rejected", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("Open", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("expired", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    cell.Attributes.Add("class", "status-onhold"); // red
+                                    statusClass = "status-onhold"; // red
                                 }
                                 else if (statusValue.Equals("pending", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("In progress", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    cell.Attributes.Add("class", "status-pending"); // yellow
+                                    statusClass = "status-pending"; // yellow
                                 }
 
+                                // Build a <span> element for the status label
                                 if (reader[i].ToString().Equals("onhold"))
-                                    cell.InnerText = "On-Hold";
+                                    cell.InnerHtml = $"<span class='{statusClass}'>{"On-Hold"}</span>";
                                 else
-                                    cell.InnerText = char.ToUpper(reader[i].ToString()[0]) + reader[i].ToString().Substring(1);
+                                    cell.InnerHtml = $"<span class='{statusClass}'>{char.ToUpper(statusValue[0]) + statusValue.Substring(1)}</span>";
                                 row.Cells.Add(cell);
                             }
                             // URL Column 
@@ -533,6 +574,22 @@ namespace Telecom_Customer_Application
                                 else
                                 {
                                     cell.InnerText = "No URL"; // Display a placeholder if URL is empty
+                                }
+                                row.Cells.Add(cell);
+                            }
+                            // Email Column
+                            else if (reader.GetName(i).Equals("Email", StringComparison.OrdinalIgnoreCase))
+                            {
+                                string mail = reader[i]?.ToString();
+
+                                if (!string.IsNullOrEmpty(mail))
+                                {
+                                    // Apply the clickable-link class to make it blue and clickable
+                                    cell.InnerHtml = $"<a href='mailto:{mail}' class='clickable-link'>{mail}</a>";
+                                }
+                                else
+                                {
+                                    cell.InnerText = "No URL"; // Display a placeholder if Mail is empty
                                 }
                                 row.Cells.Add(cell);
                             }

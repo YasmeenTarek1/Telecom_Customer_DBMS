@@ -27,7 +27,7 @@
 
          /* Sidebar Styling */
         .sidebar {
-            width: 300px;  /* Default wider width */
+            width: 290px;  /* Default wider width */
             background-color: #2a3d56;  /* Darker blue shade */
             color: #fff;
             display: flex;

@@ -1406,4 +1406,3 @@ SELECT * FROM Physical_Shop;
 SELECT * FROM E_SHOP;
 SELECT * FROM Voucher;
 SELECT * FROM Technical_Support_Ticket;
-

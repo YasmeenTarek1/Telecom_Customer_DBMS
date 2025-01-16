@@ -27,9 +27,9 @@
 
          /* Sidebar Styling */
         .sidebar {
-            width: 300px;  /* Default wider width */
+            width: 260px;  /* Default wider width */
             background-color: #2a3d56;  /* Darker blue shade */
-            color: #fff;
+            color: #f5f5f5;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -37,30 +37,29 @@
             overflow-y: auto;
             overflow-x: hidden;
             position: relative;
-            margin-right: 40px;
+            margin-right: 20px;
             top: 0;
             left: 0;
         }
 
         .sidebar:hover {
-            width: 350px;  /* Expanding sidebar further on hover */
+            width: 280px;  /* Expanding sidebar further on hover */
         }
 
         /* Sidebar Header */
         .sidebar h4 {
             text-align: center;
-            font-size: 30px;
+            font-size: 28px;
             font-weight: bold;
             margin-top: -52px;
             margin-bottom: 50px;
-            margin-left: 50px;
+            margin-left: 63px;
         }
 
         /* Style for the image inside the header */
         .sidebar-header-img {
             width: 70px;
             height: auto;
-            border-radius: 50%; /* make the image circular */
             margin-left: 10px;
             margin-top: 35px;
         }
@@ -69,21 +68,51 @@
         .sidebar a {
             color: #fff;
             text-decoration: none;
-            padding: 11px 15px;
+            padding: 13px 15px;
             margin: 7px 4px;
             border-radius: 5px;
             display: flex;
             font-size: 16px;
             font-weight: 500;
-            transition: background-color 0.3s;
+            position: relative;
         }
 
-        .sidebar a:hover {
-            background-color: #3e4f6e;  /* Darker blue hover effect */
-        }
-
+        .sidebar a:hover,
         .sidebar a.active {
-            background-color: #1e6fa1;  /* New shade of blue */
+            background-color: #f5f5f5; 
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            color:#2a3d56;
+        }
+        
+        .sidebar a:hover::before,
+        .sidebar a.active::before {
+            content: "";
+            position: absolute;
+            right: -4px;
+            top: -35px; /* upward offset */
+            width: 35px; /* circle size */
+            height: 35px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 25px 25px 0 6px #f5f5f5; /* shadow offset and spread */
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sidebar a:hover::after,
+        .sidebar a.active::after {
+            content: "";
+            position: absolute;
+            right: -4px;
+            bottom: -35px; /* downward offset */
+            width: 35px; /* circle size */
+            height: 35px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 25px -25px 0 6px #f5f5f5; /* shadow offset and spread */
+            pointer-events: none;
+            z-index: 1; 
         }
 
         /* Styling the icons (Font Awesome) */
@@ -99,7 +128,6 @@
             margin-left: auto; /* Push this icon to the far right */
             margin-top:3px;
         }
-
 
         /* Scrollbar Styling */
         .sidebar::-webkit-scrollbar {
@@ -228,11 +256,64 @@
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
 
+        /* Cards Styling */
+
+        .cardBox {
+            position: relative;
+            width: 95%;
+            padding: 20px;
+            display: grid;
+            margin-left: 25px;
+            margin-top: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 30px;
+        } 
+
+        .cardBox .card {
+            position: relative;
+            background: #2a3d56;
+            padding: 30px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .cardBox .card .numbers {
+            position: relative;
+            font-weight: 500;
+            font-size: 2.5rem;
+            color: #f5f5f5;
+        }
+
+        .cardBox .card .cardName {
+            color: #9b9b9b;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .cardBox .card .iconBx {
+            font-size: 3.5rem;
+            color: #f5f5f5;
+            margin-right: 20px
+        }
+
+        .cardBox .card:hover {
+            background: #f5f5f5;
+        }
+
+        .cardBox .card:hover .numbers,
+        .cardBox .card:hover .cardName,
+        .cardBox .card:hover .iconBx {
+            color: #007bff;
+        }
+
         /* Table Styling */
 
         table {
             border-collapse: collapse;
-            margin: 20px 0 170px 10px;
+            margin: 20px 0 320px 15px;
             font-size: 16px;
             text-align: center;
             background-color: #ffffff;
@@ -240,17 +321,20 @@
             border: 1px solid #e0e0e0;
         }
 
-        table th, table td {
+        table th{
             padding: 12px;
             border: 1px solid #ddd;
             color: #333;
-        }
-
-        table th {
             font-weight: bold;
             background-color: #e9f3ff;
             color: #0056b3;
             border: 1px solid #cce5ff;
+        }
+
+        table td {  /* table data cell */
+            padding: 10px;
+            border: 1px solid #ddd;
+            color: #333;
         }
         
         .table-responsive {
@@ -281,7 +365,7 @@
         .table-responsive::-webkit-scrollbar-track {
             background: rgba(220, 220, 220, 0.5);
             border-radius: 6px;
-            margin: 25px 0 174px 0;
+            margin: 25px 0 320px 0;
         }
 
         .table-responsive {
@@ -290,23 +374,33 @@
 
         /* Status badges */
         .status-active {
-            color: #00ff00;
-            padding: 5px 10px;
-            border-radius: 5px;
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 12px;
             font-size: 14px;
+            text-align: center;
         }
+
         .status-onhold {
-            color: #ff0000;
-            padding: 5px 10px;
-            border-radius: 5px;
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 12px;
             font-size: 14px;
+            text-align: center;
         }
 
         .status-pending {
-            color: #ffd700;
-            padding: 5px 10px;
-            border-radius: 5px;
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: #f8e061;
+            color: black;
+            border-radius: 12px;
             font-size: 14px;
+            text-align: center;
         }
 
         /* Style for the initials circle */
@@ -401,11 +495,9 @@
 
         .tab-heading {
             font-family: "Arial", sans-serif;
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 28px;
             color: #333;
-            margin-bottom: 0px;
-            margin-top:40px;
+            margin: 40px 0px 0px 20px;
             display: inline-block; /* Ensures the underline is only under the text */
             letter-spacing: 0.05em;
             border-bottom: 2px solid #0056b3; /* Adds a blue underline */
@@ -680,54 +772,6 @@
                  gap: 6px;
              }
          }
-         /* From Uiverse.io by cuzpq */ 
-        .theme-checkbox {
-          --toggle-size: 16px;
-          -webkit-appearance: none;
-          -moz-appearance: none;
-          appearance: none;
-          width: 6.25em;
-          height: 3.125em;
-          background: -webkit-gradient(linear, left top, right top, color-stop(50%, #efefef), color-stop(50%, #2a2a2a)) no-repeat;
-          background: -o-linear-gradient(left, #efefef 50%, #2a2a2a 50%) no-repeat;
-          background: linear-gradient(to right, #efefef 50%, #2a2a2a 50%) no-repeat;
-          background-size: 205%;
-          background-position: 0;
-          -webkit-transition: 0.4s;
-          -o-transition: 0.4s;
-          transition: 0.4s;
-          border-radius: 99em;
-          position: relative;
-          cursor: pointer;
-          font-size: var(--toggle-size);
-        }
-
-        .theme-checkbox::before {
-          content: "";
-          width: 2.25em;
-          height: 2.25em;
-          position: absolute;
-          top: 0.438em;
-          left: 0.438em;
-          background: -webkit-gradient(linear, left top, right top, color-stop(50%, #efefef), color-stop(50%, #2a2a2a)) no-repeat;
-          background: -o-linear-gradient(left, #efefef 50%, #2a2a2a 50%) no-repeat;
-          background: linear-gradient(to right, #efefef 50%, #2a2a2a 50%) no-repeat;
-          background-size: 205%;
-          background-position: 100%;
-          border-radius: 50%;
-          -webkit-transition: 0.4s;
-          -o-transition: 0.4s;
-          transition: 0.4s;
-        }
-
-        .theme-checkbox:checked::before {
-          left: calc(100% - 2.25em - 0.438em);
-          background-position: 0;
-        }
-
-        .theme-checkbox:checked {
-          background-position: 100%;
-        }
 
     </style>
 
@@ -819,9 +863,56 @@
             </div>
 
     
-            <div id="sharedContent" runat="server" class="tab-content active-tab" style="display:block;">
+            <div id="sharedContent" runat="server" class="tab-content active-tab" style="display: block;">
 
                 <h3 id="TabHeading" runat="server" class="tab-heading">Tab Details</h3>
+                <div  id="cardBox" runat="server" style="display: none;">
+                    <div class="cardBox"">
+                        <div class="card">
+                            <div>
+                                <div class="numbers" id="customerCount" runat="server">0</div>
+                                <div class="cardName">Customers</div>
+                            </div>
+
+                            <div class="iconBx">
+                                <i class="fa-solid fa-user sidebar-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div>
+                                <div class="numbers" id="paymentCount" runat="server">0</div>
+                                <div class="cardName">Payments</div>
+                            </div>
+
+                            <div class="iconBx">
+                                <i class="fa-solid fa-coins sidebar-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div>
+                                <div class="numbers" id="transferCount" runat="server">0</div>
+                                <div class="cardName">Transactions</div>
+                            </div>
+
+                            <div class="iconBx">
+                                <i class="fa-solid fa-arrow-right-arrow-left sidebar-icon"></i>
+                            </div>
+                        </div>
+                        <div class="card" >
+                            <div>
+                                <div class="numbers" id="servicePlanCount" runat="server">0</div>
+                                <div class="cardName">Plans</div>
+                            </div>
+
+                            <div class="iconBx">
+                                <i class="fa-solid fa-globe sidebar-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div id="DateContainer1" runat="server" class="date-picker-container" style="display: none;">
                     <label id="DateLabel1" runat="server" for="DateInput1" class="date-picker-label">Start Date:</label>
@@ -852,7 +943,7 @@
 
                 <div class="button-container">
                     <asp:Button ID="SearchButton" runat="server" CssClass="styled-button" Text="Search" OnClick="SearchButton_Click" />
-                    <asp:Button ID="DeleteButton" runat="server" CssClass="styled-button delete-button" Text="Delete" OnClick="DeleteBenefitsButton_Click" style="display:none;" />
+                    <asp:Button ID="DeleteButton" runat="server" CssClass="styled-button delete-button" Text="Delete" OnClick="DeleteBenefitsButton_Click" Style="display: none;" />
                 </div>
 
 
@@ -860,18 +951,18 @@
                     <asp:Label ID="LabelOut" runat="server" CssClass="output-label" Text=""></asp:Label>
                 </div>
 
-                 <!-- Data Table -->
-                 <div class="table-responsive">
-                     <table>
-                         <tbody id="TableBody" runat="server"></tbody> <!-- TableBody for rows -->
-                     </table>
-                 </div>
+                <!-- Data Table -->
+                <div class="table-responsive">
+                    <table>
+                        <tbody id="TableBody" runat="server"></tbody>
+                        <!-- TableBody for rows -->
+                    </table>
+                </div>
 
-                <button id="backButton" runat="server" onserverclick="BackButton_Click" class="top-right-button"/>
+                <button id="backButton" runat="server" onserverclick="BackButton_Click" class="top-right-button" />
 
-
-            </div> 
-        </div>       
+            </div>
+        </div>    
     </form>
 </body>
 </html>
