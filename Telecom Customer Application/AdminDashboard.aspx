@@ -271,7 +271,7 @@
 
         .cardBox .card {
             position: relative;
-            background: #2a3d56;
+            background: #f5f5f5;
             padding: 30px;
             border-radius: 20px;
             display: flex;
@@ -284,7 +284,7 @@
             position: relative;
             font-weight: 500;
             font-size: 2.5rem;
-            color: #f5f5f5;
+            color: #2a3d56;
         }
 
         .cardBox .card .cardName {
@@ -295,19 +295,26 @@
 
         .cardBox .card .iconBx {
             font-size: 3.5rem;
-            color: #f5f5f5;
+            color: #007bff;
             margin-right: 20px
         }
 
         .cardBox .card:hover {
-            background: #f5f5f5;
+            background: #2a3d56;
         }
 
         .cardBox .card:hover .numbers,
         .cardBox .card:hover .cardName,
         .cardBox .card:hover .iconBx {
-            color: #007bff;
+            color: #f5f5f5; 
         }
+
+        /*
+            #9b9b9b --> grey
+            #2a3d56 --> dark blue
+            #007bff --> baby blue
+            #f5f5f5 --> white
+        */
 
         /* Table Styling */
 
