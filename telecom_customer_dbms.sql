@@ -76,7 +76,7 @@ BEGIN
         CONSTRAINT FK_mobileNo_Payment FOREIGN KEY(mobileNo) REFERENCES Customer_Account(mobileNo)
     );
 
-    CREATE TABLE Process_Payment(
+    CREATE TABLE Process_Payment(   -- Plan Subcribtions / Plan Renewals
         paymentID INT,
         planID INT,
         remaining_balance AS (dbo.Remaining_amount(paymentID , planID)),

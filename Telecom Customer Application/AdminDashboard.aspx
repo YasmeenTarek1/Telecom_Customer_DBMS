@@ -10,7 +10,7 @@
      <style>
         /* General Body and Layout */
         body {
-            margin: 0 30px 0 0;
+            margin: 0 25px 0 0;
             font-family: 'Arial', sans-serif;
             background-color: #f5f5f5;
             color: #333;
@@ -131,7 +131,7 @@
 
         /* Scrollbar Styling */
         .sidebar::-webkit-scrollbar {
-            width: 12px;
+            width: 0;
             height: 12px;
         }
 
@@ -151,67 +151,24 @@
             margin: 2px;
         }
 
-        /* Smooth scrolling behavior */
         .sidebar {
-            scroll-behavior: smooth;
+            scroll-behavior: smooth;        /* Smooth scrolling behavior */
         }
 
 
         /* Dropdown */
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-toggle {
-            color: #fff;
-            text-decoration: none;
-            padding: 15px;
-            display: block;
-            cursor: pointer;
-            background-color: #2a3d56;  /* Darker blue shade */
-            transition: background-color 0.3s;
-        }
-
-        .dropdown-toggle:hover {
-            background-color: #3e4f6e;  /* Darker blue hover effect */
-        }
 
         .dropdown-content {
             display: none;
-            flex-direction: column;
-            background-color: #2d3e55;  /* Darker blue shade */
-            width: 100%;
-            padding-left: 15px;
+            padding-left: 10px 25px;
         }
 
         .dropdown-content a {
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 15px;
-            display: block;
             font-size: 14px;
         }
 
-        .dropdown-content a:hover {
-            background-color: #3e4f6e;  /* Darker blue hover effect */
-        }
-
-        .dropdown.active .dropdown-content {
-            display: flex;
-        }
-        .nested-dropdown {
-            left: 100%;
-            top: 0;
-            position: absolute;
-            min-width: 200px;
-            z-index: 15;
-        }
-
-        .dropdown-content .dropdown:hover > .nested-dropdown {
-            display: block;
-        }
-
         /* Content Area */
+
         .content {
             width: 80%;
             padding: 20px;
@@ -806,24 +763,24 @@
                     <h4>TeleSphere</h4>
                 </div>
 
-                <a href="#" id="customersTab" runat="server" onserverclick="LoadCustomers" >
+                <a href="#" id="customersTab" runat="server" onserverclick="LoadCustomers">
                     <i class="fa-solid fa-user sidebar-icon"></i>Customers
                 </a>
 
                 <a href="#" id="subscriptionsTab" runat="server" onserverclick="LoadSubscriptions">
                     <i class="fa-solid fa-sim-card sidebar-icon"></i>Subscribtions
                 </a>
-                
-                <div class="dropdown">
-                    <a href="#" id="storesTabDropDown" class="dropdown-toggle" onclick="toggleDropdown(this)">
+
+                <div>
+                    <a href="#" id="storesTabDropDown" onclick="toggleDropdown(this)">
                         <i class="fa-solid fa-store sidebar-icon"></i>Shops
                         <i class="fa-solid fa-chevron-down sidebar-icon2"></i>
                     </a>
-                       <div class="dropdown-content">
-                         <a href="#" id="physicalShopsTab" runat="server" onserverclick="LoadPhysicalShops">Physical Shops</a>
-                         <a href="#" id="E_shopsTab" runat="server" onserverclick="LoadE_shops">E-Shops</a>
-                       </div>
-                 </div>
+                    <div class="dropdown-content">
+                        <a href="#" id="physicalShopsTab" runat="server" onserverclick="LoadPhysicalShops">Physical Shops</a>
+                        <a href="#" id="E_shopsTab" runat="server" onserverclick="LoadE_shops">E-Shops</a>
+                    </div>
+                </div>
 
                 <a href="#" id="ticketsTab" runat="server" onserverclick="LoadTickets">
                     <i class="fa-solid fa-ticket sidebar-icon"></i>Tickets
@@ -832,14 +789,14 @@
                 <a href="#" id="plansTab" runat="server" onserverclick="LoadPlans">
                     <i class="fa-solid fa-globe sidebar-icon"></i>Plans
                 </a>
-                
-                <div class="dropdown">
-                    <a href="#" id="BenefitsTabDropdown" class="dropdown-toggle" onclick="toggleDropdown(this)">
+
+                <div>
+                    <a href="#" id="BenefitsTabDropdown" onclick="toggleDropdown(this)">
                         <i class="fa-solid fa-gift sidebar-icon"></i>Benefits<i class="fa-solid fa-chevron-down sidebar-icon2"></i></a>
                     <div class="dropdown-content">
 
                         <div class="dropdown">
-                            <a href="#" id="CashbackTabDropdown" class="dropdown-toggle" onclick="toggleDropdown(this)"><i class="fa-solid fa-money-bill-wave sidebar-icon"></i>Cashback&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-chevron-down sidebar-icon2"></i></a>
+                            <a href="#" id="CashbackTabDropdown" onclick="toggleDropdown(this)"><i class="fa-solid fa-money-bill-wave sidebar-icon"></i>Cashback&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-chevron-down sidebar-icon2"></i></a>
                             <div class="dropdown-content">
                                 <a href="#" id="CashbackTab" runat="server" onserverclick="LoadCashback">Cashback Transactions</a>
                                 <a href="#" id="CashbackAmountTab" runat="server" onserverclick="LoadCashbackAmount">Cashback Amount</a>
@@ -857,17 +814,19 @@
                 <a href="#" id="accountUsageTab" runat="server" onserverclick="LoadAccountUsage"><i class="fa-solid fa-chart-column sidebar-icon"></i>Account Usage</a>
                 <a href="#" id="walletsTab" runat="server" onserverclick="LoadWallets"><i class="fa-solid fa-wallet sidebar-icon"></i>Wallets</a>
                 <a href="#" id="PaymentsTab" runat="server" onserverclick="LoadPayments"><i class="fa-solid fa-coins sidebar-icon"></i>Payments</a>
-                
 
-                 <div class="dropdown">
-                    <a href="#" id="TransactionTabDropdown" class="dropdown-toggle" onclick="toggleDropdown(this)"><i class="fa-solid fa-arrow-right-arrow-left sidebar-icon"></i>Transaction <i class="fa-solid fa-chevron-down sidebar-icon2"></i></a>
-                       <div class="dropdown-content">
-                            <a href="#" id="TransactionsTab" runat="server" onserverclick="LoadTransactions">Transaction Details</a>
-                           <a href="#" id="AverageTransactionsTab" runat="server" onserverclick="LoadAverageTransactions">Average Transaction Amount</a>
-                       </div>
-                 </div>
+
+                <div>
+                    <a href="#" id="TransactionTabDropdown" onclick="toggleDropdown(this)"><i class="fa-solid fa-arrow-right-arrow-left sidebar-icon"></i>Transaction <i class="fa-solid fa-chevron-down sidebar-icon2"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#" id="TransactionsTab" runat="server" onserverclick="LoadTransactions">Transaction Details</a>
+                        <a href="#" id="AverageTransactionsTab" runat="server" onserverclick="LoadAverageTransactions">Average Transaction Amount</a>
+                    </div>
+                </div>
 
             </div>
+       
+
 
     
             <div id="sharedContent" runat="server" class="tab-content active-tab" style="display: block;">
@@ -969,7 +928,7 @@
                 <button id="backButton" runat="server" onserverclick="BackButton_Click" class="top-right-button" />
 
             </div>
-        </div>    
+        </div>
     </form>
 </body>
 </html>
