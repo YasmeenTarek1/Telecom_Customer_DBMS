@@ -45,6 +45,23 @@
                  );
              background-blend-mode: screen, overlay, multiply;
          }
+        .alert {
+         padding: 15px;
+         margin: 10px 0;
+         border-radius: 5px;
+         font-size: 14px;
+         color: white;
+         background-color: #dc3545;
+         border: 1px solid #dc3545;
+         position: fixed;
+         top: 0;
+         left: 50%;
+         transform: translateX(-50%);
+         z-index: 9999;
+         width: 70%;
+         max-width: 600px;
+         text-align: center;
+     }
           .header {
               position: fixed;
               left:0;
