@@ -116,6 +116,7 @@
         }
 
         /* Styling the icons (Font Awesome) */
+
         .sidebar-icon {
             width: 20px;
             height: 20px;
@@ -130,6 +131,7 @@
         }
 
         /* Scrollbar Styling */
+
         .sidebar::-webkit-scrollbar {
             width: 0;
             height: 12px;
@@ -160,10 +162,11 @@
 
         .dropdown-content {
             display: none;
-            padding-left: 10px 25px;
+            margin-left: 30px;
         }
 
         .dropdown-content a {
+            padding: 10px 15px;
             font-size: 14px;
         }
 
@@ -741,6 +744,15 @@
 
     <script>
         function toggleDropdown(element) {
+            // Close all other dropdowns
+            const allDropdownContents = document.querySelectorAll('.dropdown-content');
+            allDropdownContents.forEach(content => {
+                if (content !== element.nextElementSibling) {
+                    content.style.display = "none";
+                }
+            });
+
+            // Toggle the clicked dropdown
             const content = element.nextElementSibling;
             if (content.style.display === "block") {
                 content.style.display = "none";
@@ -748,8 +760,8 @@
                 content.style.display = "block";
             }
         }
-
     </script>
+
 
 </head>
 <body>
@@ -792,17 +804,12 @@
 
                 <div>
                     <a href="#" id="BenefitsTabDropdown" onclick="toggleDropdown(this)">
-                        <i class="fa-solid fa-gift sidebar-icon"></i>Benefits<i class="fa-solid fa-chevron-down sidebar-icon2"></i></a>
+                        <i class="fa-solid fa-gift sidebar-icon"></i>Benefits<i class="fa-solid fa-chevron-down sidebar-icon2"></i>
+                    </a>
                     <div class="dropdown-content">
-
-                        <div class="dropdown">
-                            <a href="#" id="CashbackTabDropdown" onclick="toggleDropdown(this)"><i class="fa-solid fa-money-bill-wave sidebar-icon"></i>Cashback&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-chevron-down sidebar-icon2"></i></a>
-                            <div class="dropdown-content">
-                                <a href="#" id="CashbackTab" runat="server" onserverclick="LoadCashback">Cashback Transactions</a>
-                                <a href="#" id="CashbackAmountTab" runat="server" onserverclick="LoadCashbackAmount">Cashback Amount</a>
-                            </div>
-                        </div>
-
+                 
+                        <a href="#" id="CashbackTab" runat="server" onserverclick="LoadCashback">Cashback Transactions</a>
+                        <a href="#" id="CashbackAmountTab" runat="server" onserverclick="LoadCashbackAmount">Cashback Amount</a>
                         <a href="#" id="benefitsTab" runat="server" onserverclick="LoadBenefits" class="active">Delete Benefits</a>
                         <a href="#" id="offersTab" runat="server" onserverclick="LoadOffers">Offers</a>
                         <a href="#" id="PointsTab" runat="server" onserverclick="LoadPoints" class="active">Update Points</a>

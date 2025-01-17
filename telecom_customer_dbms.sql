@@ -7,6 +7,12 @@ USE Telecom_Team_8
 GO
 CREATE PROCEDURE createAllTables AS
 BEGIN
+
+
+    ------------ Customer Management --------------------------------
+
+
+
     CREATE TABLE Customer_profile(
         nationalID INT,
         first_name VARCHAR(50) NOT NULL,
@@ -30,7 +36,15 @@ BEGIN
         CONSTRAINT FK_nationalID_Customer_Account FOREIGN KEY(nationalID) REFERENCES Customer_profile(nationalID)
     );
 
-    CREATE TABLE Service_Plan(
+
+
+
+    ------------ Service Plans and Subscriptions -----------------------
+
+
+
+
+    CREATE TABLE Service_Plan(      -- general table (contains the available plans generally) 
         planID INT IDENTITY(1,1),
         SMS_offered INT NOT NULL,
         minutes_offered INT NOT NULL,
@@ -38,31 +52,8 @@ BEGIN
         name VARCHAR(50) NOT NULL,
         price INT NOT NULL,
         description VARCHAR(50),
+        expiryIntervalDays INT,     -- Expiry interval in days
         CONSTRAINT PK_Service_Plan PRIMARY KEY(planID)
-    );
-
-    CREATE TABLE Subscription(
-        mobileNo CHAR(11),
-        planID INT,
-        subscription_date DATE,
-        status VARCHAR(50) CHECK(status IN('active','onhold'))
-        CONSTRAINT PK_Subscription PRIMARY KEY(mobileNo, planID),
-        CONSTRAINT FK_mobileNo_Subscription FOREIGN KEY(mobileNo) REFERENCES Customer_Account(mobileNo),
-        CONSTRAINT FK_planID_Subscription FOREIGN KEY(planID) REFERENCES Service_Plan(planID)
-    );
-
-    CREATE TABLE Plan_Usage(
-        usageID INT IDENTITY(1,1),
-        start_date DATE NOT NULL,
-        end_date DATE NOT NULL,
-        data_consumption INT,
-        minutes_used INT,
-        SMS_sent INT,
-        mobileNo CHAR(11),
-        planID INT,
-        CONSTRAINT PK_Plan_Usage PRIMARY KEY(usageID),
-        CONSTRAINT FK_mobileNo_Plan_Usage FOREIGN KEY(mobileNo) REFERENCES Customer_Account(mobileNo),
-        CONSTRAINT FK_planID_Plan_Usage FOREIGN KEY(planID) REFERENCES Service_Plan(planID)
     );
 
     CREATE TABLE Payment(          -- Plan Subcribtions / Plan Renewals / Balance Recharging
@@ -86,6 +77,118 @@ BEGIN
         CONSTRAINT FK_planID_Process_Payment FOREIGN KEY (planID) REFERENCES Service_Plan(planID)
     );
 
+    CREATE TABLE Subscription(      -- each account along with its subscribed plans
+        mobileNo CHAR(11),
+        planID INT,
+        subscription_date DATE,
+        status VARCHAR(50) CHECK(status IN('active','onhold'))
+        CONSTRAINT PK_Subscription PRIMARY KEY(mobileNo, planID),
+        CONSTRAINT FK_mobileNo_Subscription FOREIGN KEY(mobileNo) REFERENCES Customer_Account(mobileNo),
+        CONSTRAINT FK_planID_Subscription FOREIGN KEY(planID) REFERENCES Service_Plan(planID)
+    );
+
+    CREATE TABLE Plan_Usage(
+        usageID INT IDENTITY(1,1),
+        start_date DATE NOT NULL,
+        expiry_date DATE NOT NULL,
+        data_consumption INT,
+        minutes_used INT,
+        SMS_sent INT,
+        mobileNo CHAR(11),
+        planID INT,
+        CONSTRAINT PK_Plan_Usage PRIMARY KEY(usageID),
+        CONSTRAINT FK_mobileNo_Plan_Usage FOREIGN KEY(mobileNo) REFERENCES Customer_Account(mobileNo),
+        CONSTRAINT FK_planID_Plan_Usage FOREIGN KEY(planID) REFERENCES Service_Plan(planID)
+    );
+
+
+
+
+    ----------------- Benefits -------------------------------------
+
+
+
+    
+    CREATE TABLE Benefits (
+        benefitID INT IDENTITY(1,1),
+        description VARCHAR(50),
+        expiryIntervalDays INT, -- Expiry interval in days
+        CONSTRAINT PK_Benefits PRIMARY KEY (benefitID)
+    );
+
+    CREATE TABLE Customer_Benefits (
+        benefitID INT,
+        mobileNo CHAR(11),
+        status VARCHAR(50) CHECK(status IN('active','expired')),
+        subscription_date DATE, -- Date when the customer subscribed to the benefit
+        expiration_date DATE,   -- Date when the benefit will expire
+        CONSTRAINT PK_Customer_Benefits PRIMARY KEY (benefitID, mobileNo),
+        CONSTRAINT FK_benefitID_Customer_Benefits FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
+        CONSTRAINT FK_mobileNo_Customer_Benefits FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo)
+    );
+
+    CREATE TABLE Points_Group(            -- General Table
+        pointID INT IDENTITY(1,1),
+        benefitID INT,
+        amount INT,
+        CONSTRAINT PK_Points_Group PRIMARY KEY (pointID,benefitID),
+        CONSTRAINT FK_benefitID_Points_Group FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID)
+    );
+
+    CREATE TABLE Exclusive_Offer(         -- General Table
+        offerID INT IDENTITY(1,1),
+        benefitID INT,
+        internet_offered INT,
+        SMS_offered INT,
+        minutes_offered INT,
+        CONSTRAINT PK_Exclusive_Offer PRIMARY KEY (offerID,benefitID),
+        CONSTRAINT FK_benefitID_Exclusive_Offer FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID)
+    );
+
+    CREATE TABLE Cashback(                -- General Table  -- Cashback is calculated as 10% of the payment amount.
+        CashbackID INT IDENTITY(1,1),
+        benefitID INT,
+        amount INT,
+        CONSTRAINT PK_Cashback PRIMARY KEY (CashbackID,benefitID),
+        CONSTRAINT FK_benefitID_Cashback FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID)
+    );
+
+    CREATE TABLE Benefit_Usage(           -- Tracking Points Group & Offers Consumption
+        usageID INT IDENTITY(1,1),
+        mobileNo CHAR(11),
+        benefitID INT,
+        start_date DATE NOT NULL,
+        expiry_date DATE NOT NULL,
+        poits_used INT,
+        data_consumption INT,
+        minutes_used INT,
+        SMS_sent INT
+        CONSTRAINT PK_Benefit_Usage PRIMARY KEY(usageID),
+        CONSTRAINT FK_mobileNo_Benefit_Usage FOREIGN KEY(mobileNo) REFERENCES Customer_Account(mobileNo),
+        CONSTRAINT FK_benefitID_Benefit_Usage FOREIGN KEY(benefitID) REFERENCES Benefits(benefitID)
+    );
+
+
+
+    -------------- Benefits for each Plan -------------------------
+
+
+
+    CREATE TABLE Plan_Provides_Benefits(
+        benefitID INT,
+        planID INT,
+        CONSTRAINT PK_Plan_Provides_Benefits PRIMARY KEY (planID,benefitID),
+        CONSTRAINT FK_benefitID_Plan_Provides_Benefits FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
+        CONSTRAINT FK_planID_Plan_Provides_Benefits FOREIGN KEY (planID) REFERENCES Service_Plan(planID)
+    );
+
+
+
+
+    --------------- Wallet and Money Transfers ------------------------
+
+
+
     CREATE TABLE Wallet(
         walletID INT IDENTITY(1,1),
         current_balance DECIMAL(10,2) default 0,
@@ -108,54 +211,11 @@ BEGIN
         CONSTRAINT FK_walletID2_Transfer_money FOREIGN KEY (walletID2) REFERENCES Wallet(walletID)
     );
 
-    CREATE TABLE Benefits(
-        benefitID INT IDENTITY(1,1),
-        description VARCHAR(50),
-        validity_date DATE,
-        status VARCHAR(50) CHECK(status IN('active','expired')),
-        mobileNo CHAR(11),
-        CONSTRAINT PK_Benefits PRIMARY KEY (benefitID),
-        CONSTRAINT FK_mobileNo_Benefits FOREIGN KEY (mobileNo) REFERENCES Customer_account(mobileNo)
-    );
 
-    CREATE TABLE Points_Group(
-        pointID INT IDENTITY(1,1),
-        benefitID INT,
-        pointsAmount INT,
-        PaymentID INT,
-        CONSTRAINT PK_Points_Group PRIMARY KEY (pointID,benefitID),
-        CONSTRAINT FK_benefitID_Points_Group FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
-        CONSTRAINT FK_PaymentID_Points_Group FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID)
-    );
 
-    CREATE TABLE Exclusive_Offer(
-        offerID INT IDENTITY(1,1),
-        benefitID INT,
-        internet_offered INT,
-        SMS_offered INT,
-        minutes_offered INT,
-        CONSTRAINT PK_Exclusive_Offer PRIMARY KEY (offerID,benefitID),
-        CONSTRAINT FK_benefitID_Exclusive_Offer FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID)
-    );
+    ------------- Shops and Vouchers ----------------------------
 
-    CREATE TABLE Cashback( -- Cashback is calculated as 10% of the payment amount.
-        CashbackID INT IDENTITY(1,1),
-        benefitID INT,
-        walletID INT,
-        amount INT,
-        credit_date DATE,
-        CONSTRAINT PK_Cashback PRIMARY KEY (CashbackID,benefitID),
-        CONSTRAINT FK_benefitID_Cashback FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
-        CONSTRAINT FK_walletID_Cashback FOREIGN KEY (walletID) REFERENCES Wallet(walletID)
-    );
 
-    CREATE TABLE Plan_Provides_Benefits(
-        benefitID INT,
-        planID INT,
-        CONSTRAINT PK_Plan_Provides_Benefits PRIMARY KEY (planID,benefitID),
-        CONSTRAINT FK_benefitID_Plan_Provides_Benefits FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
-        CONSTRAINT FK_planID_Plan_Provides_Benefits FOREIGN KEY (planID) REFERENCES Service_Plan(planID)
-    );
 
     CREATE TABLE Shop(
         shopID INT IDENTITY(1,1),
@@ -193,6 +253,12 @@ BEGIN
         CONSTRAINT FK_mobileNo_Voucher FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo)
     );
 
+
+
+    ------------- Technical Support ----------------------------
+
+
+
     CREATE TABLE Technical_Support_Ticket(
         ticketID INT IDENTITY(1,1),
         mobileNo CHAR(11),
@@ -211,6 +277,8 @@ DROP TABLE  Points_Group;
 DROP TABLE  Exclusive_Offer;
 DROP TABLE  Cashback;
 DROP TABLE Plan_Provides_Benefits;
+DROP TABLE Customer_Benefits;
+DROP TABLE  Benefit_Usage;
 DROP TABLE  Voucher;
 DROP TABLE  Technical_Support_Ticket;
 DROP TABLE  Transfer_money;
@@ -352,16 +420,15 @@ ON p.nationalID = a.nationalID;
 
 
 GO
-CREATE VIEW allServicePlans AS 
+CREATE VIEW allServicePlans AS  -- General Info
 SELECT *
 FROM Service_Plan;
 
 
 GO
-CREATE VIEW allBenefits AS 
+CREATE VIEW allBenefits AS     -- General Info
 SELECT *
-FROM Benefits 
-WHERE status = 'active';
+FROM Benefits;
 
 
 
@@ -415,12 +482,12 @@ ON P.shopID = V.shopID
 Inner Join Shop S
 ON S.shopID = P.shopID;
 
-Go
---Fetch number of cashback transactions per each wallet.
-CREATE VIEW Num_of_cashback As
-Select walletID , count(*) AS 'count of transactions'
-From Cashback
-Group by walletID;
+--Go
+----Fetch number of cashback transactions per each wallet.
+--CREATE VIEW Num_of_cashback As
+--Select walletID , count(*) AS 'count of transactions'
+--From Cashback
+--Group by walletID;
 
 Go 
 --List all accounts along with the service plans they are subscribed to
@@ -475,11 +542,14 @@ AS
 BEGIN
     BEGIN TRANSACTION;
 
-    UPDATE Benefits
-    SET mobileNo = NULL
-    FROM Benefits B INNER JOIN plan_provides_benefits pb
-    ON B.benefitID = pb.benefitid 
-    WHERE B.mobileNo = @mobile_num AND pb.planID = @plan_id
+    DELETE CB
+    From Customer_Benefits CB
+    WHERE CB.mobileNo = @mobile_num AND Exists (
+                                                SELECT pb.benefitID
+                                                FROM plan_provides_benefits pb
+                                                WHERE pb.planID = @plan_id 
+                                                AND pb.benefitId = CB.benefitID
+                                               )
 
     COMMIT TRANSACTION;
 END;
@@ -491,13 +561,16 @@ CREATE PROCEDURE Benefits_Account_Plan
 
 AS
     select B.*
-    FROM Benefits B INNER JOIN plan_provides_benefits pb
+    FROM Benefits B 
+    INNER JOIN plan_provides_benefits pb
     ON B.benefitID = pb.benefitid 
-    WHERE B.mobileNo = @mobile_num AND pb.planID = @plan_id
+    INNER JOIN Customer_Benefits CB
+    ON CB.benefitID = pb.benefitid 
+    WHERE CB.mobileNo = @mobile_num AND pb.planID = @plan_id
 
 
 GO
---Retrieve the list of gained offers of type �SMS� for the input account
+--Retrieve the list of gained offers of type SMS for the input account
 CREATE FUNCTION Account_SMS_Offers(@mobile_num char(11))
 RETURNS TABLE
 AS
@@ -505,21 +578,23 @@ AS
             From Exclusive_Offer O 
             Inner join Benefits B 
             ON B.benefitID = O.benefitID
-            Where B.mobileNo = @mobile_num AND O.SMS_offered > 0 
+            Inner join Customer_Benefits CB
+            ON CB.benefitID = B.benefitID
+            Where CB.mobileNo = @mobile_num AND O.SMS_offered > 0 
           );
 
-Go
---Retrieve the number of accepted payment transactions initiated by the input account during 
---the last year along with the total amount of earned points.
-CREATE PROCEDURE Account_Payment_Points
-@mobile_num char(11)
-AS
-    Select Count(P.paymentID) AS 'Total Number of Transactions' , ISNULL(SUM(PG.pointsAmount), 0) AS 'Total Amount of Points'
-    From Payment P 
-    inner join Points_Group PG 
-    ON P.paymentID = PG.PaymentID
-    Where P.mobileNo = @mobile_num AND P.status = 'successful' 
-    AND DATEDIFF(YEAR, P.date_of_payment, CURRENT_TIMESTAMP) <= 1;
+--Go
+----Retrieve the number of accepted payment transactions initiated by the input account during 
+----the last year along with the total amount of earned points.
+--CREATE PROCEDURE Account_Payment_Points
+--@mobile_num char(11)
+--AS
+--    Select Count(P.paymentID) AS 'Total Number of Accepted Payments' , ISNULL(SUM(PG.pointsAmount), 0) AS 'Total Amount of Points'
+--    From Payment P 
+--    inner join Points_Group PG 
+--    ON P.paymentID = PG.PaymentID
+--    Where P.mobileNo = @mobile_num AND P.status = 'successful' 
+--    AND DATEDIFF(YEAR, P.date_of_payment, CURRENT_TIMESTAMP) <= 1;
 
 
 Go
@@ -530,12 +605,17 @@ returns INT
 As
 BEGIN
     Declare @Amount_of_cashback INT
+    Declare @MobileNo Char(11)
 
-    Select @Amount_of_cashback = SUM(C.amount)
-    From Cashback C 
-    inner join Plan_Provides_Benefits PPB 
-    ON C.benefitID = PPB.benefitID
-    Where C.walletID = @walletID AND PPB.planID = @planID
+    Select @MobileNo = mobileNo
+    From Wallet
+    Where walletID = @walletID
+
+    Select @Amount_of_cashback = SUM(amount)
+    From Customer_Benefits CB
+    INNER Join Cashback C ON C.benefitID = CB.benefitID
+    INNER JOIN Plan_Provides_Benefits pb ON pb.benefitID = C.benefitID
+    Where CB.mobileNo = @MobileNo AND pb.planID = @planID
 
 Return @Amount_of_cashback
 END
@@ -582,35 +662,35 @@ END;
 -------------- blue part ------------------
 
 
-Go
---Update the total number of points that the input account should have.
-CREATE PROCEDURE Total_Points_Account
-@mobile_num CHAR(11)
-AS
+--Go
+----Update the total number of points that the input account should have.
+--CREATE PROCEDURE Total_Points_Account
+--@mobile_num CHAR(11)
+--AS
 
-    DECLARE @total_points int
+--    DECLARE @total_points int
 
-    Select @total_points =  SUM(pg.pointsAmount) 
-    From Points_group pg
-    Inner join Payment p
-    ON pg.paymentId = p.paymentID
-    WHERE p.mobileNo = @mobile_num
+--    Select @total_points =  SUM(pg.pointsAmount) 
+--    From Points_group pg
+--    Inner join Payment p
+--    ON pg.paymentId = p.paymentID
+--    WHERE p.mobileNo = @mobile_num
 
-    IF(@total_points is null)
-        SET @total_points = 0;
+--    IF(@total_points is null)
+--        SET @total_points = 0;
 
-    UPDATE Customer_Account  
-    SET points += @total_points
-    WHERE mobileNo = @mobile_num;
+--    UPDATE Customer_Account  
+--    SET points += @total_points
+--    WHERE mobileNo = @mobile_num;
 
-    DELETE FROM Points_group
-    WHERE pointId in  (
-                        Select pg.pointId 
-                        From Points_group pg
-                        Inner join Payment p 
-                        ON pg.paymentId = p.paymentID
-                        WHERE p.mobileNo = @mobile_num
-                      )
+--    DELETE FROM Points_group
+--    WHERE pointId in  (
+--                        Select pg.pointId 
+--                        From Points_group pg
+--                        Inner join Payment p 
+--                        ON pg.paymentId = p.paymentID
+--                        WHERE p.mobileNo = @mobile_num
+--                      )
 
 
 GO
@@ -648,7 +728,7 @@ RETURN
     INNER JOIN Service_Plan SP ON PU.planID = SP.planID
     WHERE SP.name = @Plan_name AND 
           PU.start_date >= @start_date AND 
-          PU.end_date <= @end_date
+          PU.expiry_date <= @end_date
 );
 
 
@@ -676,25 +756,25 @@ RETURN(
     FROM Subscription S      
     INNER JOIN Plan_Usage P 
     ON S.mobileNo = P.mobileNo AND S.planID = P.planID
-    WHERE YEAR(P.start_date) = YEAR(CURRENT_TIMESTAMP) OR YEAR(P.end_date) = YEAR(CURRENT_TIMESTAMP)
-          AND MONTH(P.start_date) = MONTH(CURRENT_TIMESTAMP) OR MONTH(P.end_date) = MONTH(CURRENT_TIMESTAMP)
+    WHERE YEAR(P.start_date) = YEAR(CURRENT_TIMESTAMP) OR YEAR(P.expiry_date) = YEAR(CURRENT_TIMESTAMP)
+          AND MONTH(P.start_date) = MONTH(CURRENT_TIMESTAMP) OR MONTH(P.expiry_date) = MONTH(CURRENT_TIMESTAMP)
           AND S.mobileNo = @mobile_num 
           AND S.status = 'active'
 );
 
 
-GO
---Retrieve all cashback transactions related to the wallet of the input customer.
-CREATE FUNCTION Cashback_Wallet_Customer(@NID int)
-RETURNS TABLE 
-AS 
-RETURN (
-    SELECT C.* 
-    FROM Cashback C
-    INNER JOIN Wallet W
-    ON C.walletID = W.walletID 
-    WHERE W.nationalID = @NID
-);
+--GO
+----Retrieve all cashback transactions related to the wallet of the input customer.
+--CREATE FUNCTION Cashback_Wallet_Customer(@NID int)
+--RETURNS TABLE 
+--AS 
+--RETURN (
+--    SELECT C.* 
+--    FROM Cashback C
+--    INNER JOIN Wallet W
+--    ON C.walletID = W.walletID 
+--    WHERE W.nationalID = @NID
+--);
 
 
 
@@ -874,7 +954,7 @@ END CATCH
 
 GO
 -- Calculate the amount of cashback that will be returned on the wallet of the customer of the input account
--- from a certain payment for the specified benefit and update the wallet�s balance accordingly.
+-- from a certain payment for the specified benefit and update the wallet's balance accordingly.
 CREATE PROCEDURE Payment_wallet_cashback
     @mobile_num CHAR(11),
     @payment_id INT,
@@ -887,24 +967,6 @@ BEGIN
         DECLARE @WalletID INT;
         DECLARE @PaymentAmount DECIMAL(10, 1);
         DECLARE @Cashback DECIMAL(10, 1);
-        DECLARE @ValidityDate DATE;
-        DECLARE @BenefitStatus Varchar(50);
-
-        -- Validate benefit validity
-        SELECT @ValidityDate = validity_date
-        FROM Benefits
-        WHERE benefitID = @benefit_id;
-
-        SELECT @BenefitStatus = status 
-        FROM Benefits 
-        where benefitID = @benefit_id
-
-        IF @ValidityDate < CURRENT_TIMESTAMP OR @BenefitStatus = 'expired'
-        BEGIN
-            RAISERROR ('Benefit has expired.', 16, 1);
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END
 
         -- Retrieve Wallet ID
         SELECT @WalletID = walletID
@@ -928,10 +990,6 @@ BEGIN
         SET current_balance = current_balance + @Cashback,
             last_modified_date = CURRENT_TIMESTAMP
         WHERE walletID = @WalletID;
-
-        -- Log Cashback
-        INSERT INTO Cashback (benefitID, walletID, amount, credit_date)
-        VALUES (@benefit_id, @WalletID, @Cashback, CURRENT_TIMESTAMP);
 
         COMMIT TRANSACTION;
     END TRY
@@ -1079,102 +1137,6 @@ VALUES
 ('01171717171', 'paulpass', 350.0, 'Prepaid', '2023-09-01', 'active', 35, 117),
 ('01181818181', 'quincy123', 120.0, 'Post Paid', '2023-10-01', 'active', 18, 118);
 
-INSERT INTO Service_Plan (SMS_offered, minutes_offered, data_offered, name, price, description)
-VALUES
-(100, 200, 1024, 'Basic Plan', 50, 'Basic monthly plan'),
-(300, 500, 2048, 'Premium Plan', 100, 'Premium plan with more data'),
-(500, 1000, 4096, 'Unlimited Plan', 200, 'Unlimited everything'),
-(200, 400, 2048, 'Family Plan', 120, 'Plan for families with shared minutes'),
-(250, 500, 3072, 'Student Plan', 75, 'Affordable plan for students'),
-(150, 300, 512, 'Starter Plan', 30, 'Entry-level plan'),
-(400, 800, 2048, 'Business Plan', 150, 'For small businesses with high usage'),
-(350, 700, 1024, 'Travel Plan', 90, 'Designed for international travelers'),
-(600, 1200, 8192, 'High Data Plan', 250, 'High data for heavy users'),
-(300, 600, 4096, 'Basic Data Plan', 85, 'Standard plan with a balanced offering'),
-(150, 300, 5120, 'Junior Plan', 45, 'Plan for kids with low data usage'),
-(100, 250, 1024, 'Light Plan', 40, 'Light plan for casual users'),
-(200, 500, 2048, 'Media Plan', 110, 'Plan with media streaming benefits'),
-(500, 1000, 4096, 'Global Plan', 200, 'Plan with global coverage'),
-(250, 500, 2048, 'Entertainment Plan', 95, 'Plan with free streaming services'),
-(300, 600, 1024, 'Call & Data Plan', 80, 'Plan with unlimited calls and moderate data'),
-(350, 700, 3072, 'Unlimited Calls Plan', 120, 'Unlimited calls with moderate data'),
-(150, 350, 1024, 'Basic + Plan', 65, 'Basic plan with extra data'),
-(200, 400, 2048, 'Plus Plan', 110, 'Plan with extra minutes and data');
-
-INSERT INTO Subscription (mobileNo, planID, subscription_date, status)
-VALUES
-('01010101010', 1, '2023-02-01', 'active'),
-('01020202020', 2, '2023-07-01', 'onhold'),
-('01030303030', 3, '2023-08-01', 'active'),
-('01040404040', 4, '2023-09-01', 'active'),
-('01050505050', 5, '2023-10-01', 'onhold'),
-('01060606060', 6, '2023-11-01', 'active'),
-('01070707070', 7, '2023-12-01', 'active'),
-('01080808080', 8, '2023-01-01', 'onhold'),
-('01090909090', 9, '2023-03-01', 'active'),
-('01101010101', 10, '2023-04-01', 'active'),
-('01111111111', 1, '2023-05-01', 'active'),
-('01121212121', 2, '2023-06-01', 'onhold'),
-('01131313131', 3, '2023-07-01', 'active'),
-('01141414141', 4, '2023-08-01', 'active'),
-('01151515151', 5, '2023-09-01', 'onhold');
-
-
-INSERT INTO Plan_Usage (start_date, end_date, data_consumption, minutes_used, SMS_sent, mobileNo, planID)
-VALUES
-('2023-02-01', '2023-02-28', 1024, 300, 50, '01010101010', 1),
-('2023-03-01', '2023-03-31', 2048, 500, 150, '01020202020', 2),
-('2023-04-01', '2023-04-30', 4096, 600, 200, '01030303030', 3),
-('2023-05-01', '2023-05-31', 1024, 400, 100, '01040404040', 4),
-('2023-06-01', '2023-06-30', 2048, 550, 120, '01050505050', 5),
-('2023-07-01', '2023-07-31', 3072, 700, 250, '01060606060', 6),
-('2023-08-01', '2023-08-31', 5120, 800, 300, '01070707070', 7),
-('2023-09-01', '2023-09-30', 1024, 350, 75, '01080808080', 8),
-('2023-10-01', '2023-10-31', 2048, 500, 100, '01090909090', 9),
-('2023-11-01', '2023-11-30', 4096, 750, 180, '01101010101', 10),
-('2023-12-01', '2023-12-31', 3072, 600, 150, '01111111111', 1),
-('2024-01-01', '2024-01-31', 1024, 250, 50, '01121212121', 2),
-('2024-02-01', '2024-02-29', 2048, 400, 100, '01131313131', 3),
-('2024-03-01', '2024-03-31', 3072, 500, 120, '01141414141', 4),
-('2024-04-01', '2024-04-30', 5120, 650, 200, '01151515151', 5);
-
-INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
-VALUES
-(100.0, '2023-02-10', 'cash', 'successful', '01010101010'),
-(150.5, '2023-03-15', 'credit', 'pending', '01020202020'),
-(200.0, '2023-04-20', 'cash', 'successful', '01030303030'),
-(50.0, '2023-05-25', 'credit', 'rejected', '01040404040'),
-(75.0, '2023-06-30', 'cash', 'successful', '01050505050'),
-(120.0, '2023-07-10', 'credit', 'successful', '01060606060'),
-(300.0, '2023-08-05', 'cash', 'successful', '01070707070'),
-(85.0, '2023-09-12', 'credit', 'pending', '01080808080'),
-(100.0, '2023-10-18', 'cash', 'successful', '01090909090'),
-(250.0, '2023-11-23', 'credit', 'successful', '01101010101'),
-(120.0, '2023-12-30', 'cash', 'rejected', '01111111111'),
-(180.0, '2024-01-05', 'credit', 'successful', '01121212121'),
-(250.0, '2024-02-01', 'cash', 'successful', '01131313131'),
-(130.0, '2024-03-08', 'credit', 'pending', '01141414141'),
-(90.0, '2024-04-15', 'cash', 'successful', '01151515151');
-
-
-INSERT INTO Process_Payment (paymentID, planID)
-VALUES
-(1, 1),
-(2, 2),
-(3, 3),
-(4, 4),
-(5, 5),
-(6, 6),
-(7, 7),
-(8, 8),
-(9, 9),
-(10, 10),
-(11, 1),
-(12, 2),
-(13, 3),
-(14, 4),
-(15, 5);
-
 
 INSERT INTO Wallet (current_balance, currency, last_modified_date, nationalID, mobileNo)
 VALUES
@@ -1194,6 +1156,177 @@ VALUES
 (320.00, 'egp', '2024-03-01', 114, '01141414141'),
 (280.00, 'usd', '2024-04-01', 115, '01151515151');
 
+INSERT INTO Service_Plan (SMS_offered, minutes_offered, data_offered, name, price, description, expiryIntervalDays)
+VALUES
+-- Plan 1: Basic Plan (Low-cost, minimal usage)
+(100, 200, 1024, 'Basic Plan', 50, 'Affordable plan for light users', 30),
+-- Plan 2: Standard Plan (Moderate usage)
+(500, 1000, 5120, 'Standard Plan', 100, 'Ideal for moderate users', 30),
+-- Plan 3: Premium Plan (Heavy usage)
+(1000, 2000, 10240, 'Premium Plan', 200, 'Best for heavy users', 30),
+-- Plan 4: Unlimited Plan (Unlimited usage)
+(9999, 9999, 99999, 'Unlimited Plan', 300, 'Unlimited calls, SMS, and data', 30);
+
+
+INSERT INTO Plan_Usage (start_date, expiry_date, data_consumption, minutes_used, SMS_sent, mobileNo, planID)
+VALUES
+-- Customer 1 (Basic Plan)
+('2023-10-01', '2023-11-01', 500, 100, 50, '01010101010', 1),
+-- Customer 2 (Standard Plan)
+('2023-10-01', '2023-11-01', 2000, 500, 200, '01020202020', 2),
+-- Customer 3 (Premium Plan)
+('2023-10-01', '2023-11-01', 5000, 1000, 500, '01030303030', 3),
+-- Customer 4 (Unlimited Plan)
+('2023-10-01', '2023-11-01', 10000, 2000, 1000, '01040404040', 4);
+
+INSERT INTO Benefits (description, expiryIntervalDays)
+VALUES
+-- Benefit 1: Free SMS Bundle
+('Free 100 SMS per month', 30),
+-- Benefit 2: Extra Data
+('Extra 1GB data per month', 30),
+-- Benefit 3: Cashback on Renewal
+('10% cashback on plan renewal', 30),
+-- Benefit 4: Exclusive Offers
+('Exclusive offers on partner apps', 30),
+-- Benefit 5: Bonus Minutes
+('Extra 100 minutes per month', 30),
+-- Benefit 6: Loyalty Points
+('Earn 50 loyalty points per month', 30);
+
+INSERT INTO Points_Group (benefitID, amount)
+VALUES
+-- Benefit 6: Loyalty Points
+(6, 50), -- 50 points for Loyalty Points benefit
+(6, 100), -- 100 points for Loyalty Points benefit
+(6, 150); -- 150 points for Loyalty Points benefit
+
+INSERT INTO Exclusive_Offer (benefitID, internet_offered, SMS_offered, minutes_offered)
+VALUES
+-- Benefit 4: Exclusive Offers
+(4, 1024, 100, 60), -- 1GB internet, 100 SMS, 60 minutes
+(4, 2048, 200, 120), -- 2GB internet, 200 SMS, 120 minutes
+(4, 5120, 500, 300); -- 5GB internet, 500 SMS, 300 minutes
+
+
+INSERT INTO Cashback (benefitID, amount)
+VALUES
+-- Benefit 3: Cashback on Renewal
+(3, 5), -- 5 EGP cashback
+(3, 10), -- 10 EGP cashback
+(3, 20); -- 20 EGP cashback
+
+
+
+INSERT INTO Benefit_Usage (mobileNo, benefitID, start_date, expiry_date, poits_used, data_consumption, minutes_used, SMS_sent)
+VALUES
+-- Customer 1 (Basic Plan)
+('01010101010', 1, '2023-10-01', '2023-11-01', 0, 0, 0, 50), -- Free SMS Bundle
+('01010101010', 6, '2023-10-01', '2023-11-01', 50, 0, 0, 0), -- Loyalty Points
+-- Customer 2 (Standard Plan)
+('01020202020', 1, '2023-10-01', '2023-11-01', 0, 0, 0, 100), -- Free SMS Bundle
+('01020202020', 2, '2023-10-01', '2023-11-01', 0, 1024, 0, 0), -- Extra Data
+('01020202020', 6, '2023-10-01', '2023-11-01', 50, 0, 0, 0), -- Loyalty Points
+-- Customer 3 (Premium Plan)
+('01030303030', 1, '2023-10-01', '2023-11-01', 0, 0, 0, 200), -- Free SMS Bundle
+('01030303030', 2, '2023-10-01', '2023-11-01', 0, 2048, 0, 0), -- Extra Data
+('01030303030', 3, '2023-10-01', '2023-11-01', 0, 0, 0, 0), -- Cashback on Renewal
+('01030303030', 5, '2023-10-01', '2023-11-01', 0, 0, 100, 0), -- Bonus Minutes
+('01030303030', 6, '2023-10-01', '2023-11-01', 50, 0, 0, 0), -- Loyalty Points
+-- Customer 4 (Unlimited Plan)
+('01040404040', 1, '2023-10-01', '2023-11-01', 0, 0, 0, 500), -- Free SMS Bundle
+('01040404040', 2, '2023-10-01', '2023-11-01', 0, 5120, 0, 0), -- Extra Data
+('01040404040', 3, '2023-10-01', '2023-11-01', 0, 0, 0, 0), -- Cashback on Renewal
+('01040404040', 4, '2023-10-01', '2023-11-01', 0, 0, 0, 0), -- Exclusive Offers
+('01040404040', 5, '2023-10-01', '2023-11-01', 0, 0, 200, 0), -- Bonus Minutes
+('01040404040', 6, '2023-10-01', '2023-11-01', 50, 0, 0, 0); -- Loyalty Points
+
+
+INSERT INTO Plan_Provides_Benefits (planID, benefitID)
+VALUES
+-- Basic Plan Benefits
+(1, 1), -- Free SMS Bundle
+(1, 6), -- Loyalty Points
+
+-- Standard Plan Benefits
+(2, 1), -- Free SMS Bundle
+(2, 2), -- Extra Data
+(2, 6), -- Loyalty Points
+
+-- Premium Plan Benefits
+(3, 1), -- Free SMS Bundle
+(3, 2), -- Extra Data
+(3, 3), -- Cashback on Renewal
+(3, 5), -- Bonus Minutes
+(3, 6), -- Loyalty Points
+
+-- Unlimited Plan Benefits
+(4, 1), -- Free SMS Bundle
+(4, 2), -- Extra Data
+(4, 3), -- Cashback on Renewal
+(4, 4), -- Exclusive Offers
+(4, 5), -- Bonus Minutes
+(4, 6); -- Loyalty Points
+
+
+INSERT INTO Customer_Benefits (benefitID, mobileNo, status, subscription_date, expiration_date)
+VALUES
+-- Customer 1 (Basic Plan)
+(1, '01010101010', 'active', '2023-10-01', '2023-11-01'), -- Free SMS Bundle
+(6, '01010101010', 'active', '2023-10-01', '2023-11-01'), -- Loyalty Points
+-- Customer 2 (Standard Plan)
+(1, '01020202020', 'active', '2023-10-01', '2023-11-01'), -- Free SMS Bundle
+(2, '01020202020', 'active', '2023-10-01', '2023-11-01'), -- Extra Data
+(6, '01020202020', 'active', '2023-10-01', '2023-11-01'), -- Loyalty Points
+-- Customer 3 (Premium Plan)
+(1, '01030303030', 'active', '2023-10-01', '2023-11-01'), -- Free SMS Bundle
+(2, '01030303030', 'active', '2023-10-01', '2023-11-01'), -- Extra Data
+(3, '01030303030', 'active', '2023-10-01', '2023-11-01'), -- Cashback on Renewal
+(5, '01030303030', 'active', '2023-10-01', '2023-11-01'), -- Bonus Minutes
+(6, '01030303030', 'active', '2023-10-01', '2023-11-01'), -- Loyalty Points
+-- Customer 4 (Unlimited Plan)
+(1, '01040404040', 'active', '2023-10-01', '2023-11-01'), -- Free SMS Bundle
+(2, '01040404040', 'active', '2023-10-01', '2023-11-01'), -- Extra Data
+(3, '01040404040', 'active', '2023-10-01', '2023-11-01'), -- Cashback on Renewal
+(4, '01040404040', 'active', '2023-10-01', '2023-11-01'), -- Exclusive Offers
+(5, '01040404040', 'active', '2023-10-01', '2023-11-01'), -- Bonus Minutes
+(6, '01040404040', 'active', '2023-10-01', '2023-11-01'); -- Loyalty Points
+
+
+INSERT INTO Subscription (mobileNo, planID, subscription_date, status)
+VALUES
+-- Customer 1 (Basic Plan)
+('01010101010', 1, '2023-10-01', 'active'),
+-- Customer 2 (Standard Plan)
+('01020202020', 2, '2023-10-01', 'active'),
+-- Customer 3 (Premium Plan)
+('01030303030', 3, '2023-10-01', 'active'),
+-- Customer 4 (Unlimited Plan)
+('01040404040', 4, '2023-10-01', 'active');
+
+
+INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
+VALUES
+-- Customer 1 (Basic Plan)
+(50.0, '2023-10-01', 'credit', 'successful', '01010101010'),
+-- Customer 2 (Standard Plan)
+(100.0, '2023-10-01', 'credit', 'successful', '01020202020'),
+-- Customer 3 (Premium Plan)
+(200.0, '2023-10-01', 'credit', 'successful', '01030303030'),
+-- Customer 4 (Unlimited Plan)
+(300.0, '2023-10-01', 'credit', 'successful', '01040404040');
+
+INSERT INTO Process_Payment (paymentID, planID)
+VALUES
+-- Customer 1 (Basic Plan)
+(1, 1),
+-- Customer 2 (Standard Plan)
+(2, 2),
+-- Customer 3 (Premium Plan)
+(3, 3),
+-- Customer 4 (Unlimited Plan)
+(4, 4);
+
 
 INSERT INTO Transfer_money (walletID1, walletID2, amount, transfer_date)
 VALUES
@@ -1212,96 +1345,6 @@ VALUES
 (13, 14, 250.00, '2024-02-01'),
 (14, 15, 130.00, '2024-03-08');
 
-INSERT INTO Benefits (description, validity_date, status, mobileNo)
-VALUES
-('Free 1GB data', '2023-06-30', 'active', '01010101010'),
-('50% off next recharge', '2023-07-15', 'active', '01020202020'),
-('5% cashback', '2023-08-01', 'active', '01030303030'),
-('Bonus 500 SMS', '2023-09-30', 'expired', '01040404040'),
-('Free movie ticket', '2023-10-10', 'active', '01050505050'),
-('Free 1000 SMS', '2023-11-25', 'active', '01060606060'),
-('Free data rollover', '2023-12-15', 'expired', '01070707070'),
-('Access to premium support', '2024-01-10', 'active', '01080808080'),
-('Exclusive partner discounts', '2024-02-20', 'expired', '01090909090'),
-('Free concert tickets', '2024-03-01', 'active', '01101010101'),
-('Exclusive mobile offers', '2024-04-05', 'active', '01111111111'),
-('Bonus 200 minutes', '2024-05-15', 'active', '01121212121'),
-('Double points on purchases', '2024-06-01', 'expired', '01131313131'),
-('Free subscription to premium plan', '2024-07-01', 'active', '01141414141'),
-('Exclusive holiday package discount', '2024-08-01', 'active', '01151515151');
-
-INSERT INTO Points_Group (benefitID, pointsAmount, PaymentID)
-VALUES
-(1, 100, 1),
-(2, 50, 2),
-(3, 200, 3),
-(4, 75, 4),
-(5, 150, 5),
-(6, 100, 6),
-(7, 250, 7),
-(8, 200, 8),
-(9, 300, 9),
-(10, 50, 10),
-(11, 400, 11),
-(12, 100, 12),
-(13, 150, 13),
-(14, 200, 14),
-(15, 500, 15);
-  
-INSERT INTO Exclusive_Offer (benefitID, internet_offered, SMS_offered, minutes_offered)
-VALUES
-(1, 1024, 100, 200),
-(2, 2048, 150, 300),
-(3, 4096, 200, 400),
-(4, 5120, 250, 500),
-(5, 1024, 100, 200),
-(6, 2048, 150, 300),
-(7, 3072, 200, 400),
-(8, 5120, 250, 500),
-(9, 1024, 100, 200),
-(10, 2048, 150, 300),
-(11, 4096, 200, 400),
-(12, 5120, 250, 500),
-(13, 1024, 100, 200),
-(14, 2048, 150, 300),
-(15, 3072, 200, 400);
-
-INSERT INTO Cashback (benefitID, walletID, amount, credit_date)
-VALUES
-(1, 1, 10.0, '2023-02-15'),
-(2, 2, 15.5, '2023-03-20'),
-(3, 3, 20.0, '2023-04-25'),
-(4, 4, 5.0, '2023-05-30'),
-(5, 5, 7.5, '2023-06-05'),
-(6, 6, 12.0, '2023-07-12'),
-(7, 7, 30.0, '2023-08-18'),
-(8, 8, 8.5, '2023-09-22'),
-(9, 9, 10.0, '2023-10-30'),
-(10, 10, 25.0, '2023-11-10'),
-(11, 11, 12.0, '2023-12-05'),
-(12, 12, 18.0, '2024-01-10'),
-(13, 13, 25.0, '2024-02-15'),
-(14, 14, 13.0, '2024-03-20'),
-(15, 15, 9.0, '2024-04-25');
-
-
-INSERT INTO Plan_Provides_Benefits (benefitID, planID)
-VALUES
-(1, 1),
-(2, 2),
-(3, 3),
-(4, 4),
-(5, 5),
-(6, 6),
-(7, 7),
-(8, 8),
-(9, 9),
-(10, 10),
-(11, 1),
-(12, 2),
-(13, 3),
-(14, 4),
-(15, 5);
 
 INSERT INTO Shop (name, category)
 VALUES
@@ -1397,12 +1440,37 @@ SELECT * FROM Process_Payment;
 SELECT * FROM Wallet;
 SELECT * FROM Transfer_money;
 SELECT * FROM Benefits;
+SELECT * FROM Customer_Benefits;
 SELECT * FROM Points_Group;
 SELECT * FROM Exclusive_Offer;
 SELECT * FROM Cashback;
+SELECT * FROM Benefit_Usage;
 SELECT * FROM Plan_Provides_Benefits;
 SELECT * FROM Shop;
 SELECT * FROM Physical_Shop;
 SELECT * FROM E_SHOP;
 SELECT * FROM Voucher;
 SELECT * FROM Technical_Support_Ticket;
+
+
+
+/*
+    Changes made to the Database:
+        1- made the benefits table general to represent the info of the benefits generally
+            why?
+                because linking the mobileNo directly in the Benefits table can lead to a delete anomaly.
+                If you delete all customers subscribed to a benefit, the benefit itself might be lost, even if it’s still associated with a plan. 
+                This is a delete anomaly and violates **3rd Normal Form (3NF)**.
+
+                To resolve this issue, we need to make 2 tables:
+
+                1. Benefit: The definition of a benefit (e.g., extra 1GB data, 10% cashback).
+                2. Customer_Benefit: The actual benefits assigned to specific customers.
+
+
+                also, important thing, now all of these tables are general : Benefits, Points_Group, Exclusive_Offer, Cashback  (Holds the general services the system offers)
+
+        2- made a Benefit_Usage table that tracks the customer consumption of the offered benefits
+        3- some changes in the attributes 
+
+*/
