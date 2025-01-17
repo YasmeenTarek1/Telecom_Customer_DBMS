@@ -392,6 +392,7 @@ namespace Telecom_Customer_Application
             currentTab = activeTabId;
 
             // Configure shared content based on activeTabId
+            //headingText,showDateInput,showPlanIDInput,showMobileInput,showSearchButton,showWalletIDInput,showDate2Input,showLabelOut
             switch (currentTab)
             {
                 case "customersTab":

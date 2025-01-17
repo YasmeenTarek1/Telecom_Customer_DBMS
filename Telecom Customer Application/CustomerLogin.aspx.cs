@@ -75,7 +75,7 @@ namespace Telecom_Customer_Application
 
         }
 
-        protected void BackButton_Click(object sender, EventArgs e)
+        protected void BackToHome(object sender, EventArgs e)
         {
             Response.Redirect("WelcomePage.aspx");
 

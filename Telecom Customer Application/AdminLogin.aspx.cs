@@ -64,7 +64,7 @@ namespace Telecom_Customer_Application
             form1.Controls.Add(new Literal { Text = errorMessage });
 
         }
-        protected void BackButton_Click(object sender, EventArgs e)
+        protected void BackToHome(object sender, EventArgs e)
         {
             Response.Redirect("WelcomePage.aspx");
 
