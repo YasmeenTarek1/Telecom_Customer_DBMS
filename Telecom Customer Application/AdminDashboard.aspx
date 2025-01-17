@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-     <style>
+    <style>
         /* General Body and Layout */
         body {
             margin: 0 25px 0 0;
@@ -19,21 +19,20 @@
         /* Container with Flexbox Layout */
         .container {
             display: flex;
-            flex-direction:row;
+            flex-direction: row;
             height: 100vh;
             overflow: hidden;
         }
 
-
-         /* Sidebar Styling */
+        /* Sidebar Styling */
         .sidebar {
-            width: 260px;  /* Default wider width */
-            background-color: #2a3d56;  /* Darker blue shade */
+            width: 260px;
+            background-color: #2a3d56;
             color: #f5f5f5;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            transition: width 0.3s ease-in-out;  /* Smooth transition */
+            transition: width 0.3s ease-in-out;
             overflow-y: auto;
             overflow-x: hidden;
             position: relative;
@@ -43,7 +42,7 @@
         }
 
         .sidebar:hover {
-            width: 280px;  /* Expanding sidebar further on hover */
+            width: 280px;
         }
 
         /* Sidebar Header */
@@ -79,23 +78,23 @@
 
         .sidebar a:hover,
         .sidebar a.active {
-            background-color: #f5f5f5; 
+            background-color: #f5f5f5;
             border-top-left-radius: 30px;
             border-bottom-left-radius: 30px;
-            color:#2a3d56;
+            color: #2a3d56;
         }
-        
+
         .sidebar a:hover::before,
         .sidebar a.active::before {
             content: "";
             position: absolute;
             right: -4px;
-            top: -35px; /* upward offset */
-            width: 35px; /* circle size */
+            top: -35px;
+            width: 35px;
             height: 35px;
             background-color: transparent;
             border-radius: 50%;
-            box-shadow: 25px 25px 0 6px #f5f5f5; /* shadow offset and spread */
+            box-shadow: 25px 25px 0 6px #f5f5f5;
             pointer-events: none;
             z-index: 1;
         }
@@ -105,61 +104,58 @@
             content: "";
             position: absolute;
             right: -4px;
-            bottom: -35px; /* downward offset */
-            width: 35px; /* circle size */
+            bottom: -35px;
+            width: 35px;
             height: 35px;
             background-color: transparent;
             border-radius: 50%;
-            box-shadow: 25px -25px 0 6px #f5f5f5; /* shadow offset and spread */
+            box-shadow: 25px -25px 0 6px #f5f5f5;
             pointer-events: none;
-            z-index: 1; 
+            z-index: 1;
         }
 
         /* Styling the icons (Font Awesome) */
-
         .sidebar-icon {
             width: 20px;
             height: 20px;
             margin-right: 8px;
         }
+
         .sidebar-icon2 {
-            font-size: 11px;  /* Change the font size to make the icon smaller */
+            font-size: 11px;
             width: 20px;
             height: 20px;
-            margin-left: auto; /* Push this icon to the far right */
-            margin-top:3px;
+            margin-left: auto;
+            margin-top: 3px;
         }
 
         /* Scrollbar Styling */
-
         .sidebar::-webkit-scrollbar {
             width: 0;
             height: 12px;
         }
 
         .sidebar::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #3b5f77, #2c4d6f);  /* Darker blue gradient */
+            background: linear-gradient(45deg, #3b5f77, #2c4d6f);
             border-radius: 6px;
             border: 2px solid #1f3a4d;
         }
 
         .sidebar::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(45deg, #2a4c65, #1c3b4d);  /* Darker blue hover effect */
+            background: linear-gradient(45deg, #2a4c65, #1c3b4d);
         }
 
         .sidebar::-webkit-scrollbar-track {
-            background-color: #1f3a4d;  /* Darker blue track */
+            background-color: #1f3a4d;
             border-radius: 6px;
             margin: 2px;
         }
 
         .sidebar {
-            scroll-behavior: smooth;        /* Smooth scrolling behavior */
+            scroll-behavior: smooth;
         }
 
-
         /* Dropdown */
-
         .dropdown-content {
             display: none;
             margin-left: 30px;
@@ -171,7 +167,6 @@
         }
 
         /* Content Area */
-
         .content {
             width: 80%;
             padding: 20px;
@@ -192,8 +187,7 @@
             color: #343a40;
             font-weight: 700;
         }
-
-        .filters button,
+         .filters button,
         .actions button {
             background-color: #f0f0f0;
             border: 1px solid #ccc;
@@ -217,7 +211,6 @@
         }
 
         /* Cards Styling */
-
         .cardBox {
             position: relative;
             width: 95%;
@@ -227,7 +220,7 @@
             margin-top: 20px;
             grid-template-columns: repeat(4, 1fr);
             grid-gap: 30px;
-        } 
+        }
 
         .cardBox .card {
             position: relative;
@@ -256,7 +249,7 @@
         .cardBox .card .iconBx {
             font-size: 3.5rem;
             color: #007bff;
-            margin-right: 20px
+            margin-right: 20px;
         }
 
         .cardBox .card:hover {
@@ -266,10 +259,9 @@
         .cardBox .card:hover .numbers,
         .cardBox .card:hover .cardName,
         .cardBox .card:hover .iconBx {
-            color: #f5f5f5; 
+            color: #f5f5f5;
         }
-
-        /*
+          /*
             #9b9b9b --> grey
             #2a3d56 --> dark blue
             #007bff --> baby blue
@@ -277,7 +269,6 @@
         */
 
         /* Table Styling */
-
         table {
             border-collapse: collapse;
             margin: 20px 0 320px 15px;
@@ -288,7 +279,7 @@
             border: 1px solid #e0e0e0;
         }
 
-        table th{
+        table th {
             padding: 12px;
             border: 1px solid #ddd;
             color: #333;
@@ -298,19 +289,19 @@
             border: 1px solid #cce5ff;
         }
 
-        table td {  /* table data cell */
+        table td {
             padding: 10px;
             border: 1px solid #ddd;
             color: #333;
         }
-        
+
         .table-responsive {
             max-height: 100%;
             max-width: 100%;
             overflow-y: auto;
             overflow-x: auto;
-            border: none; 
-            box-shadow: none; 
+            border: none;
+            box-shadow: none;
             position: relative;
             padding: 3px;
         }
@@ -319,13 +310,13 @@
             width: 5px;
         }
 
-        .table-responsive::-webkit-scrollbar-thumb {   
+        .table-responsive::-webkit-scrollbar-thumb {
             background: rgba(200, 200, 200, 0.7);
             border-radius: 4px;
         }
 
         .table-responsive::-webkit-scrollbar-thumb:hover {
-            background: rgba(180, 180, 180, 0.8); 
+            background: rgba(180, 180, 180, 0.8);
             border-radius: 4px;
         }
 
@@ -401,16 +392,14 @@
 
         /* Style for clickable link */
         .clickable-link {
-            color: blue; /* Make the link blue */
-            text-decoration: underline; /* Underline the link */
+            color: blue;
+            text-decoration: underline;
         }
 
-        /* Style for the link when hovered */
         .clickable-link:hover {
-            color: darkblue; /* Change color when the link is hovered */
-            text-decoration: underline; /* Keep the underline on hover */
+            color: darkblue;
+            text-decoration: underline;
         }
-
 
         table tr:nth-child(odd) {
             background-color: #f9fbff;
@@ -465,10 +454,11 @@
             font-size: 28px;
             color: #333;
             margin: 40px 0px 0px 20px;
-            display: inline-block; /* Ensures the underline is only under the text */
+            display: inline-block;
             letter-spacing: 0.05em;
-            border-bottom: 2px solid #0056b3; /* Adds a blue underline */
+            border-bottom: 2px solid #0056b3;
         }
+
         .date-container {
             margin-bottom: 20px;
             display: flex;
@@ -518,13 +508,15 @@
             .date-container {
                 align-items: center;
                 text-align: center;
-            } 
-           .date-input {
+            }
+
+            .date-input {
                 max-width: 100%;
             }
         }
+
         .date-picker-container {
-            margin-bottom: 30px; 
+            margin-bottom: 30px;
             display: block;
             padding: 30px 20px 0px;
             padding-left: 5px;
@@ -537,11 +529,11 @@
         }
 
         .date-picker-label {
-            display: block; 
+            display: block;
             font-size: 14px;
             font-weight: bold;
             color: #2d3e50;
-            margin-bottom: 10px; 
+            margin-bottom: 10px;
         }
 
         .date-picker {
@@ -591,10 +583,10 @@
                 max-width: 90%;
             }
         }
-        /* General Styles */
 
+        /* General Styles */
         .input-container {
-            margin-bottom: 30px; 
+            margin-bottom: 30px;
             display: block;
             padding: 30px 20px 0px;
             padding-left: 5px;
@@ -605,8 +597,8 @@
             font-weight: bold;
             color: #34495e;
             letter-spacing: 0.3px;
-            margin: 0; 
-            padding-bottom: 8px; 
+            margin: 0;
+            padding-bottom: 8px;
         }
 
         .styled-input {
@@ -633,9 +625,9 @@
             border-radius: 4px;
             box-sizing: border-box;
             transition: border-color 0.3s ease;
-            margin-top: 5px; 
+            margin-top: 5px;
         }
-      
+
         .textbox-style:focus {
             border-color: #007bff;
             outline: none;
@@ -707,7 +699,7 @@
             right: 8px;
             background-color: transparent;
             border: none;
-            cursor: pointer; 
+            cursor: pointer;
             padding: 10px;
             font-size: 16px;
             display: flex;
@@ -716,11 +708,11 @@
         }
 
         .top-right-button::before {
-            content: "\f2f5"; /* Unicode icon */
+            content: "\f2f5";
             font-family: "Font Awesome 5 Free";
             font-weight: 900;
             color: #2a3d56;
-            font-size: 35px; /* icon size */
+            font-size: 35px;
             margin-right: 8px;
         }
 
@@ -729,47 +721,72 @@
         }
 
         /* Responsive Design */
-         @media (max-width: 768px) {
-             .styled-input {
-                 max-width: 90%;
-             }
+        @media (max-width: 768px) {
+            .styled-input {
+                max-width: 90%;
+            }
 
-             .button-container {
-                 flex-direction: column;
-                 gap: 6px;
-             }
-         }
-
-    </style>
-
-    <script>
-        function toggleDropdown(element) {
-            // Close all other dropdowns
-            const allDropdownContents = document.querySelectorAll('.dropdown-content');
-            allDropdownContents.forEach(content => {
-                if (content !== element.nextElementSibling) {
-                    content.style.display = "none";
-                }
-            });
-
-            // Toggle the clicked dropdown
-            const content = element.nextElementSibling;
-            if (content.style.display === "block") {
-                content.style.display = "none";
-            } else {
-                content.style.display = "block";
+            .button-container {
+                flex-direction: column;
+                gap: 6px;
             }
         }
-    </script>
+    </style>
 
+   <script>
+       // Function to toggle dropdown visibility
+       function toggleDropdown(element, hiddenFieldId) {
+           // Toggle the clicked dropdown
+           const content = element.nextElementSibling;
+           if (content.style.display === "block") {
+               content.style.display = "none";
+               document.getElementById(hiddenFieldId).value = "closed";
+           } else {
+               content.style.display = "block";
+               document.getElementById(hiddenFieldId).value = "open";
+           }
+       }
 
+       // Restore dropdown states when the page loads
+       window.onload = function () {
+           // Restore the state of each dropdown individually
+           const storesDropdownState = document.getElementById('<%= hdnStoresDropdownState.ClientID %>').value;
+        const plansDropdownState = document.getElementById('<%= hdnPlansDropdownState.ClientID %>').value;
+        const benefitsDropdownState = document.getElementById('<%= hdnBenefitsDropdownState.ClientID %>').value;
+        const transactionDropdownState = document.getElementById('<%= hdnTransactionDropdownState.ClientID %>').value;
+
+           if (storesDropdownState === "open") {
+               document.querySelector('#storesTabDropDown + .dropdown-content').style.display = "block";
+           }
+           if (plansDropdownState === "open") {
+               document.querySelector('#plansTab + .dropdown-content').style.display = "block";
+           }
+           if (benefitsDropdownState === "open") {
+               document.querySelector('#BenefitsTabDropdown + .dropdown-content').style.display = "block";
+           }
+           if (transactionDropdownState === "open") {
+               document.querySelector('#TransactionTabDropdown + .dropdown-content').style.display = "block";
+           }
+       };
+
+       // Prevent dropdown from closing when clicking inside it
+       document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+           dropdown.addEventListener('click', function (event) {
+               event.stopPropagation(); // Stop the click event from bubbling up to the parent
+           });
+       });
+   </script>
 </head>
 <body>
     <form id="form1" runat="server">
+        <asp:HiddenField ID="hdnStoresDropdownState" runat="server" />
+        <asp:HiddenField ID="hdnPlansDropdownState" runat="server" />
+        <asp:HiddenField ID="hdnBenefitsDropdownState" runat="server" />
+        <asp:HiddenField ID="hdnTransactionDropdownState" runat="server" />
+
         <div class="container" runat="server">
             <!-- Sidebar -->
             <div class="sidebar">
-
                 <div class="sidebar-header">
                     <img src="TeleSphere.png" alt="Header Image" class="sidebar-header-img">
                     <h4>TeleSphere</h4>
@@ -780,11 +797,11 @@
                 </a>
 
                 <a href="#" id="subscriptionsTab" runat="server" onserverclick="LoadSubscriptions">
-                    <i class="fa-solid fa-sim-card sidebar-icon"></i>Subscribtions
+                    <i class="fa-solid fa-sim-card sidebar-icon"></i>Subscriptions
                 </a>
 
                 <div>
-                    <a href="#" id="storesTabDropDown" onclick="toggleDropdown(this)">
+                    <a href="#" id="storesTabDropDown" onclick="toggleDropdown(this, '<%= hdnStoresDropdownState.ClientID %>')">
                         <i class="fa-solid fa-store sidebar-icon"></i>Shops
                         <i class="fa-solid fa-chevron-down sidebar-icon2"></i>
                     </a>
@@ -798,55 +815,64 @@
                     <i class="fa-solid fa-ticket sidebar-icon"></i>Tickets
                 </a>
 
-                <a href="#" id="plansTab" runat="server" onserverclick="LoadPlans">
-                    <i class="fa-solid fa-globe sidebar-icon"></i>Plans
-                </a>
-
                 <div>
-                    <a href="#" id="BenefitsTabDropdown" onclick="toggleDropdown(this)">
-                        <i class="fa-solid fa-gift sidebar-icon"></i>Benefits<i class="fa-solid fa-chevron-down sidebar-icon2"></i>
+                    <a href="#" id="plansTab" onclick="toggleDropdown(this, '<%= hdnPlansDropdownState.ClientID %>')">
+                        <i class="fa-solid fa-globe sidebar-icon"></i>Plans
+                        <i class="fa-solid fa-chevron-down sidebar-icon2"></i>
                     </a>
                     <div class="dropdown-content">
-                 
+                        <a href="#" id="PlanSinceDate" runat="server" onserverclick="LoadPlans">Subscribers Since a Date</a>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="#" id="BenefitsTabDropdown" onclick="toggleDropdown(this, '<%= hdnBenefitsDropdownState.ClientID %>')">
+                        <i class="fa-solid fa-gift sidebar-icon"></i>Benefits
+                        <i class="fa-solid fa-chevron-down sidebar-icon2"></i>
+                    </a>
+                    <div class="dropdown-content">
                         <a href="#" id="CashbackTab" runat="server" onserverclick="LoadCashback">Cashback Transactions</a>
                         <a href="#" id="CashbackAmountTab" runat="server" onserverclick="LoadCashbackAmount">Cashback Amount</a>
                         <a href="#" id="benefitsTab" runat="server" onserverclick="LoadBenefits" class="active">Delete Benefits</a>
                         <a href="#" id="offersTab" runat="server" onserverclick="LoadOffers">Offers</a>
                         <a href="#" id="PointsTab" runat="server" onserverclick="LoadPoints" class="active">Update Points</a>
-
                     </div>
                 </div>
 
+                <a href="#" id="accountUsageTab" runat="server" onserverclick="LoadAccountUsage">
+                    <i class="fa-solid fa-chart-column sidebar-icon"></i>Account Usage
+                </a>
 
-                <a href="#" id="accountUsageTab" runat="server" onserverclick="LoadAccountUsage"><i class="fa-solid fa-chart-column sidebar-icon"></i>Account Usage</a>
-                <a href="#" id="walletsTab" runat="server" onserverclick="LoadWallets"><i class="fa-solid fa-wallet sidebar-icon"></i>Wallets</a>
-                <a href="#" id="PaymentsTab" runat="server" onserverclick="LoadPayments"><i class="fa-solid fa-coins sidebar-icon"></i>Payments</a>
+                <a href="#" id="walletsTab" runat="server" onserverclick="LoadWallets">
+                    <i class="fa-solid fa-wallet sidebar-icon"></i>Wallets
+                </a>
 
+                <a href="#" id="PaymentsTab" runat="server" onserverclick="LoadPayments">
+                    <i class="fa-solid fa-coins sidebar-icon"></i>Payments
+                </a>
 
                 <div>
-                    <a href="#" id="TransactionTabDropdown" onclick="toggleDropdown(this)"><i class="fa-solid fa-arrow-right-arrow-left sidebar-icon"></i>Transaction <i class="fa-solid fa-chevron-down sidebar-icon2"></i></a>
+                    <a href="#" id="TransactionTabDropdown" onclick="toggleDropdown(this, '<%= hdnTransactionDropdownState.ClientID %>')">
+                        <i class="fa-solid fa-arrow-right-arrow-left sidebar-icon"></i>Transaction
+                        <i class="fa-solid fa-chevron-down sidebar-icon2"></i>
+                    </a>
                     <div class="dropdown-content">
                         <a href="#" id="TransactionsTab" runat="server" onserverclick="LoadTransactions">Transaction Details</a>
                         <a href="#" id="AverageTransactionsTab" runat="server" onserverclick="LoadAverageTransactions">Average Transaction Amount</a>
                     </div>
                 </div>
-
             </div>
-       
 
-
-    
+            <!-- Content Area -->
             <div id="sharedContent" runat="server" class="tab-content active-tab" style="display: block;">
-
                 <h3 id="TabHeading" runat="server" class="tab-heading">Tab Details</h3>
-                <div  id="cardBox" runat="server" style="display: none;">
-                    <div class="cardBox"">
+                <div id="cardBox" runat="server" style="display: none;">
+                    <div class="cardBox">
                         <div class="card">
                             <div>
                                 <div class="numbers" id="customerCount" runat="server">0</div>
                                 <div class="cardName">Customers</div>
                             </div>
-
                             <div class="iconBx">
                                 <i class="fa-solid fa-user sidebar-icon"></i>
                             </div>
@@ -857,7 +883,6 @@
                                 <div class="numbers" id="paymentCount" runat="server">0</div>
                                 <div class="cardName">Payments</div>
                             </div>
-
                             <div class="iconBx">
                                 <i class="fa-solid fa-coins sidebar-icon"></i>
                             </div>
@@ -868,24 +893,22 @@
                                 <div class="numbers" id="transferCount" runat="server">0</div>
                                 <div class="cardName">Transactions</div>
                             </div>
-
                             <div class="iconBx">
                                 <i class="fa-solid fa-arrow-right-arrow-left sidebar-icon"></i>
                             </div>
                         </div>
-                        <div class="card" >
+
+                        <div class="card">
                             <div>
                                 <div class="numbers" id="servicePlanCount" runat="server">0</div>
                                 <div class="cardName">Plans</div>
                             </div>
-
                             <div class="iconBx">
                                 <i class="fa-solid fa-globe sidebar-icon"></i>
                             </div>
                         </div>
                     </div>
                 </div>
-
 
                 <div id="DateContainer1" runat="server" class="date-picker-container" style="display: none;">
                     <label id="DateLabel1" runat="server" for="DateInput1" class="date-picker-label">Start Date:</label>
@@ -896,7 +919,6 @@
                     <label id="DateLabel2" runat="server" for="DateInput2" class="date-picker-label">End Date:</label>
                     <asp:TextBox ID="DateInput2" runat="server" CssClass="date-picker" TextMode="Date"></asp:TextBox>
                 </div>
-
 
                 <div id="TextBoxContainer1" runat="server" class="input-container">
                     <label for="PlanIDEditText" class="input-label">Plan ID:</label>
@@ -913,12 +935,10 @@
                     <asp:TextBox ID="WalletEditText" runat="server" CssClass="styled-input" placeholder="Enter Wallet ID"></asp:TextBox>
                 </div>
 
-
                 <div class="button-container">
                     <asp:Button ID="SearchButton" runat="server" CssClass="styled-button" Text="Search" OnClick="SearchButton_Click" />
                     <asp:Button ID="DeleteButton" runat="server" CssClass="styled-button delete-button" Text="Delete" OnClick="DeleteBenefitsButton_Click" Style="display: none;" />
                 </div>
-
 
                 <div class="output-container">
                     <asp:Label ID="LabelOut" runat="server" CssClass="output-label" Text=""></asp:Label>
@@ -928,12 +948,10 @@
                 <div class="table-responsive">
                     <table>
                         <tbody id="TableBody" runat="server"></tbody>
-                        <!-- TableBody for rows -->
                     </table>
                 </div>
 
                 <button id="backButton" runat="server" onserverclick="BackButton_Click" class="top-right-button" />
-
             </div>
         </div>
     </form>

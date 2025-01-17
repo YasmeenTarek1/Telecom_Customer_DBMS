@@ -516,7 +516,7 @@ RETURN(
     From Subscription S 
     inner join Service_Plan SP 
     ON S.planID = SP.planID
-    Where S.subscription_date = @sub_date AND S.planID = @Plan_id
+    Where S.subscription_date >= @sub_date AND S.planID = @Plan_id
 );
 
 

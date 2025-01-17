@@ -27,6 +27,7 @@ namespace Telecom_Customer_Application
             {
                 // Load Customers by default
                 LoadCustomers(null, null);
+                
             }
         }
 
