@@ -445,19 +445,6 @@ GO
 Exec createAllTables;
 
 GO
-CREATE VIEW allCustomerAccounts AS 
-SELECT 
-    p.*,
-    a.mobileNo,
-    a.account_type,
-    a.status AS 'Account_Status',
-    a.start_date,
-    a.balance,
-    a.points,
-    dbo.Wallet_MobileNo(a.mobileNo) AS 'Has Wallet'
-FROM Customer_profile p
-INNER JOIN Customer_Account a 
-ON p.nationalID = a.nationalID;
 
 
 GO
@@ -714,6 +701,21 @@ BEGIN
 
 return @result
 END;
+
+Go
+CREATE VIEW allCustomerAccounts AS 
+SELECT 
+    p.*,
+    a.mobileNo,
+    a.account_type,
+    a.status AS 'Account_Status',
+    a.start_date,
+    a.balance,
+    a.points,
+    dbo.Wallet_MobileNo(a.mobileNo) AS 'Has Wallet'
+FROM Customer_profile p
+INNER JOIN Customer_Account a 
+ON p.nationalID = a.nationalID;
 
 -------------- blue part ------------------
 
@@ -1150,6 +1152,40 @@ BEGIN;
         THROW;
     END CATCH;
 END;
+
+Go
+CREATE PROCEDURE GetPlans
+AS
+BEGIN
+    SELECT 
+        planID, 
+        name AS PlanName
+    FROM 
+        Service_Plan
+    ORDER BY 
+        name;
+END
+
+Go
+CREATE PROCEDURE GetSubscribersForPlan
+    @PlanID INT
+AS
+BEGIN
+    SELECT 
+        c.nationalID, 
+        c.first_name + ' ' + c.last_name AS CustomerName, 
+        s.subscription_date
+    FROM 
+        Subscription s
+    INNER JOIN 
+        Customer_Account ca ON s.mobileNo = ca.mobileNo
+    INNER JOIN 
+        Customer_profile c ON ca.nationalID = c.nationalID
+    WHERE 
+        s.planID = @PlanID
+    ORDER BY 
+        s.subscription_date DESC;
+END
 
 INSERT INTO Customer_profile (nationalID, first_name, last_name, email, address, date_of_birth)
 VALUES
