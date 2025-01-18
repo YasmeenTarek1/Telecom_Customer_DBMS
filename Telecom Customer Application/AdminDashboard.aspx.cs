@@ -34,40 +34,46 @@ namespace Telecom_Customer_Application
         {
             DisplayContent("customersTab");
 
-            string query = "SELECT * FROM allCustomerAccounts ORDER BY Account_Status";
-            ExecuteQueryWithHandling(query);
+            try
+            {
+                string query = "SELECT * FROM allCustomerAccounts ORDER BY Account_Status";
+                ExecuteQueryWithHandling(query);
 
-            using (SqlConnection con = new SqlConnection(connectionString))
-            { 
-                con.Open();
-
-                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_profile", con))
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    CustomerCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_profile", con))
+                    {
+                        CustomerCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Payment", con))
+                    {
+                        PaymentCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Transfer_money", con))
+                    {
+                        TransferCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Service_Plan", con))
+                    {
+                        ServicePlanCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
                 }
 
-                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Payment", con))
-                {
-                    PaymentCount = Convert.ToInt32(cmd.ExecuteScalar());
-                }
+                customerCount.InnerText = CustomerCount.ToString();
+                paymentCount.InnerText = PaymentCount.ToString();
+                transferCount.InnerText = TransferCount.ToString();
+                servicePlanCount.InnerText = ServicePlanCount.ToString();
 
-                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Transfer_money", con))
-                {
-                    TransferCount = Convert.ToInt32(cmd.ExecuteScalar());
-                }
-
-                using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Service_Plan", con))
-                {
-                    ServicePlanCount =  Convert.ToInt32(cmd.ExecuteScalar());
-                }
+                SetActiveTab("customersTab");
             }
-
-            customerCount.InnerText = CustomerCount.ToString();
-            paymentCount.InnerText = PaymentCount.ToString();
-            transferCount.InnerText = TransferCount.ToString();
-            servicePlanCount.InnerText = ServicePlanCount.ToString();
-
-            SetActiveTab("customersTab");
+            catch (Exception ex) {
+                DisplayAlert(ex);
+            }
         }
 
         protected void LoadSubscriptions(object sender, EventArgs e)
@@ -113,9 +119,15 @@ namespace Telecom_Customer_Application
         }
         protected void LoadPlans(object sender, EventArgs e)
         {
-            DisplayContent("plansTab");
+            DisplayContent("PlanSinceDateTab");
 
-            SetActiveTab("plansTab");
+            SetActiveTab("PlanSinceDateTab");
+        }
+        protected void LoadPlansInfo(object sender, EventArgs e)
+        {
+            DisplayContent("PlanInfoTab");
+
+            SetActiveTab("PlanInfoTab");
         }
         protected void LoadBenefits(object sender, EventArgs e)
         {
@@ -206,7 +218,7 @@ namespace Telecom_Customer_Application
                     int updatedPoints = 0;
                     switch (currentTab)
                     {
-                        case "plansTab":
+                        case "PlanSinceDate                     ":
                             cmd = new SqlCommand("SELECT * FROM dbo.Account_Plan_date(@sub_date, @plan_id)", con);
                             planId = PlanIDEditText.Text;
                             checkValidPlanID(planId);
@@ -364,7 +376,7 @@ namespace Telecom_Customer_Application
         {
             string[] allTabs = {
                 "customersTab", "subscriptionsTab", "physicalShopsTab", "ticketsTab",
-                "plansTab", "accountUsageTab", "benefitsTab", "offersTab",
+                "PlanSinceDateTab","PlanInfoTab", "accountUsageTab", "benefitsTab", "offersTab",
                 "walletsTab","E_shopsTab","PaymentsTab","CashbackTab","TransactionsTab",
                 "CashbackAmountTab","AverageTransactionsTab", "PointsTab"
             };
@@ -407,8 +419,11 @@ namespace Telecom_Customer_Application
                 case "ticketsTab":
                     ConfigureSharedContent("Tickets", false, false, false, false, false, false, false);
                     break;
-                case "plansTab":
-                    ConfigureSharedContent("Plans", true, true, false, true, false, false, false);
+                case "PlanSinceDateTab":
+                    ConfigureSharedContent("Subscribers Since a Date", true, true, false, true, false, false, false);
+                    break;
+                case "PlanInfoTab":
+                    ConfigureSharedContent("View Plans Information", false, false, false, false, false, false, false);
                     break;
                 case "accountUsageTab":
                     ConfigureSharedContent("Account Usage", true, false, true, true, false, false, false);

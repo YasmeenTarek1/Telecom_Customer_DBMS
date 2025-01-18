@@ -821,7 +821,8 @@
                         <i class="fa-solid fa-chevron-down sidebar-icon2"></i>
                     </a>
                     <div class="dropdown-content">
-                        <a href="#" id="PlanSinceDate" runat="server" onserverclick="LoadPlans">Subscribers Since a Date</a>
+                        <a href="#" id="PlanSinceDateTab" runat="server" onserverclick="LoadPlans">Subscribers Since a Date</a>
+                        <a href="#" id="PlanInfoTab" runat="server" onserverclick="LoadPlansInfo">Plans Information</a>
                     </div>
                 </div>
 
