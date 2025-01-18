@@ -108,23 +108,12 @@ BEGIN
 
 
 
-    
+    -- General Tables
     CREATE TABLE Benefits (
         benefitID INT IDENTITY(1,1),
         description VARCHAR(50),
         expiryIntervalDays INT, -- Expiry interval in days
         CONSTRAINT PK_Benefits PRIMARY KEY (benefitID)
-    );
-
-    CREATE TABLE Customer_Benefits (
-        benefitID INT,
-        mobileNo CHAR(11),
-        status VARCHAR(50) CHECK(status IN('active','expired')),
-        subscription_date DATE, -- Date when the customer subscribed to the benefit
-        expiration_date DATE,   -- Date when the benefit will expire
-        CONSTRAINT PK_Customer_Benefits PRIMARY KEY (benefitID, mobileNo),
-        CONSTRAINT FK_benefitID_Customer_Benefits FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
-        CONSTRAINT FK_mobileNo_Customer_Benefits FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo)
     );
 
     CREATE TABLE Points_Group(            -- General Table
@@ -153,7 +142,61 @@ BEGIN
         CONSTRAINT FK_benefitID_Cashback FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID)
     );
 
-    CREATE TABLE Benefit_Usage(           -- Tracking Points Group & Offers Consumption
+    -- Customer-Specific Tracking Tables
+    CREATE TABLE Customer_Benefits (
+        benefitID INT,
+        mobileNo CHAR(11),
+        status VARCHAR(50) CHECK(status IN('active','expired')),
+        subscription_date DATE, -- Date when the customer subscribed to the benefit
+        expiration_date DATE,   -- Date when the benefit will expire
+        PaymentID INT,       -- payment id in which this benefit was offered
+        CONSTRAINT PK_Customer_Benefits PRIMARY KEY (benefitID, mobileNo),
+        CONSTRAINT FK_benefitID_Customer_Benefits FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
+        CONSTRAINT FK_mobileNo_Customer_Benefits FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
+        CONSTRAINT FK_PaymentID_Customer_Benefits FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID)
+    );
+    
+    CREATE TABLE Customer_Points (
+        mobileNo CHAR(11),
+        benefitID INT,      -- general
+        pointID INT,        -- general
+        points_earned INT,
+        PaymentID INT,       -- payment id in which this benefit was offered
+        CONSTRAINT PK_Customer_Points PRIMARY KEY (mobileNo, pointID),
+        CONSTRAINT FK_mobileNo_Customer_Points FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
+        CONSTRAINT FK_benefit_ID_pointID_Customer_Points FOREIGN KEY (pointID, benefitID) REFERENCES Points_Group(pointID, benefitID),
+        CONSTRAINT FK_PaymentID_Customer_Points FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID)
+    );
+
+    CREATE TABLE Customer_Cashback (
+        walletID INT,
+        mobileNo CHAR(11),
+        benefitID INT,       -- general
+        CashbackID INT,      -- general
+        amount_earned DECIMAL(10,2),
+        PaymentID INT,       -- payment id in which this benefit was offered
+        CONSTRAINT PK_Customer_Cashback PRIMARY KEY (walletID, CashbackID),
+        CONSTRAINT FK_mobileNo_Customer_Cashback FOREIGN KEY (walletID) REFERENCES Wallet(walletID),
+        CONSTRAINT FK_benefit_ID_CashbackID_Customer_Cashback FOREIGN KEY (CashbackID, benefitID) REFERENCES Cashback(CashbackID, benefitID),
+        CONSTRAINT FK_PaymentID_Customer_Cashback FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID)
+    );
+
+    CREATE TABLE Customer_Exclusive_Offers (
+        mobileNo CHAR(11),
+        benefitID INT,       -- general
+        offerID INT,         -- general
+        data_offered INT,
+        minutes_offered INT,
+        SMS_offered INT,
+        PaymentID INT,       -- payment id in which this benefit was offered
+        CONSTRAINT PK_Customer_Exclusive_Offers PRIMARY KEY (mobileNo, offerID),
+        CONSTRAINT FK_mobileNo_Customer_Exclusive_Offers FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
+        CONSTRAINT FK_benefit_ID_offerID_Customer_Exclusive_Offers FOREIGN KEY (offerID, benefitID) REFERENCES Exclusive_Offer(offerID, benefitID),
+        CONSTRAINT FK_PaymentID_Customer_Exclusive_Offers FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID)
+    );
+
+    -- Tracking Points Group & Offers Consumption Table
+    CREATE TABLE Benefit_Usage(           
         usageID INT IDENTITY(1,1),
         mobileNo CHAR(11),
         benefitID INT,
@@ -167,7 +210,6 @@ BEGIN
         CONSTRAINT FK_mobileNo_Benefit_Usage FOREIGN KEY(mobileNo) REFERENCES Customer_Account(mobileNo),
         CONSTRAINT FK_benefitID_Benefit_Usage FOREIGN KEY(benefitID) REFERENCES Benefits(benefitID)
     );
-
 
 
     -------------- Benefits for each Plan -------------------------
@@ -482,12 +524,12 @@ ON P.shopID = V.shopID
 Inner Join Shop S
 ON S.shopID = P.shopID;
 
---Go
-----Fetch number of cashback transactions per each wallet.
---CREATE VIEW Num_of_cashback As
---Select walletID , count(*) AS 'count of transactions'
---From Cashback
---Group by walletID;
+Go
+--Fetch number of cashback transactions per each wallet.
+CREATE VIEW Num_of_cashback As
+Select walletID , count(*) AS 'count of transactions'
+From Customer_Cashback
+Group by walletID;
 
 Go 
 --List all accounts along with the service plans they are subscribed to
@@ -505,9 +547,8 @@ ORDER BY S.subscription_date DESC;
 -------------- Green part ------------------
 
 
-
 Go
---Retrieve the list of accounts subscribed to the input plan on a certain date
+--Retrieve the list of accounts subscribed to the input plan starting from a certain date
 CREATE FUNCTION Account_Plan_date(@sub_date date,@plan_id int)
 RETURNS TABLE
 AS
@@ -532,7 +573,6 @@ AS
         Group By U.planID
     );
 
-
 Go
 --Delete all benefits offered to the input account for a certain plan
 CREATE PROCEDURE Benefits_Account
@@ -544,12 +584,35 @@ BEGIN
 
     DELETE CB
     From Customer_Benefits CB
-    WHERE CB.mobileNo = @mobile_num AND Exists (
-                                                SELECT pb.benefitID
-                                                FROM plan_provides_benefits pb
-                                                WHERE pb.planID = @plan_id 
-                                                AND pb.benefitId = CB.benefitID
-                                               )
+    Inner Join Payment P
+    On P.paymentID = CB.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
+
+    DELETE CP
+    From Customer_Points CP
+    Inner Join Payment P
+    On P.paymentID = CP.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CP.mobileNo = @mobile_num
+
+    DELETE CH
+    From Customer_Cashback CH
+    Inner Join Payment P
+    On P.paymentID = CH.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CH.mobileNo = @mobile_num
+
+    DELETE CE
+    From Customer_Exclusive_Offers CE
+    Inner Join Payment P
+    On P.paymentID = CE.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CE.mobileNo = @mobile_num
 
     COMMIT TRANSACTION;
 END;
@@ -560,13 +623,13 @@ CREATE PROCEDURE Benefits_Account_Plan
 @mobile_num char(11), @plan_id int
 
 AS
-    select B.*
-    FROM Benefits B 
-    INNER JOIN plan_provides_benefits pb
-    ON B.benefitID = pb.benefitid 
-    INNER JOIN Customer_Benefits CB
-    ON CB.benefitID = pb.benefitid 
-    WHERE CB.mobileNo = @mobile_num AND pb.planID = @plan_id
+    Select CB.*
+    From Customer_Benefits CB
+    Inner Join Payment P
+    On P.paymentID = CB.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
 
 
 GO
@@ -574,27 +637,24 @@ GO
 CREATE FUNCTION Account_SMS_Offers(@mobile_num char(11))
 RETURNS TABLE
 AS
-    RETURN( Select O.*
-            From Exclusive_Offer O 
-            Inner join Benefits B 
-            ON B.benefitID = O.benefitID
-            Inner join Customer_Benefits CB
-            ON CB.benefitID = B.benefitID
-            Where CB.mobileNo = @mobile_num AND O.SMS_offered > 0 
+    RETURN( Select *
+            From Customer_Exclusive_Offers 
+            Where mobileNo = @mobile_num AND SMS_offered > 0 
           );
 
---Go
-----Retrieve the number of accepted payment transactions initiated by the input account during 
-----the last year along with the total amount of earned points.
---CREATE PROCEDURE Account_Payment_Points
---@mobile_num char(11)
---AS
---    Select Count(P.paymentID) AS 'Total Number of Accepted Payments' , ISNULL(SUM(PG.pointsAmount), 0) AS 'Total Amount of Points'
---    From Payment P 
---    inner join Points_Group PG 
---    ON P.paymentID = PG.PaymentID
---    Where P.mobileNo = @mobile_num AND P.status = 'successful' 
---    AND DATEDIFF(YEAR, P.date_of_payment, CURRENT_TIMESTAMP) <= 1;
+
+Go
+--Retrieve the number of accepted payments initiated by the input account during 
+--the last year along with the total amount of earned points.
+CREATE PROCEDURE Account_Payment_Points
+@mobile_num char(11)
+AS
+    Select Count(P.paymentID) AS 'Total Number of Accepted Payments' , ISNULL(SUM(PG.points_earned), 0) AS 'Total Amount of Points'
+    From Payment P 
+    inner join Customer_Points PG 
+    ON P.paymentID = PG.PaymentID
+    Where P.mobileNo = @mobile_num AND P.status = 'successful' 
+    AND DATEDIFF(YEAR, P.date_of_payment, CURRENT_TIMESTAMP) <= 1;
 
 
 Go
@@ -605,24 +665,21 @@ returns INT
 As
 BEGIN
     Declare @Amount_of_cashback INT
-    Declare @MobileNo Char(11)
 
-    Select @MobileNo = mobileNo
-    From Wallet
-    Where walletID = @walletID
-
-    Select @Amount_of_cashback = SUM(amount)
-    From Customer_Benefits CB
-    INNER Join Cashback C ON C.benefitID = CB.benefitID
-    INNER JOIN Plan_Provides_Benefits pb ON pb.benefitID = C.benefitID
-    Where CB.mobileNo = @MobileNo AND pb.planID = @planID
+    Select @Amount_of_cashback = SUM(CH.amount_earned)
+    From Customer_Cashback CH
+    Inner Join Payment P
+    On P.paymentID = CH.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @planID AND CH.walletID = @walletID
 
 Return @Amount_of_cashback
 END
 
 
 Go
---Retrieve the average of the sent transaction amounts from the input wallet within a certain duration
+--Retrieve the average of the sent wallet transaction amounts from the input wallet within a certain duration
 CREATE FUNCTION Wallet_Transfer_Amount(@walletID int,@start_date date, @end_date date)
 returns Float
 AS
@@ -763,18 +820,18 @@ RETURN(
 );
 
 
---GO
-----Retrieve all cashback transactions related to the wallet of the input customer.
---CREATE FUNCTION Cashback_Wallet_Customer(@NID int)
---RETURNS TABLE 
---AS 
---RETURN (
---    SELECT C.* 
---    FROM Cashback C
---    INNER JOIN Wallet W
---    ON C.walletID = W.walletID 
---    WHERE W.nationalID = @NID
---);
+GO
+--Retrieve all cashback transactions related to the wallet of the input customer.
+CREATE FUNCTION Cashback_Wallet_Customer(@NID int)
+RETURNS TABLE 
+AS 
+RETURN (
+    SELECT C.* 
+    FROM Customer_Cashback C
+    INNER JOIN Wallet W
+    ON C.walletID = W.walletID 
+    WHERE W.nationalID = @NID
+);
 
 
 
@@ -1075,7 +1132,7 @@ BEGIN;
         END
     
         
-        -- Deduct the points from the account
+        -- Deduce the points from the account
         UPDATE Customer_Account
         SET points = points - @RequiredPoints
         WHERE mobileNo = @mobile_num;
