@@ -37,6 +37,33 @@ BEGIN
     );
 
 
+        --------------- Wallet and Money Transfers ------------------------
+
+
+
+    CREATE TABLE Wallet(
+        walletID INT IDENTITY(1,1),
+        current_balance DECIMAL(10,2) default 0,
+        currency VARCHAR(50) default 'egp',
+        last_modified_date DATE,
+        nationalID INT,
+        mobileNo CHAR(11)
+        CONSTRAINT PK_Wallet PRIMARY KEY(walletID),
+        CONSTRAINT FK_nationalID_Wallet FOREIGN KEY (nationalID) REFERENCES Customer_profile(nationalID)
+    );
+
+    CREATE TABLE Transfer_money(
+        walletID1 INT,
+        walletID2 INT,
+        transfer_id INT IDENTITY(1,1),
+        amount DECIMAL(10,2),
+        transfer_date DATE,
+        CONSTRAINT PK_Transfer_money PRIMARY KEY (walletID1,walletID2,transfer_id),
+        CONSTRAINT FK_walletID1_Transfer_money FOREIGN KEY (walletID1) REFERENCES Wallet(walletID),
+        CONSTRAINT FK_walletID2_Transfer_money FOREIGN KEY (walletID2) REFERENCES Wallet(walletID)
+    );
+
+
 
 
     ------------ Service Plans and Subscriptions -----------------------
@@ -182,6 +209,7 @@ BEGIN
     );
 
     CREATE TABLE Customer_Exclusive_Offers (
+        exclusiveOfferID INT IDENTITY(1,1),
         mobileNo CHAR(11),
         benefitID INT,       -- general
         offerID INT,         -- general
@@ -189,7 +217,7 @@ BEGIN
         minutes_offered INT,
         SMS_offered INT,
         PaymentID INT,       -- payment id in which this benefit was offered
-        CONSTRAINT PK_Customer_Exclusive_Offers PRIMARY KEY (mobileNo, offerID),
+        CONSTRAINT PK_Customer_Exclusive_Offers PRIMARY KEY(exclusiveOfferID),
         CONSTRAINT FK_mobileNo_Customer_Exclusive_Offers FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
         CONSTRAINT FK_benefit_ID_offerID_Customer_Exclusive_Offers FOREIGN KEY (offerID, benefitID) REFERENCES Exclusive_Offer(offerID, benefitID),
         CONSTRAINT FK_PaymentID_Customer_Exclusive_Offers FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID)
@@ -222,35 +250,6 @@ BEGIN
         CONSTRAINT PK_Plan_Provides_Benefits PRIMARY KEY (planID,benefitID),
         CONSTRAINT FK_benefitID_Plan_Provides_Benefits FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
         CONSTRAINT FK_planID_Plan_Provides_Benefits FOREIGN KEY (planID) REFERENCES Service_Plan(planID)
-    );
-
-
-
-
-    --------------- Wallet and Money Transfers ------------------------
-
-
-
-    CREATE TABLE Wallet(
-        walletID INT IDENTITY(1,1),
-        current_balance DECIMAL(10,2) default 0,
-        currency VARCHAR(50) default 'egp',
-        last_modified_date DATE,
-        nationalID INT,
-        mobileNo CHAR(11)
-        CONSTRAINT PK_Wallet PRIMARY KEY(walletID),
-        CONSTRAINT FK_nationalID_Wallet FOREIGN KEY (nationalID) REFERENCES Customer_profile(nationalID)
-    );
-
-    CREATE TABLE Transfer_money(
-        walletID1 INT,
-        walletID2 INT,
-        transfer_id INT IDENTITY(1,1),
-        amount DECIMAL(10,2),
-        transfer_date DATE,
-        CONSTRAINT PK_Transfer_money PRIMARY KEY (walletID1,walletID2,transfer_id),
-        CONSTRAINT FK_walletID1_Transfer_money FOREIGN KEY (walletID1) REFERENCES Wallet(walletID),
-        CONSTRAINT FK_walletID2_Transfer_money FOREIGN KEY (walletID2) REFERENCES Wallet(walletID)
     );
 
 
