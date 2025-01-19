@@ -938,6 +938,12 @@
            });
        });
    </script>
+    <script type="text/javascript">
+        function triggerPostback(planId) {
+            __doPostBack('PlanClicked', planId);
+        }
+    </script>
+
 </head>
 <body>
     <form id="form1" runat="server">
@@ -1073,13 +1079,11 @@
                     </div>
                 </div>
 
-                <!-- Add PlanCardsContainer here -->
                 <div id="PlanCardsContainer" runat="server" style="display: none;">
                     <div class="PlanCardsContainer">
                         <!-- Basic Plan Card -->
-                        <div class="plan-card basic-plan" onclick="Subscribers_for_plan(100)">
+                        <div class="plan-card basic-plan" onclick="triggerPostback('1')">
                             <i class="fas fa-user"></i>
-                            <!-- Font Awesome icon -->
                             <div class="plan-name">Basic Plan</div>
                             <div class="plan-id">Plan ID: 1</div>
                             <div class="plan-details">Affordable plan for light users</div>
@@ -1087,9 +1091,8 @@
                         </div>
 
                         <!-- Standard Plan Card -->
-                        <div class="plan-card standard-plan" onclick="Subscribers_for_plan(500)">
+                        <div class="plan-card standard-plan" onclick="triggerPostback('2')">
                             <i class="fas fa-users"></i>
-                            <!-- Font Awesome icon -->
                             <div class="plan-name">Standard Plan</div>
                             <div class="plan-id">Plan ID: 2</div>
                             <div class="plan-details">Ideal for moderate users</div>
@@ -1097,9 +1100,8 @@
                         </div>
 
                         <!-- Premium Plan Card -->
-                        <div class="plan-card premium-plan" onclick="Subscribers_for_plan(1000)">
+                        <div class="plan-card premium-plan" onclick="triggerPostback('3')">
                             <i class="fas fa-star"></i>
-                            <!-- Font Awesome icon -->
                             <div class="plan-name">Premium Plan</div>
                             <div class="plan-id">Plan ID: 3</div>
                             <div class="plan-details">Best for heavy users</div>
@@ -1107,9 +1109,8 @@
                         </div>
 
                         <!-- Unlimited Plan Card -->
-                        <div class="plan-card unlimited-plan" onclick="Subscribers_for_plan(9999)">
+                        <div class="plan-card unlimited-plan" onclick="triggerPostback('4')">
                             <i class="fas fa-infinity"></i>
-                            <!-- Font Awesome icon -->
                             <div class="plan-name">Unlimited Plan</div>
                             <div class="plan-id">Plan ID: 4</div>
                             <div class="plan-details">Unlimited calls, SMS, and data</div>
@@ -1117,6 +1118,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <div id="DateContainer1" runat="server" class="date-picker-container" style="display: none;">
                     <label id="DateLabel1" runat="server" for="DateInput1" class="date-picker-label">Start Date:</label>

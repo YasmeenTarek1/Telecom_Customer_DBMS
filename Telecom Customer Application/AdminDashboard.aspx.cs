@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Web.Configuration;
 using System.Web.UI.HtmlControls;
@@ -28,7 +29,35 @@ namespace Telecom_Customer_Application
                 // Load Customers by default
                 LoadCustomers(null, null);
             }
+            string eventTarget = Request["__EVENTTARGET"];
+            string eventArgument = Request["__EVENTARGUMENT"];
+
+            if (eventTarget == "PlanClicked")
+            {
+                Subscribers_for_plan(eventArgument);
+            }
         }
+
+        protected void BasicPlanLink_Click(object sender, EventArgs e)
+        {
+            Subscribers_for_plan("1");
+        }
+
+        protected void StandardPlanLink_Click(object sender, EventArgs e)
+        {
+            Subscribers_for_plan("2");
+        }
+
+        protected void PremiumPlanLink_Click(object sender, EventArgs e)
+        {
+            Subscribers_for_plan("3");
+        }
+
+        protected void UnlimitedPlanLink_Click(object sender, EventArgs e)
+        {
+            Subscribers_for_plan("4");
+        }
+
 
         protected void LoadCustomers(object sender, EventArgs e)
         {
@@ -203,15 +232,28 @@ namespace Telecom_Customer_Application
 
             SetActiveTab("AverageTransactionsTab");
         }
-        protected void Subscribers_for_plan(string planId)
+        private void Subscribers_for_plan(string planId)
         {
-            // Fetch subscribers for the selected plan (planId)
-            // You can bind the data to a grid or display it in any other control
-            // Example:
-            // var subscribers = GetSubscribersForPlan(planId);
-            // GridView1.DataSource = subscribers;
-            // GridView1.DataBind();
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("GetSubscribersForPlan", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@PlanID", SqlDbType.Int) { Value = int.Parse(planId) });
+                    LoadData(cmd);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                DisplayAlert(ex);
+            }
         }
+
 
 
         protected void SearchButton_Click(object sender, EventArgs e)
