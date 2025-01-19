@@ -71,7 +71,8 @@ namespace Telecom_Customer_Application
 
                 SetActiveTab("customersTab");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 DisplayAlert(ex);
             }
         }
@@ -125,7 +126,7 @@ namespace Telecom_Customer_Application
         }
         protected void LoadPlansInfo(object sender, EventArgs e)
         {
-            DisplayContent("PlanInfoTab");
+            DisplayContent("PlanInfoTab"); 
 
             SetActiveTab("PlanInfoTab");
         }
@@ -202,6 +203,16 @@ namespace Telecom_Customer_Application
 
             SetActiveTab("AverageTransactionsTab");
         }
+        protected void Subscribers_for_plan(string planId)
+        {
+            // Fetch subscribers for the selected plan (planId)
+            // You can bind the data to a grid or display it in any other control
+            // Example:
+            // var subscribers = GetSubscribersForPlan(planId);
+            // GridView1.DataSource = subscribers;
+            // GridView1.DataBind();
+        }
+
 
         protected void SearchButton_Click(object sender, EventArgs e)
         {
@@ -490,7 +501,7 @@ namespace Telecom_Customer_Application
                 SearchButton.Text = "Update";
             else
                 SearchButton.Text = "Search";
-            
+
 
             if (currentTab != "benefitsTab")
                 DeleteButton.Style["display"] = "none";
@@ -500,6 +511,11 @@ namespace Telecom_Customer_Application
                 cardBox.Style["display"] = "block";
             else
                 cardBox.Style["display"] = "none";
+
+            if (currentTab == "PlanInfoTab")
+                PlanCardsContainer.Style["display"] = "block";
+            else
+                PlanCardsContainer.Style["display"] = "none";
         }
 
         protected void LoadData(SqlCommand cmd)

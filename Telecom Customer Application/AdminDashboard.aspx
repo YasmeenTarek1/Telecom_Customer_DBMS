@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="AdminDashboard.aspx.cs" Inherits="Telecom_Customer_Application.AdminDashboard" %>
+﻿﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="AdminDashboard.aspx.cs" Inherits="Telecom_Customer_Application.AdminDashboard" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +14,7 @@
             font-family: 'Arial', sans-serif;
             background-color: #f5f5f5;
             color: #333;
+
         }
 
         /* Container with Flexbox Layout */
@@ -731,6 +732,167 @@
                 gap: 6px;
             }
         }
+     /* General Plan Card Styling */
+       #PlanCardsContainer {
+            display: flex; 
+            flex-wrap: nowrap;
+            gap: 20px; 
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto; 
+            width: 100%; 
+            align-items: flex-start; 
+        }
+
+        .PlanCardsContainer {
+            display: flex; 
+            flex-wrap: nowrap; 
+            gap: 20px; 
+        }
+
+        .plan-card {
+            background-color: #ffffff; /* White background for cards */
+            border-radius: 15px;
+            padding: 25px;
+            width: 280px; /* Fixed width for each card */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Deeper shadow */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0; /* Prevent cards from shrinking */
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px); /* Stronger lift effect on hover */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+        }
+
+        /* Plan Name Styling */
+        .plan-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff; /* White text for better contrast */
+        }
+
+        /* Plan ID Styling */
+        .plan-id {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            margin-bottom: 10px;
+        }
+
+        /* Plan Details Styling */
+        .plan-details {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            margin-bottom: 20px;
+        }
+
+        /* Plan Price Styling */
+        .plan-price {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff; /* White text */
+            background-color: rgba(0, 0, 0, 0.1); /* Semi-transparent background */
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        /* Unique Styling for Each Plan */
+        .basic-plan {
+            background: linear-gradient(135deg, #64b5f6, #1976d2); /* Blue gradient */
+        }
+
+        .basic-plan .plan-name {
+            color: #fff; /* White text */
+        }
+
+        .standard-plan {
+            background: linear-gradient(135deg, #81c784, #388e3c); /* Green gradient */
+        }
+
+        .standard-plan .plan-name {
+            color: #fff; /* White text */
+        }
+
+        .premium-plan {
+            background: linear-gradient(135deg, #ffb74d, #f57c00); /* Orange gradient */
+        }
+
+        .premium-plan .plan-name {
+            color: #fff; /* White text */
+        }
+
+        .unlimited-plan {
+            background: linear-gradient(135deg, #f48fb1, #c2185b); /* Pink gradient */
+        }
+
+        .unlimited-plan .plan-name {
+            color: #fff; /* White text */
+        }
+
+        /* Add Icons for Each Plan */
+        .plan-card::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent circle */
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .plan-card::after {
+            content: "";
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent circle */
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* Add Icons for Each Plan */
+        .plan-card i {
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            margin-bottom: 20px;
+            display: block;
+            z-index: 2;
+            position: relative;
+        }
+
+        /* Unique Icons for Each Plan */
+        .basic-plan i {
+            content: "\f1ec"; /* Font Awesome icon for Basic Plan */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+        }
+
+        .standard-plan i {
+            content: "\f0c0"; /* Font Awesome icon for Standard Plan */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+        }
+
+        .premium-plan i {
+            content: "\f3a5"; /* Font Awesome icon for Premium Plan */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+        }
+
+        .unlimited-plan i {
+            content: "\f0e7"; /* Font Awesome icon for Unlimited Plan */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+        }
     </style>
 
    <script>
@@ -751,7 +913,7 @@
        window.onload = function () {
            // Restore the state of each dropdown individually
            const storesDropdownState = document.getElementById('<%= hdnStoresDropdownState.ClientID %>').value;
-        const plansDropdownState = document.getElementById('<%= hdnPlansDropdownState.ClientID %>').value;
+           const plansDropdownState = document.getElementById('<%= hdnPlansDropdownState.ClientID %>').value;
         const benefitsDropdownState = document.getElementById('<%= hdnBenefitsDropdownState.ClientID %>').value;
         const transactionDropdownState = document.getElementById('<%= hdnTransactionDropdownState.ClientID %>').value;
 
@@ -911,6 +1073,51 @@
                     </div>
                 </div>
 
+                <!-- Add PlanCardsContainer here -->
+                <div id="PlanCardsContainer" runat="server" style="display: none;">
+                    <div class="PlanCardsContainer">
+                        <!-- Basic Plan Card -->
+                        <div class="plan-card basic-plan" onclick="Subscribers_for_plan(100)">
+                            <i class="fas fa-user"></i>
+                            <!-- Font Awesome icon -->
+                            <div class="plan-name">Basic Plan</div>
+                            <div class="plan-id">Plan ID: 1</div>
+                            <div class="plan-details">Affordable plan for light users</div>
+                            <div class="plan-price">Price: $50/month</div>
+                        </div>
+
+                        <!-- Standard Plan Card -->
+                        <div class="plan-card standard-plan" onclick="Subscribers_for_plan(500)">
+                            <i class="fas fa-users"></i>
+                            <!-- Font Awesome icon -->
+                            <div class="plan-name">Standard Plan</div>
+                            <div class="plan-id">Plan ID: 2</div>
+                            <div class="plan-details">Ideal for moderate users</div>
+                            <div class="plan-price">Price: $100/month</div>
+                        </div>
+
+                        <!-- Premium Plan Card -->
+                        <div class="plan-card premium-plan" onclick="Subscribers_for_plan(1000)">
+                            <i class="fas fa-star"></i>
+                            <!-- Font Awesome icon -->
+                            <div class="plan-name">Premium Plan</div>
+                            <div class="plan-id">Plan ID: 3</div>
+                            <div class="plan-details">Best for heavy users</div>
+                            <div class="plan-price">Price: $200/month</div>
+                        </div>
+
+                        <!-- Unlimited Plan Card -->
+                        <div class="plan-card unlimited-plan" onclick="Subscribers_for_plan(9999)">
+                            <i class="fas fa-infinity"></i>
+                            <!-- Font Awesome icon -->
+                            <div class="plan-name">Unlimited Plan</div>
+                            <div class="plan-id">Plan ID: 4</div>
+                            <div class="plan-details">Unlimited calls, SMS, and data</div>
+                            <div class="plan-price">Price: $300/month</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="DateContainer1" runat="server" class="date-picker-container" style="display: none;">
                     <label id="DateLabel1" runat="server" for="DateInput1" class="date-picker-label">Start Date:</label>
                     <asp:TextBox ID="DateInput1" runat="server" CssClass="date-picker" TextMode="Date"></asp:TextBox>
@@ -954,7 +1161,9 @@
 
                 <button id="backButton" runat="server" onserverclick="BackButton_Click" class="top-right-button" />
             </div>
+
+
         </div>
     </form>
-</body>
+</body> 
 </html>

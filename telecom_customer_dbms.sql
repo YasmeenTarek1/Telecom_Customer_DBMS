@@ -1153,18 +1153,6 @@ BEGIN;
     END CATCH;
 END;
 
-Go
-CREATE PROCEDURE GetPlans
-AS
-BEGIN
-    SELECT 
-        planID, 
-        name AS PlanName
-    FROM 
-        Service_Plan
-    ORDER BY 
-        name;
-END
 
 Go
 CREATE PROCEDURE GetSubscribersForPlan

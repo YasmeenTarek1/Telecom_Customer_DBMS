@@ -193,6 +193,8 @@
         form {
          width: 100%; /* Full width */
          overflow-x: hidden; 
+         overflow-y:hidden;
+
          }
     </style>
 </head>
