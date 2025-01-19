@@ -1562,14 +1562,13 @@ GO
 CREATE PROCEDURE InitializeSystem
 AS
 BEGIN
-    -- Insert data into Service_Plan table
     INSERT INTO Service_Plan (SMS_offered, minutes_offered, data_offered, name, price, description, expiryIntervalDays)
     VALUES
     (100, 200, 1024, 'Basic Plan', 50, 'Affordable plan for light users', 30),
     (500, 1000, 5120, 'Standard Plan', 100, 'Ideal for moderate users', 30),
-    (1000, 2000, 10240, 'Premium Plan', 200, 'Best for heavy users', 30);
+    (1000, 2000, 10240, 'Premium Plan', 200, 'Best for heavy users', 30),
+    (9999, 9999, 99999, 'Unlimited Plan', 300, 'Unlimited calls, SMS, and data', 30);
 
-    -- Insert data into Benefits table
     INSERT INTO Benefits (description, expiryIntervalDays)
     VALUES
     ('Extra 1GB data per month', 30),
@@ -1579,38 +1578,42 @@ BEGIN
     ('20% cashback on plan renewal', 30),
     ('Earn 50 loyalty points per month', 30);
 
-    -- Insert data into Points_Group table
     INSERT INTO Points_Group (benefitID, amount)
     VALUES
-    (6, 50); -- 50 points for Loyalty Points benefit
+    (6, 50); -- Loyalty 50 Points
 
-    -- Insert data into Exclusive_Offer table
     INSERT INTO Exclusive_Offer (benefitID, internet_offered, SMS_offered, minutes_offered)
     VALUES
     (1, 1024, 0, 0), -- 1GB internet
     (2, 0, 100, 0), -- 100 SMS
     (3, 0, 0, 100); -- 100 minutes
 
-    -- Insert data into Cashback table
     INSERT INTO Cashback (benefitID, percentage)
     VALUES
     (4, 10), -- 10% cashback
     (5, 20); -- 20% cashback
 
-    -- Insert data into Plan_Provides_Benefits table
     INSERT INTO Plan_Provides_Benefits (planID, benefitID)
     VALUES
     (1, 2), -- Free 100 SMS Bundle
     (1, 6), -- Loyalty 50 Points
     (1, 4), -- 5% Cashback on Plan Renewal
+
     (2, 1), -- Extra 1GB internet
     (2, 3), -- Bonus 100 Minutes
     (2, 6), -- Loyalty 50 Points
-    (2, 4), -- 5% Cashback on Plan Renewal
+    (2, 4), -- 10% Cashback on Plan Renewal
+
     (3, 1), -- Extra 1GB internet
     (3, 3), -- Bonus 100 Minutes
     (3, 6), -- Loyalty 50 Points
-    (3, 5); -- 10% Cashback on Plan Renewal
+    (3, 5), -- 20% Cashback on Plan Renewal
+
+    (4, 1), -- Extra 1GB internet
+    (4, 2), -- Free 100 SMS Bundle
+    (4, 3), -- Bonus 100 Minutes
+    (4, 5), -- 20% Cashback on Plan Renewal
+    (4, 6); -- Loyalty 50 Points
 
     INSERT INTO Shop (name, category)
     VALUES
@@ -1743,7 +1746,9 @@ VALUES
 -- Customer 2 (Standard Plan)
 (100.0, '2023-10-01', 'credit', 'successful', '01020202020'),
 -- Customer 3 (Premium Plan)
-(200.0, '2023-10-01', 'credit', 'successful', '01030303030');
+(200.0, '2023-10-01', 'credit', 'successful', '01030303030'),
+-- Customer 4 (Unlimited Plan)
+(300.0, '2023-10-01', 'credit', 'successful', '01040404040');
 
 INSERT INTO Process_Payment (paymentID, planID)
 VALUES
@@ -1752,7 +1757,9 @@ VALUES
 -- Customer 2 (Standard Plan)
 (2, 2),
 -- Customer 3 (Premium Plan)
-(3, 3);
+(3, 3),
+-- Customer 4 (Unlimited Plan)
+(4, 4);
 
 INSERT INTO Subscription (mobileNo, planID, subscription_date, status)
 VALUES
@@ -1761,7 +1768,9 @@ VALUES
 -- Customer 2 (Standard Plan)
 ('01020202020', 2, '2023-10-01', 'active'),
 -- Customer 3 (Premium Plan)
-('01030303030', 3, '2023-10-01', 'active');
+('01030303030', 3, '2023-10-01', 'active'),
+-- Customer 4 (Unlimited Plan)
+('01040404040', 4, '2023-10-01', 'active');
 
 INSERT INTO Plan_Usage (start_date, expiry_date, data_consumption, minutes_used, SMS_sent, mobileNo, planID)
 VALUES
@@ -1770,25 +1779,31 @@ VALUES
 -- Customer 2 (Standard Plan)
 ('2023-10-01', '2023-11-01', 2000, 500, 200, '01020202020', 2),
 -- Customer 3 (Premium Plan)
-('2023-10-01', '2023-11-01', 5000, 1000, 500, '01030303030', 3);
+('2023-10-01', '2023-11-01', 5000, 1000, 500, '01030303030', 3),
+-- Customer 4 (Unlimited Plan)
+('2023-10-01', '2023-11-01', 10000, 2000, 1000, '01040404040', 4);
 
 INSERT INTO Customer_Benefits (mobileNo, PaymentID, walletID, start_date, expiry_date)
 VALUES
 -- Customer 1 (Basic Plan)
-('01010101010', 1, 1, '2023-10-01', '2023-11-01'),
+('01010101010', 1, 1, '2025-01-01', '2025-02-01'),
 -- Customer 2 (Standard Plan)
-('01020202020', 2, 2, '2023-10-01', '2023-11-01'),
+('01020202020', 2, 2, '2025-01-01', '2025-02-01'),
 -- Customer 3 (Premium Plan)
-('01030303030', 3, 3, '2023-10-01', '2023-11-01');
+('01030303030', 3, 3, '2025-01-01', '2025-02-01'),
+-- Customer 4 (Unlimited Plan)
+('01040404040', 4, 4, '2025-01-01', '2025-02-01');
 
 INSERT INTO Customer_Points (benefitID, points_earned)
 VALUES
 -- Customer 1 (Basic Plan)
-(1, 50), -- Loyalty Points
+(1, 50), 
 -- Customer 2 (Standard Plan)
-(2, 50), -- Loyalty Points
+(2, 50), 
 -- Customer 3 (Premium Plan)
-(3, 50); -- Loyalty Points
+(3, 50), 
+-- Customer 4 (Unlimited Plan)
+(4, 50);
 
 INSERT INTO Customer_Cashback (benefitID, amount_earned)
 VALUES
@@ -1797,7 +1812,9 @@ VALUES
 -- Customer 2 (Standard Plan)
 (2, 10.0),
 -- Customer 3 (Premium Plan)
-(3, 40.0);
+(3, 40.0),
+-- Customer 4 (Unlimited Plan)
+(4, 60.0);
 
 INSERT INTO Customer_Exclusive_Offers (benefitID, data_offered, minutes_offered, SMS_offered)
 VALUES
@@ -1806,7 +1823,9 @@ VALUES
 -- Customer 2 (Standard Plan)
 (2, 1024, 100, 0), -- Bonus 100 Minutes + Extra 1GB internet
 -- Customer 3 (Premium Plan)
-(3, 1024, 100, 0); -- Bonus 100 Minutes + Extra 1GB internet
+(3, 1024, 100, 0), -- Bonus 100 Minutes + Extra 1GB internet
+-- Customer 4 (Unlimited Plan)
+(4, 1024, 100, 0); -- Free 100 SMS Bundle + Bonus 100 Minutes + Extra 1GB internet
 
 INSERT INTO Benefit_Usage (benefitID, points_used, data_consumption, minutes_used, SMS_sent, usage_date)
 VALUES
@@ -1815,25 +1834,28 @@ VALUES
 -- Customer 2 (Standard Plan)
 (2, 25, 420, 30, 0, '2023-10-15'), 
 -- Customer 3 (Premium Plan)
-(3, 30, 310, 15, 0, '2023-10-15');
+(3, 30, 310, 15, 0, '2023-10-15'),
+-- Customer 4 (Unlimited Plan)
+(4, 60, 250, 25, 30, '2023-10-15');
+
 
 INSERT INTO Voucher (value, expiry_date, points, mobileNo, shopID, redeem_date)
 VALUES
 (50, '2025-05-02', 100, '01010101010', 1, NULL),
-(100, '2023-06-01', 200, '01010101010', 2, '2023-04-01'),
-(150, '2025-07-03', 300, '01010101010', 3, '2023-05-01'),
-(200, '2023-08-01', 400, '01040404040', 4, '2023-06-01'),
-(250, '2023-09-01', 500, '01050505050', 5, '2023-07-01'),
-(300, '2023-10-01', 600, '01060606060', 6, '2023-08-01'),
-(350, '2023-11-01', 700, '01070707070', 7, '2023-09-01'),
-(400, '2023-12-01', 800, '01080808080', 8, '2023-10-01'),
-(450, '2024-01-01', 900, '01090909090', 9, '2023-11-01'),
-(500, '2024-02-01', 1000, '01101010101', 10, '2023-12-01'),
-(550, '2024-03-01', 1100, '01111111111', 11, '2024-01-01'),
-(600, '2024-04-01', 1200, '01121212121', 12, '2024-02-01'),
-(650, '2024-05-01', 1300, '01131313131', 13, '2024-03-01'),
-(700, '2024-06-01', 1400, '01141414141', 14, '2024-04-01'),
-(750, '2024-07-01', 1500, '01151515151', 15, '2024-05-01');
+(100, '2023-06-01', 200, '01010101010', 2, NULL),
+(150, '2025-07-03', 300, '01010101010', 3, NULL),
+(200, '2023-08-01', 400, '01040404040', 4, NULL),
+(250, '2023-09-01', 500, '01050505050', 5, NULL),
+(300, '2023-10-01', 600, '01060606060', 6, NULL),
+(350, '2023-11-01', 700, '01070707070', 7, NULL),
+(400, '2023-12-01', 800, '01080808080', 8, NULL),
+(450, '2024-01-01', 900, '01090909090', 9, NULL),
+(500, '2024-02-01', 1000, '01101010101', 10, NULL),
+(550, '2024-03-01', 1100, '01111111111', 11, NULL),
+(600, '2024-04-01', 1200, '01121212121', 12, NULL),
+(650, '2024-05-01', 1300, '01131313131', 13, NULL),
+(700, '2024-06-01', 1400, '01141414141', 14, NULL),
+(750, '2024-07-01', 1500, '01151515151', 15, NULL);
 
 INSERT INTO Technical_Support_Ticket (mobileNo, Issue_description, priority_level, status)
 VALUES
