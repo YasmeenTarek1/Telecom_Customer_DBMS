@@ -504,7 +504,7 @@ END;
 
 
 GO
-CREATE PROCEDURE Get_AllCustomerAccounts
+CREATE PROCEDURE allCustomerAccounts
 AS
 BEGIN
     EXEC Handle_Expired_Points;
@@ -519,7 +519,8 @@ BEGIN
         dbo.Wallet_MobileNo(a.mobileNo) AS 'Has Wallet'
     FROM Customer_profile p
     INNER JOIN Customer_Account a 
-    ON p.nationalID = a.nationalID;
+    ON p.nationalID = a.nationalID
+    ORDER BY Account_Status;
 ENd;
 
 

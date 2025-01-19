@@ -65,7 +65,7 @@ namespace Telecom_Customer_Application
 
             try
             {
-                string query = "SELECT * FROM allCustomerAccounts ORDER BY Account_Status";
+                string query = "allCustomerAccounts";
                 ExecuteQueryWithHandling(query);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
