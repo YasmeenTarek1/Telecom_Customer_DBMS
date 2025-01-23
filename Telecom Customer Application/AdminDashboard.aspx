@@ -7,14 +7,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* General Body and Layout */
         body {
-            margin: 0 25px 0 0;
+            margin: 0 25px 30px 0;
             font-family: 'Arial', sans-serif;
             background-color: #f5f5f5;
             color: #333;
+            overflow-y: auto;
+        }
 
+        /* Entire page scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px; 
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 6px; 
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 6px; 
+            border: 3px solid #f1f1f1; 
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
         }
 
         /* Container with Flexbox Layout */
@@ -22,21 +43,20 @@
             display: flex;
             flex-direction: row;
             height: 100vh;
-            overflow: hidden;
         }
 
         /* Sidebar Styling */
         .sidebar {
+            position: fixed; 
             width: 260px;
+            height: 100%;
             background-color: #2a3d56;
             color: #f5f5f5;
             display: flex;
             flex-direction: column;
-            height: 100vh;
             transition: width 0.3s ease-in-out;
             overflow-y: auto;
             overflow-x: hidden;
-            position: relative;
             margin-right: 20px;
             top: 0;
             left: 0;
@@ -272,12 +292,15 @@
         /* Table Styling */
         table {
             border-collapse: collapse;
-            margin: 20px 0 320px 15px;
+            margin: 20px 0 0 15px;
             font-size: 16px;
             text-align: center;
             background-color: #ffffff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
 
         table th {
@@ -299,36 +322,10 @@
         .table-responsive {
             max-height: 100%;
             max-width: 100%;
-            overflow-y: auto;
-            overflow-x: auto;
             border: none;
             box-shadow: none;
             position: relative;
             padding: 3px;
-        }
-
-        .table-responsive::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .table-responsive::-webkit-scrollbar-thumb {
-            background: rgba(200, 200, 200, 0.7);
-            border-radius: 4px;
-        }
-
-        .table-responsive::-webkit-scrollbar-thumb:hover {
-            background: rgba(180, 180, 180, 0.8);
-            border-radius: 4px;
-        }
-
-        .table-responsive::-webkit-scrollbar-track {
-            background: rgba(220, 220, 220, 0.5);
-            border-radius: 6px;
-            margin: 25px 0 320px 0;
-        }
-
-        .table-responsive {
-            scroll-behavior: smooth;
         }
 
         /* Status badges */
@@ -458,6 +455,10 @@
             display: inline-block;
             letter-spacing: 0.05em;
             border-bottom: 2px solid #0056b3;
+        }
+
+        .tab-content{
+            margin: 0 0 0 280px;
         }
 
         .date-container {
@@ -893,9 +894,58 @@
             font-family: "Font Awesome 5 Free";
             font-weight: 900;
         }
+
+        /* Section Styles */
+        .section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            width: 60%;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Section Styling */
+        .section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        /* CardBox Override for Two-Column Layout */
+        .cardBox2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two equal columns: card and chart */
+            gap: 20px; /* Space between the card and chart */
+            align-items: center;
+            width: 90%;
+            margin: auto;
+        }
+
+        /* Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 300px; /* Set a fixed width for the chart */
+            height: 300px; /* Set a fixed height for the chart */
+            margin: 0 auto; /* Center the chart */
+        }
+
+        /* Optional: Add hover effect to the chart */
+        .chart-container:hover {
+            transform: scale(1.05); /* Slight zoom-in effect on hover */
+            transition: transform 0.3s ease-in-out;
+        }
+
+
     </style>
 
-   <script>
+    <script>
        // Function to toggle dropdown visibility
        function toggleDropdown(element, hiddenFieldId) {
            // Toggle the clicked dropdown
@@ -912,19 +962,15 @@
        // Restore dropdown states when the page loads
        window.onload = function () {
            // Restore the state of each dropdown individually
-           const storesDropdownState = document.getElementById('<%= hdnStoresDropdownState.ClientID %>').value;
-           const plansDropdownState = document.getElementById('<%= hdnPlansDropdownState.ClientID %>').value;
-        const benefitsDropdownState = document.getElementById('<%= hdnBenefitsDropdownState.ClientID %>').value;
-        const transactionDropdownState = document.getElementById('<%= hdnTransactionDropdownState.ClientID %>').value;
+            const storesDropdownState = document.getElementById('<%= hdnStoresDropdownState.ClientID %>').value;
+            const plansDropdownState = document.getElementById('<%= hdnPlansDropdownState.ClientID %>').value;
+            const transactionDropdownState = document.getElementById('<%= hdnTransactionDropdownState.ClientID %>').value;
 
            if (storesDropdownState === "open") {
                document.querySelector('#storesTabDropDown + .dropdown-content').style.display = "block";
            }
            if (plansDropdownState === "open") {
                document.querySelector('#plansTab + .dropdown-content').style.display = "block";
-           }
-           if (benefitsDropdownState === "open") {
-               document.querySelector('#BenefitsTabDropdown + .dropdown-content').style.display = "block";
            }
            if (transactionDropdownState === "open") {
                document.querySelector('#TransactionTabDropdown + .dropdown-content').style.display = "block";
@@ -937,11 +983,133 @@
                event.stopPropagation(); // Stop the click event from bubbling up to the parent
            });
        });
-   </script>
+
+    </script>
+
     <script type="text/javascript">
         function triggerPostback(planId) {
             __doPostBack('PlanClicked', planId);
         }
+    </script>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            if (typeof benefitTypesData !== 'undefined') {
+                var ctx = document.getElementById('benefit-types-chart').getContext('2d');
+
+                // Extract labels and data from the JSON
+                var labels = benefitTypesData.map(item => item.benefitID); // Use benefitID as labels
+                var data = benefitTypesData.map(item => item.Percentage); // Use Percentage as data
+
+                var myPieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.6)',
+                                'rgba(54, 162, 235, 0.6)',
+                                'rgba(255, 206, 86, 0.6)',
+                                'rgba(75, 192, 192, 0.6)',
+                                'rgba(153, 102, 255, 0.6)',
+                                'rgba(255, 159, 64, 0.6)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Benefit Type Percentages'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += context.raw + '%'; // Display percentage in tooltip
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            if (typeof benefitsStatusData !== 'undefined') {
+                var ctx = document.getElementById('benefits-status-chart').getContext('2d');
+
+                // Extract labels and data from the JSON
+                var labels = Object.keys(benefitsStatusData); // ["Active", "Expired"]
+                var data = Object.values(benefitsStatusData); // [activeCount, expiredCount]
+
+                var myPieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.6)', // Green for Active
+                                'rgba(255, 99, 132, 0.6)'  // Red for Expired
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)', // Green for Active
+                                'rgba(255, 99, 132, 1)'  // Red for Expired
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Active vs Expired Benefits'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += context.raw; // Display count in tooltip
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
     </script>
 
 </head>
@@ -949,7 +1117,6 @@
     <form id="form1" runat="server">
         <asp:HiddenField ID="hdnStoresDropdownState" runat="server" />
         <asp:HiddenField ID="hdnPlansDropdownState" runat="server" />
-        <asp:HiddenField ID="hdnBenefitsDropdownState" runat="server" />
         <asp:HiddenField ID="hdnTransactionDropdownState" runat="server" />
 
         <div class="container" runat="server">
@@ -994,19 +1161,9 @@
                     </div>
                 </div>
 
-                <div>
-                    <a href="#" id="BenefitsTabDropdown" onclick="toggleDropdown(this, '<%= hdnBenefitsDropdownState.ClientID %>')">
-                        <i class="fa-solid fa-gift sidebar-icon"></i>Benefits
-                        <i class="fa-solid fa-chevron-down sidebar-icon2"></i>
-                    </a>
-                    <div class="dropdown-content">
-                        <a href="#" id="CashbackTab" runat="server" onserverclick="LoadCashback">Cashback Transactions</a>
-                        <a href="#" id="CashbackAmountTab" runat="server" onserverclick="LoadCashbackAmount">Cashback Amount</a>
-                        <a href="#" id="benefitsTab" runat="server" onserverclick="LoadBenefits" class="active">Delete Benefits</a>
-                        <a href="#" id="offersTab" runat="server" onserverclick="LoadOffers">Offers</a>
-                        <a href="#" id="PointsTab" runat="server" onserverclick="LoadPoints" class="active">Update Points</a>
-                    </div>
-                </div>
+                <a href="#" id="BenefitsTabDropdown" runat="server" onserverclick="LoadBenefits">
+                    <i class="fa-solid fa-gift sidebar-icon"></i>Benefits
+                </a>
 
                 <a href="#" id="accountUsageTab" runat="server" onserverclick="LoadAccountUsage">
                     <i class="fa-solid fa-chart-column sidebar-icon"></i>Account Usage
@@ -1119,6 +1276,61 @@
                     </div>
                 </div>
 
+                <!-- Section 1: Three Cards for Points, Cashback, and Exclusive Offers -->
+                <div id="mainCards" runat="server" style="display: none;">
+                    <div class="PlanCardsContainer">
+                        <div class="plan-card basic-plan" id="points-card">
+                            <div class="plan-name">Points</div>
+                            <p>Total Points Earned: <span id="totalPoints" runat="server">0</span></p>
+                        </div>
+                        <div class="plan-card standard-plan" id="cashback-card">
+                            <div class="plan-name">Cashback</div>
+                            <p>Total Cashback Earned: <span id="totalCashback" runat="server">0</span></p>
+                        </div>
+                        <div class="plan-card premium-plan" id="exclusive-offers-card">
+                            <div class="plan-name">Exclusive Offers</div>
+                            <p>Total Offers Redeemed: <span id="totalOffers" runat="server">0</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Number of Benefit Types with Pie Chart -->
+                <div id="secondCards" runat="server" style="display: none;">
+                    <div class="section">
+                        <div class="cardBox2">
+                            <!-- Card -->
+                            <div class="card">
+                                <div class="cardName">Number of Benefit Types</div>
+                                <div class="numbers" id="benefitsTypeCount" runat="server">6</div>
+                            </div>
+                            <!-- Pie Chart -->
+                            <div class="chart-container">
+                                <canvas id="benefit-types-chart" width="400" height="400"></canvas>
+                                <script src="script.js"></script>     
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Section 3: Total Benefits Offered with Pie Chart -->
+                <div id="thirdCards" runat="server" style="display: none;">
+                    <div class="section">
+                        <div class="cardBox2">
+                            <div class="card">
+                                <div class="cardName">Total Benefits Offered</div>
+                                <div class="numbers" id="totalBenefits" runat="server">0</div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="benefits-status-chart" width="400" height="400"></canvas>
+                                <script src="script.js"></script>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+ 
+
+
 
                 <div id="DateContainer1" runat="server" class="date-picker-container" style="display: none;">
                     <label id="DateLabel1" runat="server" for="DateInput1" class="date-picker-label">Start Date:</label>
@@ -1154,17 +1366,23 @@
                     <asp:Label ID="LabelOut" runat="server" CssClass="output-label" Text=""></asp:Label>
                 </div>
 
-                <!-- Data Table -->
+                <!-- Data Tables -->
                 <div class="table-responsive">
                     <table>
-                        <tbody id="TableBody" runat="server"></tbody>
+                        <tbody id="TableBody1" runat="server"></tbody>
                     </table>
                 </div>
-
-                <button id="backButton" runat="server" onserverclick="BackButton_Click" class="top-right-button" />
+                <div class="table-responsive">
+                    <table>
+                        <tbody id="TableBody2" runat="server" style="display: none;"></tbody>
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <tbody id="TableBody3" runat="server" style="display: none;"></tbody>
+                    </table>
+                </div>
             </div>
-
-
         </div>
     </form>
 </body> 

@@ -1,22 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Web.Configuration;
+using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Windows.Forms;
+using Newtonsoft.Json;
 
 
 namespace Telecom_Customer_Application
 {
     public partial class AdminDashboard : System.Web.UI.Page
     {
-
-        public int CustomerCount { get; set; }
-        public int PaymentCount { get; set; }
-        public int TransferCount { get; set; }
-        public int ServicePlanCount { get; set; }
 
         private string connectionString = WebConfigurationManager.ConnectionStrings["TelecomDatabaseConnection"].ToString();
 
@@ -66,7 +66,12 @@ namespace Telecom_Customer_Application
             try
             {
                 string query = "allCustomerAccounts";
-                ExecuteQueryWithHandling(query);
+                ExecuteQueryWithHandling(query, TableBody1);
+
+                int CustomerCount;
+                int PaymentCount;
+                int TransferCount;
+                int ServicePlanCount;
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -112,7 +117,7 @@ namespace Telecom_Customer_Application
 
             string query = "Account_Plan";
 
-            ExecuteQueryWithHandling(query);
+            ExecuteQueryWithHandling(query, TableBody1);
 
             SetActiveTab("subscriptionsTab");
 
@@ -123,7 +128,7 @@ namespace Telecom_Customer_Application
 
             string query = "SELECT * FROM PhysicalStoreVouchers";
 
-            ExecuteQueryWithHandling(query);
+            ExecuteQueryWithHandling(query, TableBody1);
 
             SetActiveTab("physicalShopsTab");
         }
@@ -133,7 +138,7 @@ namespace Telecom_Customer_Application
 
             string query = "SELECT * FROM E_shopVouchers";
 
-            ExecuteQueryWithHandling(query);
+            ExecuteQueryWithHandling(query, TableBody1);
 
             SetActiveTab("E_shopsTab");
         }
@@ -143,7 +148,7 @@ namespace Telecom_Customer_Application
 
             string query = "SELECT * FROM allTickets ORDER BY CASE Ticket_Status WHEN 'Open' THEN 1 WHEN 'In Progress' THEN 2 ELSE 3 END, priority_level DESC;";
 
-            ExecuteQueryWithHandling(query);
+            ExecuteQueryWithHandling(query, TableBody1);
 
             SetActiveTab("ticketsTab");
         }
@@ -163,36 +168,154 @@ namespace Telecom_Customer_Application
         {
             DisplayContent("benefitsTab");
 
-            SetActiveTab("benefitsTab");
+            try
+            {
+                int TotalPoints;
+                int TotalCashback;
+                int TotalOffers;
+                int TotalBenefits;
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_Benefits", con))
+                    {
+                        TotalBenefits = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("SELECT SUM(points_earned) FROM Customer_Points", con))
+                    {
+                        TotalPoints = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("SELECT SUM(amount_earned) FROM Customer_Cashback", con))
+                    {
+                        TotalCashback = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_Exclusive_Offers", con))
+                    {
+                        TotalOffers = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
+
+                string query1 = "GetCustomersWithBenefits";
+                ExecuteQueryWithHandling(query1, TableBody1);
+
+                string query2 = "GetCustomersWithNoBenefits";
+                ExecuteQueryWithHandling(query2, TableBody2);
+
+                string query3 = "GetBenefitsExpiringSoon";
+                ExecuteQueryWithHandling(query3, TableBody3);
+
+                // Fetch data for the pie chart
+                DataTable benefitTypesData = GetBenefitTypesData();
+                string benefitTypesJson = JsonConvert.SerializeObject(benefitTypesData);
+
+                // Pass the JSON data to the front end
+                ScriptManager.RegisterStartupScript(this, GetType(), "benefitTypesData", $"var benefitTypesData = {benefitTypesJson};", true);
+
+                // Fetch data for the pie chart (active and expired benefits)
+                Dictionary<string, int> benefitsStatus = GetActiveAndExpiredBenefits();
+                string benefitsStatusJson = JsonConvert.SerializeObject(benefitsStatus);
+
+                // Pass the JSON data to the front end
+                ScriptManager.RegisterStartupScript(this, GetType(), "benefitsStatusData", $"var benefitsStatusData = {benefitsStatusJson};", true);
+
+                totalPoints.InnerText = TotalPoints.ToString();
+                totalCashback.InnerText = TotalCashback.ToString();
+                totalOffers.InnerText = TotalOffers.ToString();
+                totalBenefits.InnerText = TotalBenefits.ToString();
+
+                SetActiveTab("benefitsTab");
+            }
+            catch (Exception ex)
+            {
+                DisplayAlert(ex);
+            }
         }
-        protected void LoadCashback(object sender, EventArgs e)
+
+        protected DataTable GetBenefitTypesData()
         {
-            DisplayContent("CashbackTab");
+            DataTable dataTable = new DataTable();
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "calculateBenefitsTypePercentages";
 
-            string query = "SELECT * FROM Num_of_cashback";
-
-            ExecuteQueryWithHandling(query);
-
-            SetActiveTab("CashbackTab");
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                        {
+                            adapter.Fill(dataTable);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DisplayAlert(ex);
+                }
+            }
+            return dataTable;
         }
-        protected void LoadCashbackAmount(object sender, EventArgs e)
+        protected Dictionary<string, int> GetActiveAndExpiredBenefits()
         {
-            DisplayContent("CashbackAmountTab");
+            Dictionary<string, int> benefitsStatus = new Dictionary<string, int>();
 
-            SetActiveTab("CashbackAmountTab");
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_Benefits WHERE status = 'active'", con))
+                    {
+                        int activeCount = Convert.ToInt32(cmd.ExecuteScalar());
+                        benefitsStatus.Add("Active", activeCount);
+                    }
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_Benefits WHERE status = 'expired'", con))
+                    {
+                        int expiredCount = Convert.ToInt32(cmd.ExecuteScalar());
+                        benefitsStatus.Add("Expired", expiredCount);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DisplayAlert(ex);
+                }
+            }
+            return benefitsStatus;
         }
-        protected void LoadOffers(object sender, EventArgs e)
-        {
-            DisplayContent("offersTab");
+        //protected void LoadCashback(object sender, EventArgs e)
+        //{
+        //    DisplayContent("CashbackTab");
 
-            SetActiveTab("offersTab");
-        }
-        protected void LoadPoints(object sender, EventArgs e)
-        {
-            DisplayContent("PointsTab");
+        //    string query = "SELECT * FROM Num_of_cashback";
 
-            SetActiveTab("PointsTab");
-        }
+        //    ExecuteQueryWithHandling(query);
+
+        //    SetActiveTab("CashbackTab");
+        //}
+        //protected void LoadCashbackAmount(object sender, EventArgs e)
+        //{
+        //    DisplayContent("CashbackAmountTab");
+
+        //    SetActiveTab("CashbackAmountTab");
+        //}
+        //protected void LoadOffers(object sender, EventArgs e)
+        //{
+        //    DisplayContent("offersTab");
+
+        //    SetActiveTab("offersTab");
+        //}
+        //protected void LoadPoints(object sender, EventArgs e)
+        //{
+        //    DisplayContent("PointsTab");
+
+        //    SetActiveTab("PointsTab");
+        //}
         protected void LoadAccountUsage(object sender, EventArgs e)
         {
             DisplayContent("accountUsageTab");
@@ -205,7 +328,7 @@ namespace Telecom_Customer_Application
 
             string query = "SELECT * FROM CustomerWallet";
 
-            ExecuteQueryWithHandling(query);
+            ExecuteQueryWithHandling(query, TableBody1);
 
             SetActiveTab("walletsTab");
         }
@@ -215,7 +338,7 @@ namespace Telecom_Customer_Application
 
             string query = "SELECT * FROM AccountPayments ORDER BY CASE Payment_Status WHEN 'Successful' THEN 1 WHEN 'Pending' THEN 2 ELSE 3 END, date_of_payment DESC;";
 
-            ExecuteQueryWithHandling(query);
+            ExecuteQueryWithHandling(query, TableBody1);
 
             SetActiveTab("PaymentsTab");
         }
@@ -244,8 +367,7 @@ namespace Telecom_Customer_Application
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@PlanID", SqlDbType.Int) { Value = int.Parse(planId) });
-                    LoadData(cmd);
-
+                    LoadData(cmd, TableBody1);
                 }
             }
             catch (Exception ex)
@@ -298,12 +420,12 @@ namespace Telecom_Customer_Application
                             DeleteButton.Style["display"] = "block";
                             break;
 
-                        case "offersTab":
-                            cmd = new SqlCommand("SELECT * FROM dbo.Account_SMS_Offers(@mobile_num)", con);
-                            mobileNo = MobileEditText.Text;
-                            checkValidMobileNum(mobileNo);
-                            cmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = mobileNo });
-                            break;
+                        //case "offersTab":
+                        //    cmd = new SqlCommand("SELECT * FROM dbo.Account_SMS_Offers(@mobile_num)", con);
+                        //    mobileNo = MobileEditText.Text;
+                        //    checkValidMobileNum(mobileNo);
+                        //    cmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = mobileNo });
+                        //    break;
 
                         case "TransactionsTab":
                             cmd = new SqlCommand("Account_Payment_Points", con);
@@ -313,15 +435,15 @@ namespace Telecom_Customer_Application
                             cmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11)).Value = mobileNo;
                             break;
 
-                        case "CashbackAmountTab":
-                            cmd = new SqlCommand("SELECT dbo.Wallet_Cashback_Amount(@walletID, @planID)", con);
-                            walletId = WalletEditText.Text;
-                            checkValidWalletID(walletId);
-                            planId = PlanIDEditText.Text;
-                            checkValidPlanID(planId);
-                            cmd.Parameters.Add(new SqlParameter("@walletID", walletId)); ;
-                            cmd.Parameters.Add(new SqlParameter("@planID", planId));
-                            break;
+                        //case "CashbackAmountTab":
+                        //    cmd = new SqlCommand("SELECT dbo.Wallet_Cashback_Amount(@walletID, @planID)", con);
+                        //    walletId = WalletEditText.Text;
+                        //    checkValidWalletID(walletId);
+                        //    planId = PlanIDEditText.Text;
+                        //    checkValidPlanID(planId);
+                        //    cmd.Parameters.Add(new SqlParameter("@walletID", walletId)); ;
+                        //    cmd.Parameters.Add(new SqlParameter("@planID", planId));
+                        //    break;
 
                         case "AverageTransactionsTab":
                             cmd = new SqlCommand("SELECT dbo.Wallet_Transfer_Amount(@walletID, @start_date, @end_date)", con);
@@ -332,23 +454,23 @@ namespace Telecom_Customer_Application
                             cmd.Parameters.Add(new SqlParameter("@end_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput2.Text) });
                             break;
 
-                        case "PointsTab":
+                        //case "PointsTab":
 
-                            cmd = new SqlCommand("Total_Points_Account", con);
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            mobileNo = MobileEditText.Text;
-                            checkValidMobileNum(mobileNo);
-                            cmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11)).Value = mobileNo;
+                        //    cmd = new SqlCommand("Total_Points_Account", con);
+                        //    cmd.CommandType = CommandType.StoredProcedure;
+                        //    mobileNo = MobileEditText.Text;
+                        //    checkValidMobileNum(mobileNo);
+                        //    cmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11)).Value = mobileNo;
 
-                            // sub command - fetching from database
-                            SqlCommand sumCommand = new SqlCommand("SELECT c.points FROM customer_account c WHERE c.mobileNo = @mobileNo", con);
-                            sumCommand.Parameters.Add(new SqlParameter("@mobileNo", SqlDbType.Char, 11)).Value = mobileNo;
-                            con.Open();
-                            object result = sumCommand.ExecuteScalar();
-                            updatedPoints = result != DBNull.Value ? Convert.ToInt32(result) : 0;
-                            con.Close();
+                        //    // sub command - fetching from database
+                        //    SqlCommand sumCommand = new SqlCommand("SELECT c.points FROM customer_account c WHERE c.mobileNo = @mobileNo", con);
+                        //    sumCommand.Parameters.Add(new SqlParameter("@mobileNo", SqlDbType.Char, 11)).Value = mobileNo;
+                        //    con.Open();
+                        //    object result = sumCommand.ExecuteScalar();
+                        //    updatedPoints = result != DBNull.Value ? Convert.ToInt32(result) : 0;
+                        //    con.Close();
 
-                            break;
+                        //    break;
 
                         default:
                             return;
@@ -361,7 +483,7 @@ namespace Telecom_Customer_Application
                     else if (currentTab == "PointsTab") // output is label but 2 consecutive commands
                         LoadLabelPointsTab(cmd, updatedPoints);
                     else
-                        LoadData(cmd); // output is data
+                        LoadData(cmd, TableBody1); // output is data
 
                 }
                 catch (Exception ex)
@@ -408,7 +530,7 @@ namespace Telecom_Customer_Application
                         displayCmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = MobileEditText.Text });
                         displayCmd.Parameters.Add(new SqlParameter("@plan_id", SqlDbType.Int) { Value = int.Parse(PlanIDEditText.Text) });
 
-                        LoadData(displayCmd);
+                        LoadData(displayCmd, TableBody1);
                     }
                 }
                 catch (Exception ex)
@@ -558,15 +680,32 @@ namespace Telecom_Customer_Application
                 PlanCardsContainer.Style["display"] = "block";
             else
                 PlanCardsContainer.Style["display"] = "none";
+
+            if (currentTab == "benefitsTab")
+            {
+                mainCards.Style["display"] = "block";
+                secondCards.Style["display"] = "block";
+                thirdCards.Style["display"] = "block";
+                TableBody2.Style["display"] = "block";
+                TableBody3.Style["display"] = "block";
+            }
+            else
+            {
+                mainCards.Style["display"] = "none";
+                secondCards.Style["display"] = "none";
+                thirdCards.Style["display"] = "none";
+                TableBody2.Style["display"] = "none";
+                TableBody3.Style["display"] = "none";
+            }
         }
 
-        protected void LoadData(SqlCommand cmd)
+        protected void LoadData(SqlCommand cmd, HtmlGenericControl tableBody)
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
 
                 // Clear any existing content
-                TableBody.Controls.Clear();
+                tableBody.Controls.Clear();
 
                 if (reader.HasRows)
                 {
@@ -598,7 +737,7 @@ namespace Telecom_Customer_Application
                         }
 
                     }
-                    TableBody.Controls.Add(row);
+                    tableBody.Controls.Add(row);
 
                     // Generate rows dynamically
                     while (reader.Read())
@@ -703,7 +842,7 @@ namespace Telecom_Customer_Application
                                 row.Cells.Add(cell);
                             }
                         }
-                        TableBody.Controls.Add(row);
+                        tableBody.Controls.Add(row);
                     }
 
                 }
@@ -723,7 +862,7 @@ namespace Telecom_Customer_Application
                     cell.Style.Add("border", "1px solid #f5c6cb");
                     cell.Style.Add("border-radius", "5px");
                     row.Cells.Add(cell);
-                    TableBody.Controls.Add(row);
+                    tableBody.Controls.Add(row);
                     DeleteButton.Style["display"] = "none";
                 }
             }
@@ -749,7 +888,6 @@ namespace Telecom_Customer_Application
                 }
 
             }
-            //handle other cases
             else
             {
                 throw new Exception("No cashback available for this wallet and plan combination.");
@@ -849,7 +987,7 @@ namespace Telecom_Customer_Application
 
         }
 
-        protected void ExecuteQueryWithHandling(string query)
+        protected void ExecuteQueryWithHandling(string query, HtmlGenericControl tableBody)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -858,7 +996,7 @@ namespace Telecom_Customer_Application
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         con.Open();
-                        LoadData(cmd);
+                        LoadData(cmd, tableBody);
                     }
                 }
                 catch (Exception ex)
@@ -873,12 +1011,6 @@ namespace Telecom_Customer_Application
                     }
                 }
             }
-        }
-
-        protected void BackButton_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("AdminLogin.aspx");
-
         }
     }
 }

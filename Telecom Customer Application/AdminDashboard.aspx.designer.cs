@@ -23,7 +23,7 @@ namespace Telecom_Customer_Application
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
-        protected global::System.Web.UI.WebControls.Table TableBody;
+        protected global::System.Web.UI.WebControls.Table tableBody;
 
         protected global::System.Web.UI.HtmlControls.HtmlAnchor customersTab;
         protected global::System.Web.UI.HtmlControls.HtmlAnchor subscriptionsTab;

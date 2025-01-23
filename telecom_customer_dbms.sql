@@ -1014,21 +1014,15 @@ CREATE PROCEDURE Benefits_Plan
     @SMS_offered INT OUTPUT
 AS
 BEGIN
-
-    SELECT @points_earned = ISNULL(SUM(PG.amount), 0)
+    SELECT 
+        @points_earned = COALESCE(SUM(PG.amount), 0),
+        @cashback_percentage = COALESCE(SUM(C.percentage), 0),
+        @data_offered = COALESCE(SUM(EO.internet_offered), 0),
+        @minutes_offered = COALESCE(SUM(EO.minutes_offered), 0),
+        @SMS_offered = COALESCE(SUM(EO.SMS_offered), 0)
     FROM Plan_Provides_Benefits pp
     INNER JOIN Points_Group PG ON PG.benefitID = pp.benefitID
-    WHERE pp.planID = @plan_id
-        
-    SELECT @cashback_percentage = ISNULL(SUM(C.percentage), 0)
-    FROM Plan_Provides_Benefits pp
     INNER JOIN Cashback C ON C.benefitID = pp.benefitID
-    WHERE pp.planID = @plan_id;
-
-    SELECT @data_offered = ISNULL(SUM(EO.internet_offered), 0),
-           @minutes_offered = ISNULL(SUM(EO.minutes_offered), 0),
-           @SMS_offered = ISNULL(SUM(EO.SMS_offered), 0)    
-    FROM Plan_Provides_Benefits pp
     INNER JOIN Exclusive_Offer EO ON EO.benefitID = pp.benefitID
     WHERE pp.planID = @plan_id;
    
@@ -1557,6 +1551,83 @@ BEGIN
     ORDER BY 
         s.subscription_date DESC;
 END
+
+Go
+CREATE PROCEDURE calculateBenefitsTypePercentages
+AS
+BEGIN
+    SELECT 
+        b.benefitID,
+        COUNT(s.mobileNo) AS SubscriptionCount,
+        CAST(COUNT(s.mobileNo) * 100.0 / SUM(COUNT(s.mobileNo)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM Subscription s
+    INNER JOIN Plan_Provides_Benefits ppb ON s.planID = ppb.planID
+    INNER JOIN Benefits b ON ppb.benefitID = b.benefitID
+    GROUP BY b.benefitID
+    ORDER BY SubscriptionCount DESC;
+END;
+
+GO
+CREATE PROCEDURE GetBenefitsExpiringSoon
+AS
+BEGIN
+    SELECT B.benefitID, P.first_name, P.last_name, B.mobileNo, B.expiry_date
+    FROM Customer_Benefits B
+    INNER JOIN Customer_Account A
+    ON A.mobileNo = B.mobileNo
+    INNER JOIN Customer_profile P
+    ON P.nationalID = A.nationalID
+    WHERE B.status = 'active'
+    AND B.expiry_date BETWEEN GETDATE() AND DATEADD(DAY, 7, GETDATE());
+END;
+
+GO
+CREATE PROCEDURE GetCustomersWithNoActiveBenefits
+AS
+BEGIN
+    SELECT P.first_name, P.last_name, A.nationalID, A.mobileNo, A.account_type, A.status
+    FROM Customer_Account A
+    INNER JOIN Customer_profile P
+    ON P.nationalID = A.nationalID
+    WHERE NOT EXISTS(
+                        SELECT 1
+                        FROM Customer_Benefits B
+                        WHERE B.status = 'active' AND A.mobileNo = B.mobileNo
+                    )
+END;
+
+GO
+CREATE PROCEDURE GetCustomersWithBenefits
+AS
+BEGIN
+SELECT 
+    cp.nationalID,
+    cp.first_name,
+    cp.last_name,
+    ca.mobileNo,
+    SUM(COALESCE(cc.amount_earned, 0)) AS awarded_cashback,
+    SUM(COALESCE(cpnt.points_earned, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
+    SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_sent, 0)) AS remaining_SMS,
+    SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_consumption, 0)) AS remaining_data,
+    SUM(COALESCE(ceo.minutes_offered, 0)) - SUM(COALESCE(bu.minutes_used, 0)) AS remaining_minutes
+FROM 
+    Customer_profile cp
+    INNER JOIN Customer_Account ca 
+    ON cp.nationalID = ca.nationalID
+    INNER JOIN Customer_Benefits cb 
+    ON ca.mobileNo = cb.mobileNo
+    INNER JOIN Customer_Cashback cc 
+    ON cb.benefitID = cc.benefitID
+    INNER JOIN Customer_Points cpnt 
+    ON cb.benefitID = cpnt.benefitID
+    INNER JOIN Customer_Exclusive_Offers ceo 
+    ON cb.benefitID = ceo.benefitID
+    INNER JOIN Benefit_Usage bu 
+    ON cb.benefitID = bu.benefitID
+    WHERE cb.status = 'active'
+    GROUP BY cp.nationalID, cp.first_name, cp.last_name, ca.mobileNo;
+
+END;
 
 GO
 CREATE PROCEDURE InitializeSystem
