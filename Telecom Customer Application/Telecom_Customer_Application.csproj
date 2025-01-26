@@ -77,20 +77,102 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AdminDashboard.aspx" />
+    <Content Include="AdminDashboard\AccountUsagePage.aspx" />
+    <Content Include="AdminDashboard\BenefitsPage.aspx" />
+    <Content Include="AdminDashboard\CustomersPage.aspx" />
+    <Content Include="AdminDashboard\PaymentsPage.aspx" />
+    <Content Include="AdminDashboard\PlansPage.aspx" />
+    <Content Include="AdminDashboard\ShopsPage.aspx" />
+    <Content Include="AdminDashboard\SubscriptionsPage.aspx" />
+    <Content Include="AdminDashboard\TicketsPage.aspx" />
+    <Content Include="AdminDashboard\TransactionsPage.aspx" />
+    <Content Include="AdminDashboard\WalletsPage.aspx" />
+    <Content Include="Controls\Sidebar.ascx" />
     <Content Include="CustomerDashboard.aspx" />
     <Content Include="CustomerLogin.aspx" />
     <Content Include="AdminLogin.aspx" />
+    <Content Include="Scripts\AdminDashboard.js" />
+    <Content Include="Styles\AdminDashboard.css" />
     <Content Include="Web.config" />
     <Content Include="WelcomePage.aspx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminDashboard.aspx.cs">
-      <DependentUpon>AdminDashboard.aspx</DependentUpon>
+    <Compile Include="AdminDashboard\AccountUsagePage.aspx.cs">
+      <DependentUpon>AccountUsagePage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="AdminDashboard.aspx.designer.cs">
-      <DependentUpon>AdminDashboard.aspx</DependentUpon>
+    <Compile Include="AdminDashboard\AccountUsagePage.aspx.designer.cs">
+      <DependentUpon>AccountUsagePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\BenefitsPage.aspx.cs">
+      <DependentUpon>BenefitsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\BenefitsPage.aspx.designer.cs">
+      <DependentUpon>BenefitsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\CustomersPage.aspx.cs">
+      <DependentUpon>CustomersPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\CustomersPage.aspx.designer.cs">
+      <DependentUpon>CustomersPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\PaymentsPage.aspx.cs">
+      <DependentUpon>PaymentsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\PaymentsPage.aspx.designer.cs">
+      <DependentUpon>PaymentsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\PlansPage.aspx.cs">
+      <DependentUpon>PlansPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\PlansPage.aspx.designer.cs">
+      <DependentUpon>PlansPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\ShopsPage.aspx.cs">
+      <DependentUpon>ShopsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\ShopsPage.aspx.designer.cs">
+      <DependentUpon>ShopsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\SubscriptionsPage.aspx.cs">
+      <DependentUpon>SubscriptionsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\SubscriptionsPage.aspx.designer.cs">
+      <DependentUpon>SubscriptionsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\TicketsPage.aspx.cs">
+      <DependentUpon>TicketsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\TicketsPage.aspx.designer.cs">
+      <DependentUpon>TicketsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\TransactionsPage.aspx.cs">
+      <DependentUpon>TransactionsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\TransactionsPage.aspx.designer.cs">
+      <DependentUpon>TransactionsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\WalletsPage.aspx.cs">
+      <DependentUpon>WalletsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\WalletsPage.aspx.designer.cs">
+      <DependentUpon>WalletsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Sidebar.ascx.cs">
+      <DependentUpon>Sidebar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Sidebar.ascx.designer.cs">
+      <DependentUpon>Sidebar.ascx</DependentUpon>
     </Compile>
     <Compile Include="CustomerDashboard.aspx.cs">
       <DependentUpon>CustomerDashboard.aspx</DependentUpon>
