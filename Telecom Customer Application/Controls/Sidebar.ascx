@@ -1,6 +1,6 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="Sidebar.ascx.cs" Inherits="Telecom_Customer_Application.Sidebar" %>
-<link href="<%= ResolveUrl("~/Styles/AdminDashboard.css") %>" rel="stylesheet"/>
-<script src="<%= ResolveUrl("~/Scripts/AdminDashboard.js") %>" type="text/javascript"></script>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="Sidebar.ascx.cs" Inherits="Controls.Sidebar" %>
+ <script src="../Scripts/AdminDashboard.js"></script> 
+ <link href="../Styles/AdminDashboard.css" rel="stylesheet"/>
 
  <!-- Sidebar -->
 <div class="sidebar">

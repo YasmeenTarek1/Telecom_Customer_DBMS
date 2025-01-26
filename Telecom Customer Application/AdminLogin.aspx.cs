@@ -1,5 +1,4 @@
-﻿using Microsoft.SqlServer.Server;
-using System;
+﻿using System;
 using System.Web.UI.WebControls;
 
 namespace Telecom_Customer_Application
@@ -27,7 +26,7 @@ namespace Telecom_Customer_Application
                 if (enteredID == AdminID && enteredPassword == AdminPassword)
                 {
                     // Go to the Dashboard
-                    Response.Redirect("AdminDashboard.aspx");
+                    Response.Redirect("AdminDashboard/CustomersPage.aspx");
                 }
                 else
                 {

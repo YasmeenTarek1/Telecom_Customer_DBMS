@@ -43,16 +43,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FastReport.Compat, Version=2025.1.11.0, Culture=neutral, PublicKeyToken=5ceb240df42bf6e8, processorArchitecture=MSIL">
-      <HintPath>..\packages\FastReport.Compat.2025.1.11\lib\net462\FastReport.Compat.dll</HintPath>
-    </Reference>
-    <Reference Include="FastReport.DataVisualization, Version=2025.1.11.0, Culture=neutral, PublicKeyToken=5ceb240df42bf6e8, processorArchitecture=MSIL">
-      <HintPath>..\packages\FastReport.DataVisualization.2025.1.11\lib\net462\FastReport.DataVisualization.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -167,6 +159,7 @@
     <Compile Include="AdminDashboard\WalletsPage.aspx.designer.cs">
       <DependentUpon>WalletsPage.aspx</DependentUpon>
     </Compile>
+    <Content Include="App_Code\PageUtilities.cs" />
     <Compile Include="Controls\Sidebar.ascx.cs">
       <DependentUpon>Sidebar.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -213,6 +206,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

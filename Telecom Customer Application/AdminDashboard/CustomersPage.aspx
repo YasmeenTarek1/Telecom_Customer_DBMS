@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="CustomersPage.aspx.cs" Inherits="Telecom_Customer_Application.AdminDashboard.CustomersPage" %>
-<%@ Register Src="~/Controls/Sidebar.ascx" TagName="Sidebar" TagPrefix="uc" %>
+<%@ Register Src="../Controls/Sidebar.ascx" TagName="Sidebar" TagPrefix="uc" %>
 
 <!DOCTYPE html>
 <html lang="en">

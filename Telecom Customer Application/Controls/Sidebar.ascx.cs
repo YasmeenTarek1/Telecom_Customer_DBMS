@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Web.UI;
 using System.Web.UI.HtmlControls;
 
-namespace Telecom_Customer_Application
+namespace Controls
 {
     public partial class Sidebar : System.Web.UI.UserControl
     {

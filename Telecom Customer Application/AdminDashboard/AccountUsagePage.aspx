@@ -6,7 +6,7 @@
 <head runat="server">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>Account Usage Page</title>
     <script src="../Scripts/AdminDashboard.js"></script> 
     <link href="../Styles/AdminDashboard.css" rel="stylesheet"/>
 </head>

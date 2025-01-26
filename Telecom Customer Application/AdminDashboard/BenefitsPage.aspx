@@ -45,7 +45,7 @@
                            <!-- Card -->
                            <div class="card">
                                <div class="cardName">Number of Benefit Types</div>
-                               <div class="numbers" id="benefitsTypeCount" runat="server">6</div>
+                               <div class="numbers" id="benefitsTypeCount" runat="server">6 </div>
                            </div>
                            <!-- Pie Chart -->
                            <div class="chart-container">
