@@ -37,15 +37,9 @@
         <i class="fa-solid fa-ticket sidebar-icon"></i>Tickets
     </a>
 
-    <div>
-        <a href="javascript:void(0);" id="plansTab" runat="server" onclick="toggleDropdown(this, '<%= hdnPlansDropdownState.ClientID %>')">
-            <i class="fa-solid fa-globe sidebar-icon"></i>Plans<i class="fa-solid fa-chevron-down sidebar-icon2"></i>
-        </a>
-        <div class="dropdown-content">
-            <a href="~/AdminDashboard/PlansPage.aspx?subtab=info" id="PlanInfoTab" runat="server">Plans Information</a>
-            <a href="~/AdminDashboard/PlansPage.aspx?subtab=sinceDate" id="PlanSinceDateTab" runat="server">Subscribers Since a Date</a>
-        </div>
-    </div>
+    <a href="~/AdminDashboard/PlansPage.aspx" id="PlanInfoTab" runat="server">
+       <i class="fa-solid fa-globe sidebar-icon"></i>Plans
+    </a>
 
     <a href="~/AdminDashboard/BenefitsPage.aspx" id="benefitsTab" runat="server">
         <i class="fa-solid fa-gift sidebar-icon"></i>Benefits

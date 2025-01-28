@@ -220,3 +220,6 @@ function fetchSubscriptionData() {
 document.addEventListener('DOMContentLoaded', function () {
     fetchSubscriptionData(); // Fetch the chart data when the page loads
 });
+function triggerPostback(planId) {
+    __doPostBack('PlanClicked', planId);  // Triggers the postback with the correct event args
+}

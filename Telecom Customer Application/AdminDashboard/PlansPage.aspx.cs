@@ -9,7 +9,19 @@ namespace Telecom_Customer_Application.AdminDashboard
 {
     public partial class PlansPage : System.Web.UI.Page
     {
-        int SelectedPlan;
+        private  int SelectedPlan
+        {
+            get
+            {
+                return ViewState["SelectedPlan"] != null ? (int)ViewState["SelectedPlan"] : 0;
+            }
+            set
+            {
+                ViewState["SelectedPlan"] = value;
+            }
+        }
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
             string eventTarget = Request.Form["__EVENTTARGET"];
@@ -17,7 +29,10 @@ namespace Telecom_Customer_Application.AdminDashboard
 
             if (eventTarget == "PlanClicked")
             {
-                Subscribers_for_plan(eventArgument);
+                // eventArgument will contain the plan ID sent from the client
+                int planId = int.Parse(eventArgument);
+                SelectedPlan = planId;  // Update SelectedPlan based on clicked plan ID
+                Subscribers_for_plan(eventArgument);  // Fetch subscribers for the selected plan
             }
 
             if (!IsPostBack)
@@ -26,76 +41,18 @@ namespace Telecom_Customer_Application.AdminDashboard
 
                 if (!string.IsNullOrEmpty(subtab))
                 {
-                    switch (subtab.ToLower())
-                    {
-                        case "info":
-                            LoadPlansInfo(sender, e);
-                            break;
-
-                        case "sinceDate":
-                            LoadPlansSinceDate(sender, e);
-                            break;
-                    }
+                    LoadPlansInfo(sender, e);
                 }
             }
         }
+
         protected void LoadPlansInfo(object sender, EventArgs e)
         {
             TabHeading.InnerText = "Plans Info";
 
-            DateContainer1.Style["display"] = "none";
-            DateInput1.Text = "";
-
-            TextBoxContainer1.Style["display"] = "none";
-            PlanIDEditText.Text = "";
-
-            SearchButton.Style["display"] = "none";
-
             PlanCardsContainer.Style["display"] = "block";
         }
-        protected void LoadPlansSinceDate(object sender, EventArgs e)
-        {
-            TabHeading.InnerText = "Plans Since Date";
-
-            DateContainer1.Style["display"] = "block";
-            DateInput1.Text = "";
-
-            TextBoxContainer1.Style["display"] = "block";
-            PlanIDEditText.Text = "";
-
-            SearchButton.Style["display"] = "block";
-
-            PlanCardsContainer.Style["display"] = "none";
-        }
-        protected void SearchButton_Click(object sender, EventArgs e)
-        {
-
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-            {
-                SqlCommand cmd = null;
-
-                try
-                {
-                    string planId = "";
-
-                    cmd = new SqlCommand("SELECT * FROM dbo.Account_Plan_date(@sub_date, @plan_id)", con);
-                    planId = PlanIDEditText.Text;
-                    PageUtilities.checkValidPlanID(planId);
-                    cmd.Parameters.Add(new SqlParameter("@plan_id", SqlDbType.Int) { Value = int.Parse(planId) });
-                    cmd.Parameters.Add(new SqlParameter("@sub_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput1.Text) });
-
-                    con.Open();
-
-                    PageUtilities.LoadData(cmd, TableBody);
-
-                }
-                catch (Exception ex)
-                {
-                    PageUtilities.DisplayAlert(ex, form1);
-                    SearchButton.Style["display"] = "none";
-                }
-            }
-        }
+       
 
         protected void BasicPlanLink_Click(object sender, EventArgs e)
         {

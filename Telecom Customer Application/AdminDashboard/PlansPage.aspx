@@ -18,28 +18,10 @@
 
             <div id="sharedContent" class="tab-content active-tab">
 
-                <h3 id="TabHeading" runat="server" class="tab-heading">Plans Since Date</h3>
+                <h3 id="TabHeading" runat="server" class="tab-heading">Plans Information</h3>
 
-                <!-- Filter Options Container -->
-                <div id="FilterContainer" runat="server" class="filter-container">
-                    <div class="filter-option">
-                        <label for="SubscriptionDateFilter" class="filter-label">Subscription Since:</label>
-                        <asp:TextBox ID="SubscriptionDateFilter" runat="server" CssClass="filter-input" TextMode="Date"></asp:TextBox>
-                    </div>
-                    <div class="filter-option">
-                        <label for="SubscriptionStatusFilter" class="filter-label">Subscription Status:</label>
-                        <asp:DropDownList ID="SubscriptionStatusFilter" runat="server" CssClass="filter-dropdown">
-                            <asp:ListItem Text="All" Value="All" Selected="True"></asp:ListItem>
-                            <asp:ListItem Text="active" Value="active"></asp:ListItem>
-                            <asp:ListItem Text="onhold" Value="onhold"></asp:ListItem>
-                        </asp:DropDownList>
-                    </div>
-                    <div class="filter-option">
-                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="filter-button" Text="Apply Filters" OnClick="ApplyFilterButton_Click" />
-                    </div>
-                </div>
 
-                <div id="PlanCardsContainer" runat="server" style="display: none;">
+                <div id="PlanCardsContainer" runat="server" style="display: block;">
                     <div class="PlanCardsContainer">
                         <!-- Basic Plan Card -->
                         <div class="plan-card basic-plan" runat="server" onclick="triggerPostback('1')">
@@ -79,17 +61,22 @@
                     </div>
                 </div>
 
-                <div id="DateContainer1" runat="server" class="date-picker-container">
-                     <label id="DateLabel1" runat="server" for="DateInput1" class="date-picker-label">Start Date:</label>
-                     <asp:TextBox ID="DateInput1" runat="server" CssClass="date-picker" TextMode="Date"></asp:TextBox>
-                 </div>
-                <div id="TextBoxContainer1" runat="server" class="input-container">
-                    <label for="PlanIDEditText" class="input-label">Plan ID:</label>
-                    <asp:TextBox ID="PlanIDEditText" runat="server" CssClass="styled-input" placeholder="Enter Plan ID"></asp:TextBox>
-                </div>
-
-                <div class="button-container">
-                    <asp:Button ID="SearchButton" runat="server" CssClass="styled-button" Text="Search" OnClick="SearchButton_Click" />
+                <div id="FilterContainer" runat="server" class="filter-container">
+                    <div class="filter-option">
+                        <label for="SubscriptionDateFilter" class="filter-label">Subscription Since:</label>
+                        <asp:TextBox ID="SubscriptionDateFilter" runat="server" CssClass="filter-input" TextMode="Date"></asp:TextBox>
+                    </div>
+                    <div class="filter-option">
+                        <label for="SubscriptionStatusFilter" class="filter-label">Subscription Status:</label>
+                        <asp:DropDownList ID="SubscriptionStatusFilter" runat="server" CssClass="filter-dropdown">
+                            <asp:ListItem Text="All" Value="All" Selected="True"></asp:ListItem>
+                            <asp:ListItem Text="active" Value="active"></asp:ListItem>
+                            <asp:ListItem Text="onhold" Value="onhold"></asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                    <div class="filter-option">
+                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="filter-button" Text="Apply Filters" OnClick="ApplyFilterButton_Click" />
+                    </div>
                 </div>
 
                 <div class="table-responsive">

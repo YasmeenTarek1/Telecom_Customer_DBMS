@@ -1536,21 +1536,31 @@ CREATE PROCEDURE GetSubscribersForPlan
     @PlanID INT
 AS
 BEGIN
-    SELECT 
-        c.nationalID, 
-        c.first_name + ' ' + c.last_name AS CustomerName, 
-        s.subscription_date
-    FROM 
-        Subscription s
-    INNER JOIN 
-        Customer_Account ca ON s.mobileNo = ca.mobileNo
-    INNER JOIN 
-        Customer_profile c ON ca.nationalID = c.nationalID
-    WHERE 
-        s.planID = @PlanID
-    ORDER BY 
-        s.subscription_date DESC;
-END
+     SELECT 
+         C.nationalID,
+         C.first_name,
+         C.last_name,
+         C.email,
+         C.address,
+         C.date_of_birth,
+         CA.mobileNo,
+         CA.account_type,
+         CA.start_date,
+         CA.status,
+         CA.balance,
+         SP.planID,
+         SP.name AS PlanName,
+         S.subscription_date,
+         S.status AS SubscriptionStatus
+     FROM Customer_Profile C
+     INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
+     INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
+     INNER JOIN Service_Plan SP ON S.planID = SP.planID
+     WHERE 
+         S.planID = @PlanID
+     ORDER BY 
+         S.subscription_date DESC;
+ END
 
 Go
 CREATE PROCEDURE calculateBenefitsTypePercentages
