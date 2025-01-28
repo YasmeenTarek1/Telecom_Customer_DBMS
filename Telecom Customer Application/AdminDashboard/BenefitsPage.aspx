@@ -20,23 +20,33 @@
 
                 <h3 id="TabHeading" class="tab-heading">Benefits</h3>
 
-               <!-- Section 1: Three Cards for Points, Cashback, and Exclusive Offers -->
-               <div id="mainCards" runat="server">
-                   <div class="PlanCardsContainer">
-                       <div class="plan-card basic-plan" id="points-card">
-                           <div class="plan-name">Points</div>
-                           <p>Total Points Earned: <span id="totalPoints" runat="server">0</span></p>
-                       </div>
-                       <div class="plan-card standard-plan" id="cashback-card">
-                           <div class="plan-name">Cashback</div>
-                           <p>Total Cashback Earned: <span id="totalCashback" runat="server">0</span></p>
-                       </div>
-                       <div class="plan-card premium-plan" id="exclusive-offers-card">
-                           <div class="plan-name">Exclusive Offers</div>
-                           <p>Total Offers Redeemed: <span id="totalOffers" runat="server">0</span></p>
-                       </div>
-                   </div>
-               </div>
+                <!-- Section 1: Three Cards for Points, Cashback, and Exclusive Offers -->
+                    <div class="PlanCardsContainer" runat="server" >
+                        <!-- Points Card -->
+                        <div class="plan-card basic-plan" id="points-card" style="margin-top:20px;">
+                            <i class="fas fa-trophy"></i>
+                            <div class="plan-name">Points</div>
+                            <p style="color: white;">Total Points Earned: <span id="totalPoints" runat="server">0</span></p>
+                        </div>
+
+                        <!-- Cashback Card -->
+                        <div class="plan-card standard-plan" id="cashback-card" style="margin-top:20px;">
+                            <i class="fas fa-wallet"></i>
+                            <div class="plan-name">Cashback</div>
+                            <p style="color: white;">Total Cashback Earned: <span id="totalCashback" runat="server">0</span></p>
+                        </div>
+
+                        <!-- Exclusive Offers Card -->
+                        <div class="plan-card premium-plan" id="exclusive-offers-card" style="margin-top:20px;">
+                            <i class="fas fa-gift"></i>
+                            <div class="plan-name">Exclusive Offers</div>
+                            <p style="color: white;">Total Offers Redeemed: <span id="totalOffers" runat="server">0</span></p>
+                        </div>
+
+                    </div>
+
+
+
 
 
                 <div class="table-responsive">

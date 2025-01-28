@@ -46,7 +46,7 @@ namespace Telecom_Customer_Application.AdminDashboard
                 string query1 = "GetCustomersWithBenefits";
                 PageUtilities.ExecuteQueryWithHandling(query1, TableBody1, form1);
 
-                string query2 = "GetCustomersWithNoBenefits";
+                string query2 = "GetCustomersWithNoActiveBenefits";
                 PageUtilities.ExecuteQueryWithHandling(query2, TableBody2, form1);
 
                 string query3 = "GetBenefitsExpiringSoon";
