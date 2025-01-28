@@ -3,11 +3,13 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Collections.Generic;
 using System.Web.Services;
+using System.Web.UI.WebControls;
 
 namespace Telecom_Customer_Application.AdminDashboard
 {
     public partial class PlansPage : System.Web.UI.Page
     {
+        int SelectedPlan;
         protected void Page_Load(object sender, EventArgs e)
         {
             string eventTarget = Request.Form["__EVENTTARGET"];
@@ -98,21 +100,25 @@ namespace Telecom_Customer_Application.AdminDashboard
         protected void BasicPlanLink_Click(object sender, EventArgs e)
         {
             Subscribers_for_plan("1");
+            SelectedPlan = 1;
         }
 
         protected void StandardPlanLink_Click(object sender, EventArgs e)
         {
             Subscribers_for_plan("2");
+            SelectedPlan = 2;
         }
 
         protected void PremiumPlanLink_Click(object sender, EventArgs e)
         {
             Subscribers_for_plan("3");
+            SelectedPlan = 3;
         }
 
         protected void UnlimitedPlanLink_Click(object sender, EventArgs e)
         {
             Subscribers_for_plan("4");
+            SelectedPlan = 4;
         }
 
         private void Subscribers_for_plan(string planId)
@@ -161,5 +167,34 @@ namespace Telecom_Customer_Application.AdminDashboard
 
             return statistics;
         }
+        protected void ApplyFilterButton_Click(object sender, EventArgs e)
+        {
+            DateTime subscriptionDate;
+            DateTime.TryParse(SubscriptionDateFilter.Text, out subscriptionDate);
+
+            string subscriptionStatus = SubscriptionStatusFilter.SelectedValue;
+
+            using (SqlConnection connection = new SqlConnection(PageUtilities.connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("GetSubscriptions", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add(new SqlParameter("@FilterDate", SqlDbType.Date) { Value = subscriptionDate });
+                    cmd.Parameters.AddWithValue("@SubscriptionStatus", subscriptionStatus);
+                    cmd.Parameters.AddWithValue("@SelectedPlan", SelectedPlan);
+
+                    // Load the data into the target UI element
+                    PageUtilities.LoadData(cmd, TableBody);
+                }
+                catch (Exception ex)
+                {
+                    PageUtilities.DisplayAlert(ex, form1);
+                }
+            }
+        }
+
     }
 }

@@ -20,6 +20,25 @@
 
                 <h3 id="TabHeading" runat="server" class="tab-heading">Plans Since Date</h3>
 
+                <!-- Filter Options Container -->
+                <div id="FilterContainer" runat="server" class="filter-container">
+                    <div class="filter-option">
+                        <label for="SubscriptionDateFilter" class="filter-label">Subscription Since:</label>
+                        <asp:TextBox ID="SubscriptionDateFilter" runat="server" CssClass="filter-input" TextMode="Date"></asp:TextBox>
+                    </div>
+                    <div class="filter-option">
+                        <label for="SubscriptionStatusFilter" class="filter-label">Subscription Status:</label>
+                        <asp:DropDownList ID="SubscriptionStatusFilter" runat="server" CssClass="filter-dropdown">
+                            <asp:ListItem Text="All" Value="All" Selected="True"></asp:ListItem>
+                            <asp:ListItem Text="active" Value="active"></asp:ListItem>
+                            <asp:ListItem Text="onhold" Value="onhold"></asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                    <div class="filter-option">
+                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="filter-button" Text="Apply Filters" OnClick="ApplyFilterButton_Click" />
+                    </div>
+                </div>
+
                 <div id="PlanCardsContainer" runat="server" style="display: none;">
                     <div class="PlanCardsContainer">
                         <!-- Basic Plan Card -->

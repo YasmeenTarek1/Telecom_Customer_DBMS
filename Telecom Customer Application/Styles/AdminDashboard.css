@@ -949,8 +949,42 @@ table tr:hover {
         text-align: center;
     }
 
-.chart-container {
-    width: 100%; /* Ensure the container takes up the full width */
-    height: 300px; /* Set a fixed height for the chart */
-    position: relative; /* Required for responsive behavior */
-}
+    .chart-container {
+        width: 100%; /* Ensure the container takes up the full width */
+        height: 300px; /* Set a fixed height for the chart */
+        position: relative; /* Required for responsive behavior */
+    }
+
+    .filter-container {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #fff;
+    }
+
+    .filter-option {
+        margin-bottom: 10px;
+    }
+
+    .filter-label {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .filter-input, .filter-dropdown {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .filter-button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .filter-button:hover {
+        background-color: #0056b3;
+    }

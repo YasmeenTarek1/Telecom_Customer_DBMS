@@ -1644,6 +1644,71 @@ BEGIN
         SP.name;
 END
 
+drop procedure GetSubscriptions
+GO
+CREATE PROCEDURE GetSubscriptions(
+    @FilterDate DATE,
+    @SubscriptionStatus VARCHAR(50),
+    @SelectedPlan INT
+)
+AS
+BEGIN
+   IF @SubscriptionStatus = 'All'
+    BEGIN
+        SELECT 
+            C.nationalID,
+            C.first_name,
+            C.last_name,
+            C.email,
+            C.address,
+            C.date_of_birth,
+            CA.mobileNo,
+            CA.account_type,
+            CA.start_date,
+            CA.status,
+            CA.balance,
+            SP.planID,
+            SP.name AS PlanName,
+            S.subscription_date,
+            S.status AS SubscriptionStatus
+        FROM Customer_Profile C
+        INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
+        INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
+        INNER JOIN Service_Plan SP ON S.planID = SP.planID
+        WHERE S.subscription_date >= @FilterDate
+          AND (SP.planID = @SelectedPlan);
+    END
+    ELSE
+    BEGIN
+        SELECT 
+            C.nationalID,
+            C.first_name,
+            C.last_name,
+            C.email,
+            C.address,
+            C.date_of_birth,
+            CA.mobileNo,
+            CA.account_type,
+            CA.start_date,
+            CA.status,
+            CA.balance,
+            SP.planID,
+            SP.name AS PlanName,
+            S.subscription_date,
+            S.status AS SubscriptionStatus
+        FROM Customer_Profile C
+        INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
+        INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
+        INNER JOIN Service_Plan SP ON S.planID = SP.planID
+        WHERE S.subscription_date >= @FilterDate
+          AND S.status = @SubscriptionStatus
+          AND (SP.planID = @SelectedPlan);
+    END
+END;
+
+
+
+
 GO
 CREATE PROCEDURE InitializeSystem
 AS
