@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Benefits Page</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1"></script>
     <script src="../Scripts/AdminDashboard.js"></script> 
     <link href="../Styles/AdminDashboard.css" rel="stylesheet"/>
 </head>
@@ -38,38 +38,6 @@
                    </div>
                </div>
 
-               <!-- Section 2: Number of Benefit Types with Pie Chart -->
-               <div id="secondCards" runat="server">
-                   <div class="section">
-                       <div class="cardBox2">
-                           <!-- Card -->
-                           <div class="card">
-                               <div class="cardName">Number of Benefit Types</div>
-                               <div class="numbers" id="benefitsTypeCount" runat="server">6 </div>
-                           </div>
-                           <!-- Pie Chart -->
-                           <div class="chart-container">
-                               <canvas id="benefit-types-chart" width="400" height="400"></canvas>
-                           </div>
-                       </div>
-                   </div>
-               </div>
-
-
-               <!-- Section 3: Total Benefits Offered with Pie Chart -->
-               <div id="thirdCards" runat="server">
-                   <div class="section">
-                       <div class="cardBox2">
-                           <div class="card">
-                               <div class="cardName">Total Benefits Offered</div>
-                               <div class="numbers" id="totalBenefits" runat="server">0</div>
-                           </div>
-                           <div class="chart-container">
-                               <canvas id="benefits-status-chart" width="400" height="400"></canvas>
-                           </div>
-                       </div>
-                   </div>
-               </div>
 
                 <div class="table-responsive">
                     <table>
@@ -87,6 +55,45 @@
                     </table>
                 </div>
 
+            </div>
+            <div id="rightSidePanel" class="right-side-panel" style="right: -300px;">
+                <!-- Hidden by default -->
+                <button id="togglePanelButton" class="toggle-panel-button" type="button" onclick="togglePanel()">
+                    <i class="fas fa-chart-pie"></i>
+                </button>
+                <div id="panelContent" class="panel-content">
+                    <!-- Section 2: Number of Benefit Types with Pie Chart -->
+                    <div id="secondCards" runat="server">
+                        <div class="section">
+                            <div class="cardBox2">
+                                <!-- Card -->
+                                <div class="card">
+                                    <div class="cardName">Number of Benefit Types</div>
+                                    <div class="numbers" id="benefitsTypeCount" runat="server">6</div>
+                                </div>
+                                <!-- Pie Chart -->
+                                <div class="chart-container">
+                                    <canvas id="benefit-types-chart" width="400" height="400"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Total Benefits Offered with Pie Chart -->
+                    <div id="thirdCards" runat="server">
+                        <div class="section">
+                            <div class="cardBox2">
+                                <div class="card">
+                                    <div class="cardName">Total Benefits Offered</div>
+                                    <div class="numbers" id="totalBenefits" runat="server">0</div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="benefits-status-chart" width="400" height="400"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </form>

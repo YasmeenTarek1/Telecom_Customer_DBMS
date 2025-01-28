@@ -1630,6 +1630,21 @@ FROM
 END;
 
 GO
+CREATE PROCEDURE GetSubscriptionStatistics
+AS
+BEGIN
+    SELECT 
+        SP.name AS PlanName, 
+        COUNT(S.planID) AS SubscriptionCount
+    FROM 
+        Service_Plan SP
+    LEFT JOIN 
+        Subscription S ON SP.planID = S.planID
+    GROUP BY 
+        SP.name;
+END
+
+GO
 CREATE PROCEDURE InitializeSystem
 AS
 BEGIN

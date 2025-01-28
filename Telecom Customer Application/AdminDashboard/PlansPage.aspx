@@ -7,6 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Plan Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1"></script>
     <script src="../Scripts/AdminDashboard.js"></script> 
     <link href="../Styles/AdminDashboard.css" rel="stylesheet"/>
 </head>
@@ -78,6 +79,19 @@
                     </table>
                 </div>
             </div>
+            <div id="rightSidePanel" class="right-side-panel" style="right: -300px;">
+                <!-- Hidden by default -->
+                <button id="togglePanelButton" class="toggle-panel-button" type="button" onclick="togglePanel()">
+                    <i class="fas fa-chart-pie"></i>
+                </button>
+                <div id="panelContent" class="panel-content">
+                    <h3>Subscription Statistics</h3>
+                    <div class="chart-container">
+                        <canvas id="subscriptionPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </form>
 </body>

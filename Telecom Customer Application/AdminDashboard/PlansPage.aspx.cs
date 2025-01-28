@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Data;
+using System.Collections.Generic;
+using System.Web.Services;
 
 namespace Telecom_Customer_Application.AdminDashboard
 {
@@ -132,6 +134,32 @@ namespace Telecom_Customer_Application.AdminDashboard
             {
                 PageUtilities.DisplayAlert(ex, form1);
             }
+        }
+        [WebMethod]
+        public static Dictionary<string, int> GetSubscriptionStatistics()
+        {
+            var statistics = new Dictionary<string, int>();
+            string procedureName = "GetSubscriptionStatistics";
+
+            using (SqlConnection connection = new SqlConnection(PageUtilities.connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(procedureName, connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string planName = reader["PlanName"].ToString();
+                            int subscriptionCount = Convert.ToInt32(reader["SubscriptionCount"]);
+                            statistics[planName] = subscriptionCount;
+                        }
+                    }
+                }
+            }
+
+            return statistics;
         }
     }
 }

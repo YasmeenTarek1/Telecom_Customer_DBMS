@@ -65,7 +65,6 @@ document.querySelectorAll('.dropdown-content').forEach(dropdown => {
         event.stopPropagation(); // Stop the click event from bubbling up to the parent
     });
 });
-
 // Initialize the benefit types chart
 document.addEventListener("DOMContentLoaded", function () {
     if (typeof benefitTypesData !== 'undefined') {
@@ -75,59 +74,33 @@ document.addEventListener("DOMContentLoaded", function () {
         var labels = benefitTypesData.map(item => item.benefitID); // Use benefitID as labels
         var data = benefitTypesData.map(item => item.Percentage); // Use Percentage as data
 
+        // If the chart already exists, update its data
+        if (myPieChart) {
+            myPieChart.data.labels = labels;
+            myPieChart.data.datasets[0].data = data;
+            myPieChart.update(); // Update the chart
+            return;
+        }
+
+        // If the chart doesn't exist, create it
         var myPieChart = new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: labels,
                 datasets: [{
                     data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
+                    backgroundColor: ['#36A2EB', '#4BC0C0', '#FFCE56', '#FF6384', '#9966FF', '#FF9F40'], // Same color scheme as second chart 
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Benefit Type Percentages'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += context.raw + '%'; // Display percentage in tooltip
-                                return label;
-                            }
-                        }
-                    }
-                }
             }
         });
     }
 });
+
+
 
 // Initialize the benefits status chart
 document.addEventListener("DOMContentLoaded", function () {
@@ -145,14 +118,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 datasets: [{
                     data: data,
                     backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)', // Green for Active
-                        'rgba(255, 99, 132, 0.6)'  // Red for Expired
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)', // Green for Active
-                        'rgba(255, 99, 132, 1)'  // Red for Expired
-                    ],
-                    borderWidth: 1
+                        '#4BC0C0',//Green
+                        'rgb(234, 37, 26)'//Red
+                    ]
                 }]
             },
             options: {
@@ -182,4 +150,73 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+}); 
+
+let subscriptionPieChart; // Global variable to store the chart instance
+
+function togglePanel() {
+    const panel = document.getElementById('rightSidePanel');
+    panel.classList.toggle('open');
+
+    // Fetch and update chart data when the panel is opened
+    if (panel.classList.contains('open')) {
+        fetchSubscriptionData();
+    }
+}
+
+function initializeChart(data) {
+    const ctx = document.getElementById('subscriptionPieChart').getContext('2d');
+
+    // If the chart already exists, update its data
+    if (subscriptionPieChart) {
+        subscriptionPieChart.data.labels = Object.keys(data);
+        subscriptionPieChart.data.datasets[0].data = Object.values(data);
+        subscriptionPieChart.update(); // Update the chart
+        return;
+    }
+
+    // If the chart doesn't exist, create it
+    subscriptionPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{
+                data: Object.values(data),
+                backgroundColor: ['#36A2EB', '#4BC0C0', '#FFCE56', '#FF6384'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+    });
+}
+
+function fetchSubscriptionData() {
+    fetch('PlansPage.aspx/GetSubscriptionStatistics', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.d) {
+                initializeChart(data.d); // Initialize or update the chart with dynamic data
+            } else {
+                console.error('API response does not contain data.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching subscription data:', error);
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetchSubscriptionData(); // Fetch the chart data when the page loads
 });
