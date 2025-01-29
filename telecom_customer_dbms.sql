@@ -1545,8 +1545,9 @@ BEGIN
         c.first_name,
         c.last_name, 
         s.mobileNo,
+        ca.account_type,
         s.subscription_date,
-        s.status
+        s.status AS 'Subscription Status'
     FROM 
         Subscription s
     INNER JOIN 
