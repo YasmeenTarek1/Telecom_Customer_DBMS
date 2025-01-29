@@ -16,12 +16,11 @@
         <div class="container" runat="server">
             <uc:Sidebar runat="server" />
 
-            <div id="sharedContent" class="tab-content active-tab">
+            <div id="sharedContent" class="tab-content">
 
-                <h3 id="TabHeading" runat="server" class="tab-heading">Plans Information</h3>
+                <h3 id="TabHeading" class="tab-heading">Plans</h3>
 
-
-                <div id="PlanCardsContainer" runat="server" style="display: block;">
+                <div id="PlanCardsContainer" runat="server">
                     <div class="PlanCardsContainer">
                         <!-- Basic Plan Card -->
                         <div class="plan-card basic-plan" runat="server" onclick="triggerPostback('1')">
@@ -62,11 +61,11 @@
                 </div>
 
                 <div id="FilterContainer" runat="server" class="filter-container">
-                    <div class="filter-option">
+                    <div id="filterOption1" runat="server" style="display: none;">
                         <label for="SubscriptionDateFilter" class="filter-label">Subscription Since:</label>
                         <asp:TextBox ID="SubscriptionDateFilter" runat="server" CssClass="filter-input" TextMode="Date"></asp:TextBox>
                     </div>
-                    <div class="filter-option">
+                    <div id="filterOption2" runat="server" style="display: none;">
                         <label for="SubscriptionStatusFilter" class="filter-label">Subscription Status:</label>
                         <asp:DropDownList ID="SubscriptionStatusFilter" runat="server" CssClass="filter-dropdown">
                             <asp:ListItem Text="All" Value="All" Selected="True"></asp:ListItem>
@@ -74,8 +73,8 @@
                             <asp:ListItem Text="onhold" Value="onhold"></asp:ListItem>
                         </asp:DropDownList>
                     </div>
-                    <div class="filter-option">
-                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="filter-button" Text="Apply Filters" OnClick="ApplyFilterButton_Click" />
+                    <div id="filterOption3" runat="server" style="display: none;">
+                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="styled-button" Text="Apply" OnClick="ApplyFilterButton_Click" Style="font-size: 12px;" />
                     </div>
                 </div>
 
@@ -85,19 +84,6 @@
                     </table>
                 </div>
             </div>
-            <div id="rightSidePanel" class="right-side-panel" style="right: -300px;">
-                <!-- Hidden by default -->
-                <button id="togglePanelButton" class="toggle-panel-button" type="button" onclick="togglePanel()">
-                    <i class="fas fa-chart-pie"></i>
-                </button>
-                <div id="panelContent" class="panel-content">
-                    <h3>Subscription Statistics</h3>
-                    <div class="chart-container">
-                        <canvas id="subscriptionPieChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </form>
 </body>

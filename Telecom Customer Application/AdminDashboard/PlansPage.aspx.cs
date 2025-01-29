@@ -35,24 +35,7 @@ namespace Telecom_Customer_Application.AdminDashboard
                 Subscribers_for_plan(eventArgument);  // Fetch subscribers for the selected plan
             }
 
-            if (!IsPostBack)
-            {
-                string subtab = Request.QueryString["subtab"];
-
-                if (!string.IsNullOrEmpty(subtab))
-                {
-                    LoadPlansInfo(sender, e);
-                }
-            }
         }
-
-        protected void LoadPlansInfo(object sender, EventArgs e)
-        {
-            TabHeading.InnerText = "Plans Info";
-
-            PlanCardsContainer.Style["display"] = "block";
-        }
-       
 
         protected void BasicPlanLink_Click(object sender, EventArgs e)
         {
@@ -91,6 +74,9 @@ namespace Telecom_Customer_Application.AdminDashboard
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@PlanID", SqlDbType.Int) { Value = int.Parse(planId) });
                     PageUtilities.LoadData(cmd, TableBody);
+                    filterOption1.Style["display"] = "block";
+                    filterOption2.Style["display"] = "block";
+                    filterOption3.Style["display"] = "block";
                 }
             }
             catch (Exception ex)
@@ -98,32 +84,7 @@ namespace Telecom_Customer_Application.AdminDashboard
                 PageUtilities.DisplayAlert(ex, form1);
             }
         }
-        [WebMethod]
-        public static Dictionary<string, int> GetSubscriptionStatistics()
-        {
-            var statistics = new Dictionary<string, int>();
-            string procedureName = "GetSubscriptionStatistics";
 
-            using (SqlConnection connection = new SqlConnection(PageUtilities.connectionString))
-            {
-                using (SqlCommand command = new SqlCommand(procedureName, connection))
-                {
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    connection.Open();
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            string planName = reader["PlanName"].ToString();
-                            int subscriptionCount = Convert.ToInt32(reader["SubscriptionCount"]);
-                            statistics[planName] = subscriptionCount;
-                        }
-                    }
-                }
-            }
-
-            return statistics;
-        }
         protected void ApplyFilterButton_Click(object sender, EventArgs e)
         {
             DateTime subscriptionDate;
@@ -141,7 +102,7 @@ namespace Telecom_Customer_Application.AdminDashboard
 
                     cmd.Parameters.Add(new SqlParameter("@FilterDate", SqlDbType.Date) { Value = subscriptionDate });
                     cmd.Parameters.AddWithValue("@SubscriptionStatus", subscriptionStatus);
-                    cmd.Parameters.AddWithValue("@SelectedPlan", SelectedPlan);
+                    cmd.Parameters.AddWithValue("@SelectedPlan", SelectedPlan+1);
 
                     // Load the data into the target UI element
                     PageUtilities.LoadData(cmd, TableBody);
@@ -152,6 +113,5 @@ namespace Telecom_Customer_Application.AdminDashboard
                 }
             }
         }
-
     }
 }

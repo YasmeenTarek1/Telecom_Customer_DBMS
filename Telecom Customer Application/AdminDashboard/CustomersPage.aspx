@@ -15,7 +15,7 @@
         <div class="container" runat="server">
             <uc:Sidebar runat="server" />
 
-            <div id="sharedContent" class="tab-content active-tab">
+            <div id="sharedContent" class="tab-content">
 
                 <h3 id="TabHeading" class="tab-heading">Dashboard</h3>
 
@@ -60,12 +60,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="table-responsive">
-                <table>
-                    <tbody id="TableBody" runat="server"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <tbody id="TableBody" runat="server"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </form>

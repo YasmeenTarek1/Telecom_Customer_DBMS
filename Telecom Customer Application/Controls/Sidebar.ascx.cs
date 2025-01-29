@@ -29,12 +29,7 @@ namespace Controls
                 if (subtab == "eshop") return "E_shopsTab";
             }
             if (currentPage.Contains("TicketsPage.aspx")) return "ticketsTab";
-            if (currentPage.Contains("PlansPage.aspx"))
-            {
-                string subtab = Request.QueryString["subtab"];
-                if (subtab == "sinceDate") return "PlanSinceDateTab";
-                if (subtab == "info") return "PlanInfoTab";
-            }
+            if (currentPage.Contains("PlansPage.aspx")) return "PlanInfoTab";
             if (currentPage.Contains("BenefitsPage.aspx")) return "benefitsTab";
             if (currentPage.Contains("AccountUsagePage.aspx")) return "accountUsageTab";
             if (currentPage.Contains("WalletsPage.aspx")) return "walletsTab";
@@ -53,9 +48,8 @@ namespace Controls
         {
             string[] allTabs = {
                 "customersTab", "subscriptionsTab", "physicalShopsTab", "ticketsTab",
-                "PlanSinceDateTab","PlanInfoTab", "accountUsageTab", "benefitsTab", "offersTab",
-                "walletsTab","E_shopsTab","PaymentsTab","CashbackTab","TransactionsTab",
-                "CashbackAmountTab","AverageTransactionsTab", "PointsTab"
+                "PlanInfoTab", "accountUsageTab", "benefitsTab", "walletsTab",
+                "E_shopsTab","PaymentsTab","TransactionsTab","AverageTransactionsTab"
             };
 
             // Loop through each tab and toggle the "active" class

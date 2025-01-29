@@ -502,18 +502,22 @@ BEGIN
     END CATCH;
 END;
 
-
 GO
 CREATE PROCEDURE allCustomerAccounts
 AS
 BEGIN
     EXEC Handle_Expired_Points;
     SELECT 
-        p.*,
+        p.nationalID,
+        p.first_name,
+        p.last_name,
+        p.email,
+        p.address,
+        CAST(p.date_of_birth AS CHAR(10)) AS date_of_birth,
         a.mobileNo,
         a.account_type,
         a.status AS 'Account_Status',
-        a.start_date,
+        CAST(a.start_date AS CHAR(10)) AS start_date,
         a.balance,
         a.points,
         dbo.Wallet_MobileNo(a.mobileNo) AS 'Has Wallet'
@@ -521,7 +525,7 @@ BEGIN
     INNER JOIN Customer_Account a 
     ON p.nationalID = a.nationalID
     ORDER BY Account_Status;
-ENd;
+END;
 
 
 
@@ -1536,31 +1540,24 @@ CREATE PROCEDURE GetSubscribersForPlan
     @PlanID INT
 AS
 BEGIN
-     SELECT 
-         C.nationalID,
-         C.first_name,
-         C.last_name,
-         C.email,
-         C.address,
-         C.date_of_birth,
-         CA.mobileNo,
-         CA.account_type,
-         CA.start_date,
-         CA.status,
-         CA.balance,
-         SP.planID,
-         SP.name AS PlanName,
-         S.subscription_date,
-         S.status AS SubscriptionStatus
-     FROM Customer_Profile C
-     INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
-     INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
-     INNER JOIN Service_Plan SP ON S.planID = SP.planID
-     WHERE 
-         S.planID = @PlanID
-     ORDER BY 
-         S.subscription_date DESC;
- END
+    SELECT 
+        c.nationalID, 
+        c.first_name,
+        c.last_name, 
+        s.mobileNo,
+        s.subscription_date,
+        s.status
+    FROM 
+        Subscription s
+    INNER JOIN 
+        Customer_Account ca ON s.mobileNo = ca.mobileNo
+    INNER JOIN 
+        Customer_profile c ON ca.nationalID = c.nationalID
+    WHERE 
+        s.planID = @PlanID
+    ORDER BY 
+        s.subscription_date DESC;
+END
 
 Go
 CREATE PROCEDURE calculateBenefitsTypePercentages
@@ -1654,7 +1651,6 @@ BEGIN
         SP.name;
 END
 
-drop procedure GetSubscriptions
 GO
 CREATE PROCEDURE GetSubscriptions(
     @FilterDate DATE,

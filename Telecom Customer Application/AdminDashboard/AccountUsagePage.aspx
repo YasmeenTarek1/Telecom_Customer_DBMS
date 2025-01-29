@@ -15,7 +15,7 @@
         <div class="container" runat="server">
             <uc:Sidebar runat="server" />
 
-            <div id="sharedContent" class="tab-content active-tab">
+            <div id="sharedContent" class="tab-content">
 
                  <h3 id="TabHeading" class="tab-heading">Account Usage</h3>
                  <div id="DateContainer" runat="server" class="date-picker-container">

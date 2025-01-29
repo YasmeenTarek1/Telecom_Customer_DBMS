@@ -1,6 +1,5 @@
 ﻿/* General Body and Layout */
 body {
-    margin: 0 25px 30px 0;
     font-family: 'Arial', sans-serif;
     background-color: #f5f5f5;
     color: #333;
@@ -27,45 +26,46 @@ body {
     background: #555;
 }
 
-/* Container with Flexbox Layout */
+/* Content Area */
 .container {
     display: flex;
     flex-direction: row;
-    height: 100vh;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Sidebar Styling */
+/* Sidebar */
 .sidebar {
     position: fixed;
-    width: 260px;
+    width: 275px;
     height: 100%;
-    background-color: #2a3d56;
+    background-color: #03184c;
     color: #f5f5f5;
     display: flex;
     flex-direction: column;
     transition: width 0.3s ease-in-out;
     overflow-y: auto;
     overflow-x: hidden;
-    margin-right: 20px;
     top: 0;
     left: 0;
 }
 
-    .sidebar:hover {
-        width: 280px;
-    }
+.sidebar:hover {
+    width: 295px;
+}
 
-    /* Sidebar Header */
-    .sidebar h4 {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        margin-top: -52px;
-        margin-bottom: 50px;
-        margin-left: 63px;
-    }
+/* Sidebar Header */
+.sidebar h4 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: -52px;
+    margin-bottom: 50px;
+    margin-left: 63px;
+}
 
-/* Style for the image inside the header */
+/* Sidebar Header Image  */
 .sidebar-header-img {
     width: 70px;
     height: auto;
@@ -86,43 +86,43 @@ body {
     position: relative;
 }
 
-    .sidebar a:hover,
-    .sidebar a.active {
-        background-color: #f5f5f5;
-        border-top-left-radius: 30px;
-        border-bottom-left-radius: 30px;
-        color: #2a3d56;
-    }
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #f5f5f5;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    color: #03184c;
+}
 
-        .sidebar a:hover::before,
-        .sidebar a.active::before {
-            content: "";
-            position: absolute;
-            right: -4px;
-            top: -35px;
-            width: 35px;
-            height: 35px;
-            background-color: transparent;
-            border-radius: 50%;
-            box-shadow: 25px 25px 0 6px #f5f5f5;
-            pointer-events: none;
-            z-index: 1;
-        }
+.sidebar a:hover::before,
+.sidebar a.active::before {
+    content: "";
+    position: absolute;
+    right: -4px;
+    top: -35px;
+    width: 35px;
+    height: 35px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 25px 25px 0 6px #f5f5f5;
+    pointer-events: none;
+    z-index: 1;
+}
 
-        .sidebar a:hover::after,
-        .sidebar a.active::after {
-            content: "";
-            position: absolute;
-            right: -4px;
-            bottom: -35px;
-            width: 35px;
-            height: 35px;
-            background-color: transparent;
-            border-radius: 50%;
-            box-shadow: 25px -25px 0 6px #f5f5f5;
-            pointer-events: none;
-            z-index: 1;
-        }
+.sidebar a:hover::after,
+.sidebar a.active::after {
+    content: "";
+    position: absolute;
+    right: -4px;
+    bottom: -35px;
+    width: 35px;
+    height: 35px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 25px -25px 0 6px #f5f5f5;
+    pointer-events: none;
+    z-index: 1;
+}
 
 /* Styling the icons (Font Awesome) */
 .sidebar-icon {
@@ -151,9 +151,9 @@ body {
     border: 2px solid #1f3a4d;
 }
 
-    .sidebar::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(45deg, #2a4c65, #1c3b4d);
-    }
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #2a4c65, #1c3b4d);
+}
 
 .sidebar::-webkit-scrollbar-track {
     background-color: #1f3a4d;
@@ -171,31 +171,9 @@ body {
     margin-left: 30px;
 }
 
-    .dropdown-content a {
-        padding: 10px 15px;
-        font-size: 14px;
-    }
-
-/* Content Area */
-.content {
-    width: 80%;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #ffffff;
-    overflow-y: auto;
-    overflow-x: auto;
-    transition: width 0.3s ease;
-}
-
-.container:hover .content {
-    width: 75%;
-}
-
-.content h3 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #343a40;
-    font-weight: 700;
+.dropdown-content a {
+    padding: 10px 15px;
+    font-size: 14px;
 }
 
 .filters button,
@@ -210,104 +188,104 @@ body {
     transition: background-color 0.3s ease;
 }
 
-    .filters button:hover,
-    .actions button:hover {
-        background-color: #e0e0e0;
-    }
+.filters button:hover,
+.actions button:hover {
+    background-color: #e0e0e0;
+}
 
-    .filters button:focus,
-    .actions button:focus {
-        outline: none;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    }
+.filters button:focus,
+.actions button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
 
 /* Cards Styling */
 .cardBox {
     position: relative;
-    width: 95%;
+    width: 100%;
     padding: 20px;
     display: grid;
-    margin-left: 25px;
-    margin-top: 20px;
+    margin: 15px -15px 0 -15px;
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 30px;
 }
 
-    .cardBox .card {
-        position: relative;
-        background: #f5f5f5;
-        padding: 30px;
-        border-radius: 20px;
-        display: flex;
-        justify-content: space-between;
-        cursor: pointer;
-        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
-    }
+.cardBox .card {
+    position: relative;
+    background: #f5f5f5;
+    padding: 30px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+}
 
-        .cardBox .card .numbers {
-            position: relative;
-            font-weight: 500;
-            font-size: 2.5rem;
-            color: #2a3d56;
-        }
+.cardBox .card .numbers {
+    position: relative;
+    font-weight: 500;
+    font-size: 2.5rem;
+    color: #03184c;
+}
 
-        .cardBox .card .cardName {
-            color: #9b9b9b;
-            font-size: 1.1rem;
-            margin-top: 5px;
-        }
+.cardBox .card .cardName {
+    color: #9b9b9b;
+    font-size: 1.1rem;
+    margin-top: 5px;
+}
 
-        .cardBox .card .iconBx {
-            font-size: 3.5rem;
-            color: #007bff;
-            margin-right: 20px;
-        }
+.cardBox .card .iconBx {
+    font-size: 3.5rem;
+    color: #007bff;
+    margin-right: 20px;
+}
 
-        .cardBox .card:hover {
-            background: #2a3d56;
-        }
+.cardBox .card:hover {
+    background: #03184c;
+}
 
-            .cardBox .card:hover .numbers,
-            .cardBox .card:hover .cardName,
-            .cardBox .card:hover .iconBx {
-                color: #f5f5f5;
-            }
+.cardBox .card:hover .numbers,
+.cardBox .card:hover .cardName,
+.cardBox .card:hover .iconBx {
+    color: #f5f5f5;
+}
 /*
-            #9b9b9b --> grey
-            #2a3d56 --> dark blue
-            #007bff --> baby blue
-            #f5f5f5 --> white
-        */
+    #9b9b9b --> grey
+    #03184c --> dark blue
+    #007bff --> baby blue
+    #f5f5f5 --> white
+*/
 
 /* Table Styling */
 table {
+    width: 100%;
     border-collapse: collapse;
-    margin: 20px 0 0 15px;
     font-size: 16px;
     text-align: center;
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    margin: 20px 0 30px 0;
 }
 
-    table th {
-        padding: 12px;
-        border: 1px solid #ddd;
-        color: #333;
-        font-weight: bold;
-        background-color: #e9f3ff;
-        color: #0056b3;
-        border: 1px solid #cce5ff;
-    }
+table th {
+    padding: 12px;
+    border: 1px solid #ddd;
+    color: #333;
+    font-weight: bold;
+    background-color: #e9f3ff;
+    color: #0056b3;
+    border: 1px solid #cce5ff;
+}
 
-    table td {
-        padding: 10px;
-        border: 1px solid #ddd;
-        color: #333;
-    }
+table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    color: #333;
+}
 
 .table-responsive {
     max-height: 100%;
@@ -316,6 +294,29 @@ table {
     box-shadow: none;
     position: relative;
     padding: 3px;
+}
+
+table caption {
+    font-size: 24px; 
+    font-weight: 600;
+    color: #333; 
+    text-align: left; 
+    padding: 12px 20px; 
+    background-color: #f4f8fb; 
+    border-top: 3px solid #0056b3;
+    border-bottom: 1px solid #e0e0e0; 
+    margin-bottom: 10px; 
+    letter-spacing: 1px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table tr:nth-child(odd) {
+    background-color: #f9fbff;
+}
+
+table tr:hover {
+    background-color: #e2edff;
+    transition: background-color 0.3s ease;
 }
 
 /* Status badges */
@@ -349,7 +350,7 @@ table {
     text-align: center;
 }
 
-/* Style for the initials circle */
+/* initials circle */
 .initials-circle {
     width: 40px;
     height: 40px;
@@ -362,61 +363,29 @@ table {
     font-weight: bold;
     font-size: 14px;
     text-transform: uppercase;
-    margin-right: 10px;
+    margin: 0 10px;
 }
 
-/* Container for name cell */
 .name-container {
     display: flex;
     align-items: center;
 }
 
-/* Style for full name next to initials */
 .full-name {
     font-size: 14px;
     color: #333;
     font-weight: normal;
 }
 
-/* Style for clickable link */
+/* clickable URL */
 .clickable-link {
     color: blue;
     text-decoration: underline;
 }
 
-    .clickable-link:hover {
-        color: darkblue;
-        text-decoration: underline;
-    }
-
-table tr:nth-child(odd) {
-    background-color: #f9fbff;
-}
-
-table tr:hover {
-    background-color: #e2edff;
-    transition: background-color 0.3s ease;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-    }
-
-    .content {
-        width: 100%;
-    }
-
-    .stats-panel {
-        width: 100%;
-        border-left: none;
-    }
+.clickable-link:hover {
+    color: darkblue;
+    text-decoration: underline;
 }
 
 .alert {
@@ -438,17 +407,24 @@ table tr:hover {
 }
 
 .tab-heading {
-    font-family: "Arial", sans-serif;
-    font-size: 28px;
+    font-size: 20px;
     color: #333;
-    margin: 40px 0px 0px 20px;
-    display: inline-block;
-    letter-spacing: 0.05em;
-    border-bottom: 2px solid #0056b3;
+    margin: 25px 0 15px 5px;
+    display: block; /* Ensures it takes full width */
+    width: fit-content; /* Shrinks to fit content */
+    padding: 12px 18px;
+    background-color: #f4f8fb;
+    text-align: left;
+    border: 2px solid #0056b3;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tab-content {
-    margin: 0 0 0 280px;
+    margin: 0 45px 0 325px;
+    width: 100%;
 }
 
 .date-container {
@@ -480,17 +456,17 @@ table tr:hover {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-    .date-input:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
-        background-color: #ffffff;
-        outline: none;
-    }
+.date-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+    background-color: #ffffff;
+    outline: none;
+}
 
-    .date-input:hover {
-        background-color: #eaf4ff;
-        border-color: #007bff;
-    }
+.date-input:hover {
+    background-color: #eaf4ff;
+    border-color: #007bff;
+}
 
 .date-container .date-input::placeholder {
     color: #b0c7de;
@@ -525,6 +501,8 @@ table tr:hover {
     font-size: 14px;
     font-weight: bold;
     color: #2d3e50;
+    display: block; /* Ensures it takes full width */
+    width: fit-content; /* Shrinks to fit content */
     margin-bottom: 10px;
 }
 
@@ -544,23 +522,23 @@ table tr:hover {
     -webkit-appearance: none;
 }
 
-    .date-picker:hover {
-        background-color: #e8f4ff;
-        border-color: #0088ff;
-        cursor: pointer;
-    }
+.date-picker:hover {
+    background-color: #e8f4ff;
+    border-color: #0088ff;
+    cursor: pointer;
+}
 
-    .date-picker:focus {
-        border-color: #006bbf;
-        box-shadow: 0 0 8px rgba(0, 107, 191, 0.4);
-        background-color: #ffffff;
-        outline: none;
-    }
+.date-picker:focus {
+    border-color: #006bbf;
+    box-shadow: 0 0 8px rgba(0, 107, 191, 0.4);
+    background-color: #ffffff;
+    outline: none;
+}
 
-    .date-picker::-webkit-calendar-picker-indicator {
-        cursor: pointer;
-        filter: hue-rotate(200deg) brightness(1.1);
-    }
+.date-picker::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: hue-rotate(200deg) brightness(1.1);
+}
 
 .date-picker-container .date-picker::placeholder {
     color: #9fbfdc;
@@ -620,10 +598,10 @@ table tr:hover {
     margin-top: 5px;
 }
 
-    .textbox-style:focus {
-        border-color: #007bff;
-        outline: none;
-    }
+.textbox-style:focus {
+    border-color: #007bff;
+    outline: none;
+}
 
 .styled-input:hover {
     background-color: #eef7ff;
@@ -652,27 +630,24 @@ table tr:hover {
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-left: 5px;
-    margin-top: 5px;
-    margin-bottom: 50px;
 }
 
-    .styled-button:hover {
-        background-color: #2c81ba;
-    }
+.styled-button:hover {
+    background-color: #2c81ba;
+}
 
-    .styled-button:focus {
-        box-shadow: 0 0 6px rgba(44, 129, 186, 0.5);
-        outline: none;
-    }
+.styled-button:focus {
+    box-shadow: 0 0 6px rgba(44, 129, 186, 0.5);
+    outline: none;
+}
 
 .delete-button {
     background-color: #e74c3c;
 }
 
-    .delete-button:hover {
-        background-color: #c0392b;
-    }
+.delete-button:hover {
+    background-color: #c0392b;
+}
 
 /* Output Label */
 .output-container {
@@ -699,18 +674,18 @@ table tr:hover {
     gap: 8px;
 }
 
-    .top-right-button::before {
-        content: "\f2f5";
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        color: #2a3d56;
-        font-size: 35px;
-        margin-right: 8px;
-    }
+.top-right-button::before {
+    content: "\f2f5";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #03184c;
+    font-size: 35px;
+    margin-right: 8px;
+}
 
-    .top-right-button:hover::before {
-        color: #0056b3;
-    }
+.top-right-button:hover::before {
+    color: #0056b3;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -723,69 +698,58 @@ table tr:hover {
         gap: 6px;
     }
 }
-/* General Plan Card Styling */
-#PlanCardsContainer {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 20px;
-    padding: 20px;
-    margin: 20px 0;
-    overflow-x: auto;
-    width: 100%;
-    align-items: flex-start;
-}
 
+/* Plan Card Styling */
 .PlanCardsContainer {
     display: flex;
-    flex-wrap: nowrap;
-    gap: 20px;
+    gap: 30px;
+    padding: 20px;
+    margin: 5px -17px;
+    width: 100%;
 }
 
 .plan-card {
-    background-color: #ffffff; /* White background for cards */
-    border-radius: 15px;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
     padding: 25px;
-    width: 20%; /* Fixed width for each card */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Deeper shadow */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    text-align: center;
 }
 
-    .plan-card:hover {
-        transform: translateY(-10px); /* Stronger lift effect on hover */
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
-    }
+.plan-card:hover {
+    transform: translateY(-10px); 
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); 
+}
 
-/* Plan Name Styling */
 .plan-name {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #fff; /* White text for better contrast */
+    color: #fff; 
 }
 
-/* Plan ID Styling */
 .plan-id {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    color: rgba(255, 255, 255, 0.8); 
     margin-bottom: 10px;
 }
 
-/* Plan Details Styling */
 .plan-details {
     font-size: 16px;
-    color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    color: rgba(255, 255, 255, 0.9); 
     margin-bottom: 20px;
 }
 
-/* Plan Price Styling */
 .plan-price {
     font-size: 22px;
     font-weight: bold;
-    color: #fff; /* White text */
-    background-color: rgba(0, 0, 0, 0.1); /* Semi-transparent background */
+    color: #fff; 
+    background-color: rgba(0, 0, 0, 0.1); 
     padding: 10px 15px;
     border-radius: 8px;
     display: inline-block;
@@ -796,35 +760,19 @@ table tr:hover {
     background: linear-gradient(135deg, #64b5f6, #1976d2); /* Blue gradient */
 }
 
-    .basic-plan .plan-name {
-        color: #fff; /* White text */
-    }
-
 .standard-plan {
+    background: linear-gradient(135deg, #fbd977, #e9ab22); /* Yellow gradient */
+}
+
+.premium-plan {
     background: linear-gradient(135deg, #81c784, #388e3c); /* Green gradient */
 }
 
-    .standard-plan .plan-name {
-        color: #fff; /* White text */
-    }
-
-.premium-plan {
-    background: linear-gradient(135deg, #ffb74d, #f57c00); /* Orange gradient */
-}
-
-    .premium-plan .plan-name {
-        color: #fff; /* White text */
-    }
-
 .unlimited-plan {
-    background: linear-gradient(135deg, #f48fb1, #c2185b); /* Pink gradient */
+    background: linear-gradient(135deg, #ce85f7, #b345f0); /* Purple gradient */
 }
 
-    .unlimited-plan .plan-name {
-        color: #fff; /* White text */
-    }
-
-/* Add Icons for Each Plan */
+/* Icons for Each Plan */
 .plan-card::before {
     content: "";
     position: absolute;
@@ -849,10 +797,10 @@ table tr:hover {
     z-index: 1;
 }
 
-/* Add Icons for Each Plan */
+/* Icons for Each Plan */
 .plan-card i {
     font-size: 40px;
-    color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    color: rgba(255, 255, 255, 0.8); 
     margin-bottom: 20px;
     display: block;
     z-index: 2;
@@ -861,173 +809,99 @@ table tr:hover {
 
 /* Unique Icons for Each Plan */
 .basic-plan i {
-    content: "\f1ec"; /* Font Awesome icon for Basic Plan */
+    content: "\f1ec"; /* Font Awesome icon */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
 }
 
 .standard-plan i {
-    content: "\f0c0"; /* Font Awesome icon for Standard Plan */
+    content: "\f0c0"; /* Font Awesome icon */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
 }
 
 .premium-plan i {
-    content: "\f3a5"; /* Font Awesome icon for Premium Plan */
+    content: "\f3a5"; /* Font Awesome icon */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
 }
 
 .unlimited-plan i {
-    content: "\f0e7"; /* Font Awesome icon for Unlimited Plan */
+    content: "\f0e7"; /* Font Awesome icon */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
 }
 
-.section {
-    margin-bottom: 20px;
-}
-
-.cardBox2 {
+/* filter */
+.filter-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.card {
+    flex-direction: row;
+    gap: 50px;
     margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
 }
 
-.cardName {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
+.filter-label {
+    color: #333;
+    margin-right: 10px;
+    font-size: 22px;
 }
 
-.numbers {
-    font-size: 24px;
-    color: #007bff;
+.filter-input, .filter-dropdown {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 
+/* pie chart */
+.chart-container {
+    width: 100%; 
+    height: 100%; 
+}
+
+.chart-container:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* right side panel */
 .right-side-panel {
     position: fixed;
     top: 0;
-    right: -300px; /* Initially hidden off-screen */
-    width: 300px;
+    right: 0;
+    width: 400px;
     height: 100%;
     background-color: #f4f4f4;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease; /* Smooth transition for sliding */
+    transition: transform 0.3s ease;
+    transform: translateX(100%); /* Initially hidden, off-screen */
     z-index: 1000;
 }
 
-    .right-side-panel.open {
-        transform: translateX(-300px); /* Moves the panel into view */
-    }
+.right-side-panel.open {
+    transform: translateX(0); 
+}
 
 .toggle-panel-button {
     position: absolute;
-    left: -64px; /* Adjusted to keep the button aligned with the changes */
+    left: -64px;
     top: 20px;
-    background-color: #007bff;
+    background-color: #03184c;
     color: white;
     border: none;
-    padding: 20px; /* Increased padding for size */
-    font-size: 20px; /* Increased font size */
+    padding: 20px;
+    font-size: 20px;
     cursor: pointer;
-    border-radius: 8px 0 0 8px; /* Slightly larger border-radius */
+    border-radius: 8px 0 0 8px;
 }
 
 .panel-content {
     padding: 20px;
 }
 
-    .panel-content h3 {
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    .chart-container {
-        width: 100%; /* Ensure the container takes up the full width */
-        height: 300px; /* Set a fixed height for the chart */
-        position: relative; /* Required for responsive behavior */
-    }
-    /* Filter Container Styling */
-    .filter-container {
-        margin-bottom: 20px;
-        padding: 20px;
-        background-color: transparent;
-        display: flex;
-        flex-direction: row;
-        gap: 20px; /* Increased space between filter options */
-        max-width: 800px; /* Limit the width for better layout */
-        width: 100%;
-        font-size:20px;
-    }
-
-    /* Individual Filter Option */
-    .filter-option {
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* Label Styling */
-    .filter-label {
-        font-weight: 600; /* Semi-bold for better readability */
-        margin-bottom: 8px; /* Slightly more space between label and input */
-        color: #444; /* Slightly darker text for better contrast */
-        font-size: 14px;
-    }
-
-    /* Textbox (Date) and Dropdown Styling */
-    .filter-input, .filter-dropdown {
-        padding: 12px;
-        border: 1px solid #ddd; /* Lighter border */
-        border-radius: 8px; /* Rounded corners */
-        font-size: 14px;
-        width: 100%; /* Full width for consistency */
-        box-sizing: border-box; /* Ensures padding doesn’t affect width */
-        background-color: #f9f9f9; /* Light gray background for input fields */
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-        .filter-input::placeholder, .filter-dropdown::placeholder {
-            color: #999; /* Placeholder text color */
-        }
-
-        .filter-input:focus, .filter-dropdown:focus {
-            outline: none;
-            border-color: #007bff; /* Highlight focus with a blue border */
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Subtle glow effect */
-        }
-
-    /* Button Styling */
-    .filter-button {
-        padding: 12px 20px;
-        background: linear-gradient(135deg, #007bff, #0056b3); /* Gradient background */
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-        transition: transform 0.2s ease, background 0.3s ease;
-        align-self: flex-start; /* Align button to the left */
-        margin-top:25px;
-    }
-
-        .filter-button:hover {
-            background: linear-gradient(135deg, #0056b3, #003d80); /* Darker gradient on hover */
-            transform: translateY(-1px); /* Slight lift effect */
-        }
-
-        .filter-button:active {
-            transform: translateY(0); /* Reset lift effect on click */
-        }
-
-        .filter-button:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3); /* Focus glow effect */
-        }
+.panel-content h3 {
+    margin-bottom: 20px;
+    text-align: center;
+}

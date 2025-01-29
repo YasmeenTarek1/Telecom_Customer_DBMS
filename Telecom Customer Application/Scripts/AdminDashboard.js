@@ -65,44 +65,74 @@ document.querySelectorAll('.dropdown-content').forEach(dropdown => {
         event.stopPropagation(); // Stop the click event from bubbling up to the parent
     });
 });
-// Initialize the benefit types chart
+
+// benefits types pie chart
 document.addEventListener("DOMContentLoaded", function () {
     if (typeof benefitTypesData !== 'undefined') {
         var ctx = document.getElementById('benefit-types-chart').getContext('2d');
 
-        // Extract labels and data from the JSON
-        var labels = benefitTypesData.map(item => item.benefitID); // Use benefitID as labels
-        var data = benefitTypesData.map(item => item.Percentage); // Use Percentage as data
+        // Sort the data by benefitID
+        benefitTypesData.sort((a, b) => a.benefitID - b.benefitID);
 
-        // If the chart already exists, update its data
-        if (myPieChart) {
-            myPieChart.data.labels = labels;
-            myPieChart.data.datasets[0].data = data;
-            myPieChart.update(); // Update the chart
-            return;
-        }
+        var data = benefitTypesData.map(item => item.Percentage); 
 
-        // If the chart doesn't exist, create it
         var myPieChart = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: labels,
+                labels: [
+                    'Extra 1GB data per month',
+                    'Free 100 SMS per month',
+                    'Extra 100 minutes per month',
+                    '10% cashback on plan renewal',
+                    '20% cashback on plan renewal',
+                    'Earn 50 loyalty points per month'
+                ],
                 datasets: [{
                     data: data,
-                    backgroundColor: ['#36A2EB', '#4BC0C0', '#FFCE56', '#FF6384', '#9966FF', '#FF9F40'], // Same color scheme as second chart 
+                    backgroundColor: [
+                        '#D3D3D3', // Bright Grey
+                        '#00FFFF', 
+                        '#00b3e0', 
+                        '#0a6aa9', 
+                        '#0a3d8c',
+                        '#03184c'  // Darkest blue
+                    ],
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        align: 'start',
+                        labels: {
+                            color: '#2a3d56', 
+                            font: {
+                                size: 14,
+                            },
+                        }
+                    },
+                    title: {
+                        position: 'bottom',
+                        display: true,
+                        text: 'Customer Benefit Distribution'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
             }
         });
     }
 });
 
-
-
-// Initialize the benefits status chart
+// benefits status pie chart
 document.addEventListener("DOMContentLoaded", function () {
     if (typeof benefitsStatusData !== 'undefined') {
         var ctx = document.getElementById('benefits-status-chart').getContext('2d');
@@ -118,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 datasets: [{
                     data: data,
                     backgroundColor: [
-                        '#4BC0C0',//Green
+                        '#02194C',
                         'rgb(234, 37, 26)'//Red
                     ]
                 }]
@@ -131,6 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         position: 'top',
                     },
                     title: {
+                        position: 'bottom',
                         display: true,
                         text: 'Active vs Expired Benefits'
                     },
@@ -138,11 +169,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         callbacks: {
                             label: function (context) {
                                 let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += context.raw; // Display count in tooltip
-                                return label;
+                                let value = context.raw || 0;
+                                return `${label}: ${value}%`;
                             }
                         }
                     }
@@ -152,7 +180,51 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 }); 
 
-let subscriptionPieChart; // Global variable to store the chart instance
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (typeof data !== 'undefined') {
+        var ctx = document.getElementById('subscriptionPieChart').getContext('2d');
+
+        var subscriptionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    data: Object.values(data),
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        position: 'bottom',
+                        display: true,
+                        text: 'Subscription Rates for Each Plan'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
 
 function togglePanel() {
     const panel = document.getElementById('rightSidePanel');
@@ -164,62 +236,6 @@ function togglePanel() {
     }
 }
 
-function initializeChart(data) {
-    const ctx = document.getElementById('subscriptionPieChart').getContext('2d');
-
-    // If the chart already exists, update its data
-    if (subscriptionPieChart) {
-        subscriptionPieChart.data.labels = Object.keys(data);
-        subscriptionPieChart.data.datasets[0].data = Object.values(data);
-        subscriptionPieChart.update(); // Update the chart
-        return;
-    }
-
-    // If the chart doesn't exist, create it
-    subscriptionPieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: Object.keys(data),
-            datasets: [{
-                data: Object.values(data),
-                backgroundColor: ['#36A2EB', '#4BC0C0', '#FFCE56', '#FF6384'],
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-        }
-    });
-}
-
-function fetchSubscriptionData() {
-    fetch('PlansPage.aspx/GetSubscriptionStatistics', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.d) {
-                initializeChart(data.d); // Initialize or update the chart with dynamic data
-            } else {
-                console.error('API response does not contain data.');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching subscription data:', error);
-        });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    fetchSubscriptionData(); // Fetch the chart data when the page loads
-});
 function triggerPostback(planId) {
     __doPostBack('PlanClicked', planId);  // Triggers the postback with the correct event args
 }

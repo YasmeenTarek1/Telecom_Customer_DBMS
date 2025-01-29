@@ -14,7 +14,7 @@
     <form id="form1" runat="server">
         <div class="container" runat="server">
             <uc:Sidebar runat="server" />
-            <div id="sharedContent" class="tab-content active-tab">
+            <div id="sharedContent" class="tab-content">
                 <h3 id="TabHeading" class="tab-heading" runat="server"></h3>
 
                 <div class="table-responsive">
