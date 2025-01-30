@@ -6,11 +6,12 @@ namespace Telecom_Customer_Application.AdminDashboard
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                string query = "SELECT * FROM AccountPayments ORDER BY CASE Payment_Status WHEN 'Successful' THEN 1 WHEN 'Pending' THEN 2 ELSE 3 END, date_of_payment DESC;";
 
-            string query = "SELECT * FROM AccountPayments ORDER BY CASE Payment_Status WHEN 'Successful' THEN 1 WHEN 'Pending' THEN 2 ELSE 3 END, date_of_payment DESC;";
-
-            PageUtilities.ExecuteQueryWithHandling(query, TableBody, form1);
-
+                PageUtilities.ExecuteQueryWithHandling(query, TableBody, form1);
+            }
         }
     }
 }

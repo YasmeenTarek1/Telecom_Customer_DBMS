@@ -67,11 +67,11 @@
                 <div id="panelContent" class="panel-content">
                     <!-- Cashback given by each Plan Pie Chart -->
                     <div class="chart-container">
-                        <canvas id="cashback-plan-chart" width="500" height="500"></canvas>
+                        <canvas id="cashback-plan-chart" width="400" height="400"></canvas>
                     </div>
                     <!-- TOP Customers awarded Cashback Bar Chart -->
                     <div class="chart-container">
-                        <canvas id="top-customers-chart" width="500" height="500"></canvas>
+                        <canvas id="top-customers-chart" width="400" height="400"></canvas>
                     </div>
                 </div>
             </div>

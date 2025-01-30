@@ -18,7 +18,68 @@
 
             <div id="sharedContent" class="tab-content">
 
-                <h3 id="TabHeading" class="tab-heading">Points Group</h3>
+                <h3 id="TabHeading" class="tab-heading">Points</h3>
+
+                <div class="cardBox">
+                    <div class="card">
+                        <div>
+                            <div class="numbers" id="totalPointsCount" runat="server">0</div>
+                            <div class="cardName">Total Points</div>
+                        </div>
+                        <div class="iconBx">
+                            <i class="fa-solid fa-coins sidebar-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="numbers" id="usedPointsCount" runat="server">0</div>
+                            <div class="cardName">Used Points</div>
+                        </div>
+                        <div class="iconBx">
+                            <i class="fa-solid fa-ticket"></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div>
+                            <div class="numbers" id="activePointsCount" runat="server">0</div>
+                            <div class="cardName">Active Points</div>
+                        </div>
+                        <div class="iconBx">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="numbers" id="expiredPointsCount" runat="server">0</div>
+                            <div class="cardName">Expired Points</div>
+                        </div>
+                        <div class="iconBx">
+                            <i class="fa-solid fa-shop-slash"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <caption>Points History</caption>
+                        <tbody id="TableBody" runat="server"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="rightSidePanel" class="right-side-panel">
+                <button id="togglePanelButton" class="toggle-panel-button" type="button" onclick="togglePanel()">
+                    <i class="fas fa-chart-pie"></i>
+                </button>
+
+                <div id="panelContent" class="panel-content">
+                    <!-- Points given by each Plan Pie Chart -->
+                    <div class="chart-container">
+                        <canvas id="points-plan-chart" width="400" height="400"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </form>

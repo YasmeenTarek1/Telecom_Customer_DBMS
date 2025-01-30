@@ -85,7 +85,7 @@
                 <div id="panelContent" class="panel-content">
                     <!-- Benefit Types Pie Chart -->
                     <div class="chart-container">
-                        <canvas id="benefit-types-chart" width="500" height="500"></canvas>
+                        <canvas id="benefit-types-chart" width="400" height="400"></canvas>
                     </div>
                     <!-- Active vs Expired Pie Chart -->
                     <div class="chart-container">

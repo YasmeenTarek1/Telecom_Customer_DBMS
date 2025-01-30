@@ -14,56 +14,56 @@ namespace Telecom_Customer_Application.AdminDashboard
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            int PaymentCount;
-            int CashbackCount;
-
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
+            if (!IsPostBack)
             {
-                con.Open();
-
-                using (SqlCommand cmd = new SqlCommand("SELECT * FROM TotalPayments", con))
+                try
                 {
-                    PaymentCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    int PaymentCount;
+                    int CashbackCount;
+
+                    using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
+                    {
+                        con.Open();
+
+                        using (SqlCommand cmd = new SqlCommand("SELECT * FROM TotalPayments", con))
+                        {
+                            PaymentCount = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+
+                        using (SqlCommand cmd = new SqlCommand("SELECT * FROM TotalCashback", con))
+                        {
+                            CashbackCount = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+
+                        using (SqlCommand cmd = new SqlCommand("CashbackHistory", con))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            PageUtilities.LoadData(cmd, TableBody1);
+                        }
+                    }
+                    cashbackCount.InnerText = CashbackCount.ToString() + " $";
+                    paymentCount.InnerText = PaymentCount.ToString() + " $";
+
+                    string query = "SELECT * FROM Num_of_cashback";
+                    PageUtilities.ExecuteQueryWithHandling(query, TableBody2, form1);
+
+                    // Fetch data for the pie chart
+                    DataTable cashbackPlanData = GetCashbackPlanData();
+                    string cashbackPlanJson = JsonConvert.SerializeObject(cashbackPlanData);
+
+                    // Pass the JSON data to the front end
+                    ScriptManager.RegisterStartupScript(this, GetType(), "cashbackPlanData", $"var cashbackPlanData = {cashbackPlanJson};", true);
+
+                    DataTable dataTable = GetTopCustomersByCashbackData();
+                    string jsonData = JsonConvert.SerializeObject(dataTable);
+
+                    ScriptManager.RegisterStartupScript(this, GetType(), "topCustomersData", $"var topCustomersData = {jsonData};", true);
                 }
-
-                using (SqlCommand cmd = new SqlCommand("SELECT * FROM TotalCashback", con))
+                catch (Exception ex)
                 {
-                    CashbackCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    PageUtilities.DisplayAlert(ex, form1);
                 }
             }
-            cashbackCount.InnerText = CashbackCount.ToString() + " $";
-            paymentCount.InnerText = PaymentCount.ToString() + " $";
-
-
-            string query = "SELECT * FROM Num_of_cashback";
-            PageUtilities.ExecuteQueryWithHandling(query, TableBody2, form1);
-
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(PageUtilities.connectionString))
-                {
-                    connection.Open();
-                    SqlCommand cmd = new SqlCommand("CashbackHistory", connection);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    PageUtilities.LoadData(cmd, TableBody1);
-                }
-            }
-            catch (Exception ex)
-            {
-                PageUtilities.DisplayAlert(ex, form1);
-            }
-
-            // Fetch data for the pie chart
-            DataTable cashbackPlanData = GetCashbackPlanData();
-            string cashbackPlanJson = JsonConvert.SerializeObject(cashbackPlanData);
-
-            // Pass the JSON data to the front end
-            ScriptManager.RegisterStartupScript(this, GetType(), "cashbackPlanData", $"var cashbackPlanData = {cashbackPlanJson};", true);
-
-            DataTable dataTable = GetTopCustomersByCashbackData();
-            string jsonData = JsonConvert.SerializeObject(dataTable); 
-
-            ScriptManager.RegisterStartupScript(this, GetType(), "topCustomersData", $"var topCustomersData = {jsonData};", true);
         }
 
         protected DataTable GetCashbackPlanData()

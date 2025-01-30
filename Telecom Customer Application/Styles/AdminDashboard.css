@@ -218,26 +218,32 @@ body {
     justify-content: space-between;
     cursor: pointer;
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+    height: 100px;
 }
-
 
 .cardBox .card .numbers {
     position: relative;
     font-weight: 500;
     font-size: 2.5rem;
     color: #03184c;
+    margin-top:18px; 
+    margin-left:5px;
 }
 
 .cardBox .card .cardName {
     color: #9b9b9b;
     font-size: 1.1rem;
     margin-top: 5px;
+    margin-bottom:5px; 
+    margin-left:5px;
 }
 
 .cardBox .card .iconBx {
     font-size: 3.5rem;
     color: #007bff;
     margin-right: 20px;
+    margin-top:20px; 
+    margin-right:40px;
 }
 
 .cardBox .card:hover {
@@ -882,7 +888,7 @@ table tr:hover {
     position: fixed;
     top: 0;
     right: 0;
-    width: 400px;
+    width: 450px;
     height: 100%;
     background-color: #f4f4f4;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);

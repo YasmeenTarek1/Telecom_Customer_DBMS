@@ -62,17 +62,30 @@ document.querySelectorAll('.dropdown-content').forEach(dropdown => {
     });
 });
 
+var benefitTypesChartInstance = null;
+var benefitsStatusChartInstance = null;
+var subscriptionChartInstance = null;
+var cashbackPlanChartInstance = null;
+var topCustomersChartInstance = null;
+var pointsChartInstance = null;
+
 // benefits types pie chart
 document.addEventListener("DOMContentLoaded", function () {
-    if (typeof benefitTypesData !== 'undefined') {
-        var ctx = document.getElementById('benefit-types-chart').getContext('2d');
+    if (window.location.pathname.includes("BenefitsPage.aspx") && !typeof benefitTypesData !== 'undefined') {
+        let ctx = document.getElementById('benefit-types-chart')?.getContext('2d');
+
+        // Destroy existing chart if it exists
+        if (benefitTypesChartInstance !== null) {
+            benefitTypesChartInstance.destroy();
+        }
+
 
         // Sort the data by benefitID
         benefitTypesData.sort((a, b) => a.benefitID - b.benefitID);
 
         var data = benefitTypesData.map(item => item.Percentage); 
 
-        var myPieChart = new Chart(ctx, {
+        benefitTypesChartInstance = new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: [
@@ -96,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }]
             },
             options: {
-                responsive: true,
+                responsive: false,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
@@ -126,21 +139,128 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+    // benefits status pie chart
+    if (typeof benefitsStatusData !== 'undefined') {
+        let ctx = document.getElementById('benefits-status-chart')?.getContext('2d');
+
+        // Destroy existing chart if it exists
+        if (benefitsStatusChartInstance != null) {
+            benefitsStatusChartInstance.destroy();
+        }
+
+        // Extract labels and data from the JSON
+        var labels = Object.keys(benefitsStatusData); // ["Active", "Expired"]
+        var data = Object.values(benefitsStatusData); // [activeCount, expiredCount]
+
+        benefitsStatusChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        '#02194C',
+                        'rgb(234, 37, 26)'//Red
+                    ]
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        position: 'bottom',
+                        display: true,
+                        text: 'Active vs Expired Benefits'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}); 
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.pathname.includes("SubscriptionsPage.aspx")  && typeof data !== 'undefined') {
+        let ctx = document.getElementById('subscriptionPieChart')?.getContext('2d');
+
+
+        // Destroy existing chart if it exists
+        if (subscriptionChartInstance != null) {
+            subscriptionChartInstance.destroy();
+        }
+
+        subscriptionChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    data: Object.values(data),
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c'
+                    ]
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        position: 'bottom',
+                        display: true,
+                        text: 'Subscription Rates for Each Plan'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    if (typeof cashbackPlanData !== 'undefined') {
-        var ctx = document.getElementById('cashback-plan-chart').getContext('2d');
+    if (window.location.pathname.includes("CashbackPage.aspx") && typeof cashbackPlanData !== 'undefined') {
+        let ctx = document.getElementById('cashback-plan-chart')?.getContext('2d');
 
-        var labels = cashbackPlanData.map(item => item.PlanName); 
-        var data = cashbackPlanData.map(item => item.Percentage); 
+        // Destroy existing chart if it exists
+        if (cashbackPlanChartInstance != null) {
+            cashbackPlanChartInstance.destroy();
+        }
 
-        var myPieChart = new Chart(ctx, {
+        var labels = cashbackPlanData.map(item => item.PlanName);
+        var data = cashbackPlanData.map(item => item.Percentage);
+
+        cashbackPlanChartInstance = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: labels, 
+                labels: labels,
                 datasets: [{
-                    data: data, 
+                    data: data,
                     backgroundColor: [
                         '#00FFFF',
                         '#00b3e0',
@@ -150,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }]
             },
             options: {
-                responsive: true,
+                responsive: false,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
@@ -180,117 +300,25 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-});
 
-// benefits status pie chart
-document.addEventListener("DOMContentLoaded", function () {
-    if (typeof benefitsStatusData !== 'undefined') {
-        var ctx = document.getElementById('benefits-status-chart').getContext('2d');
+    if (typeof topCustomersData !== 'undefined') {
+        let ctx = document.getElementById('top-customers-chart')?.getContext('2d');
 
-        // Extract labels and data from the JSON
-        var labels = Object.keys(benefitsStatusData); // ["Active", "Expired"]
-        var data = Object.values(benefitsStatusData); // [activeCount, expiredCount]
+        // Destroy existing chart if it exists
+        if (topCustomersChartInstance != null) {
+            topCustomersChartInstance.destroy();
+        }
 
-        var myPieChart = new Chart(ctx, {
-            type: 'pie',
+        var labels = topCustomersData.map(item => `${item.first_name} ${item.last_name}`); 
+        var data = topCustomersData.map(item => item['Total Cashback Earned']); 
+
+        topCustomersChartInstance = new Chart(ctx, {
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
-                    data: data,
-                    backgroundColor: [
-                        '#02194C',
-                        'rgb(234, 37, 26)'//Red
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        position: 'bottom',
-                        display: true,
-                        text: 'Active vs Expired Benefits'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                let label = context.label || '';
-                                let value = context.raw || 0;
-                                return `${label}: ${value}%`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-}); 
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    if (typeof data !== 'undefined') {
-        var ctx = document.getElementById('subscriptionPieChart').getContext('2d');
-
-        var subscriptionPieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: Object.keys(data),
-                datasets: [{
-                    data: Object.values(data),
-                    backgroundColor: [
-                        '#00FFFF',
-                        '#00b3e0',
-                        '#0a6aa9',
-                        '#03184c'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        position: 'bottom',
-                        display: true,
-                        text: 'Subscription Rates for Each Plan'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                let label = context.label || '';
-                                let value = context.raw || 0;
-                                return `${label}: ${value}%`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    if (typeof topCustomersData !== 'undefined') {
-        var ctx = document.getElementById('top-customers-chart').getContext('2d');
-
-        // Extract labels and data from topCustomersData
-        var labels = topCustomersData.map(item => `${item.first_name} ${item.last_name}`); // Combine first and last name
-        var data = topCustomersData.map(item => item['Total Cashback Earned']); // Use total cashback earned
-
-        var myBarChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels, // Customer names as labels
-                datasets: [{
                     label: 'Total Cashback Earned',
-                    data: data, // Total cashback earned as data
+                    data: data, 
                     backgroundColor: [
                         '#00FFFF',
                         '#00b3e0',
@@ -309,11 +337,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 }]
             },
             options: {
-                responsive: true,
+                responsive: false,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false // Hide legend for a cleaner look
+                        display: false 
                     },
                     title: {
                         display: true,
@@ -351,6 +379,61 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.pathname.includes("PointsPage.aspx") && typeof pointsPlanData !== 'undefined') {
+        let ctx = document.getElementById('points-plan-chart')?.getContext('2d');
+
+
+        // Destroy existing chart if it exists
+        if (pointsChartInstance != null) {
+            pointsChartInstance.destroy();
+        }
+
+        var labels = pointsPlanData.map(item => item.PlanName);
+        var data = pointsPlanData.map(item => item.Percentage);
+
+        pointsChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c'
+                    ]
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        position: 'bottom',
+                        display: true,
+                        text: 'Points Distribution by Plan'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+
 function togglePanel() {
     const panel = document.getElementById('rightSidePanel');
     panel.classList.toggle('open');
@@ -363,3 +446,4 @@ function triggerPostback(planId) {
 function triggerPostback2(benefitID) {
     __doPostBack('BenefitClicked', benefitID);  
 }
+
