@@ -11,6 +11,26 @@ namespace Telecom_Customer_Application.AdminDashboard
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            string eventTarget = Request.Form["__EVENTTARGET"];
+            string eventArgument = Request.Form["__EVENTARGUMENT"];
+
+            if (eventTarget == "BenefitClicked")
+            {
+                int benefitID = int.Parse(eventArgument);      // eventArgument will contain the benefit ID sent from the client
+                if (benefitID == 1)
+                {
+                    Response.Redirect("PointsPage.aspx");
+                }
+                else if (benefitID == 2)
+                {
+                    Response.Redirect("CashbackPage.aspx");
+                }
+                else
+                {
+                    Response.Redirect("ExclusiveOffersPage.aspx");
+                }
+            }
+
             try
             {
                 int TotalPoints;
@@ -59,11 +79,9 @@ namespace Telecom_Customer_Application.AdminDashboard
                 // Pass the JSON data to the front end
                 ScriptManager.RegisterStartupScript(this, GetType(), "benefitTypesData", $"var benefitTypesData = {benefitTypesJson};", true);
 
-                // Fetch data for the pie chart (active and expired benefits)
                 Dictionary<string, int> benefitsStatus = GetActiveAndExpiredBenefits();
                 string benefitsStatusJson = JsonConvert.SerializeObject(benefitsStatus);
 
-                // Pass the JSON data to the front end
                 ScriptManager.RegisterStartupScript(this, GetType(), "benefitsStatusData", $"var benefitsStatusData = {benefitsStatusJson};", true);
 
                 totalPoints.InnerText = TotalPoints.ToString();
@@ -130,82 +148,5 @@ namespace Telecom_Customer_Application.AdminDashboard
             }
             return benefitsStatus;
         }
-
-
-        //protected void LoadCashback(object sender, EventArgs e)
-        //{
-        //    DisplayContent("CashbackTab");
-
-        //    string query = "SELECT * FROM Num_of_cashback";
-
-        //    ExecuteQueryWithHandling(query);
-
-        //    SetActiveTab("CashbackTab");
-        //}
-        //protected void LoadCashbackAmount(object sender, EventArgs e)
-        //{
-        //    DisplayContent("CashbackAmountTab");
-
-        //    SetActiveTab("CashbackAmountTab");
-        //}
-        //protected void LoadOffers(object sender, EventArgs e)
-        //{
-        //    DisplayContent("offersTab");
-
-        //    SetActiveTab("offersTab");
-        //}
-        //protected void LoadPoints(object sender, EventArgs e)
-        //{
-        //    DisplayContent("PointsTab");
-
-        //    SetActiveTab("PointsTab");
-        //}
-
-
-        //protected void DeleteBenefitsButton_Click(object sender, EventArgs e)
-        //{
-
-        //    using (SqlConnection con = new SqlConnection(connectionString))
-        //    {
-        //        try
-        //        {
-        //            con.Open();
-
-        //            DeleteButton.Style["display"] = "none";
-
-        //            Deleting benefits
-        //            using (SqlCommand deleteCmd = new SqlCommand("Benefits_Account", con))
-        //            {
-        //                deleteCmd.CommandType = CommandType.StoredProcedure;
-        //                deleteCmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = MobileEditText.Text });
-        //                deleteCmd.Parameters.Add(new SqlParameter("@plan_id", SqlDbType.Int) { Value = int.Parse(PlanIDEditText.Text) });
-        //                deleteCmd.ExecuteNonQuery();
-
-        //            }
-
-        //            Displaying benefits after deletion
-        //            using (SqlCommand displayCmd = new SqlCommand("Benefits_Account_Plan", con))
-        //            {
-        //                displayCmd.CommandType = CommandType.StoredProcedure;
-        //                displayCmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = MobileEditText.Text });
-        //                displayCmd.Parameters.Add(new SqlParameter("@plan_id", SqlDbType.Int) { Value = int.Parse(PlanIDEditText.Text) });
-
-        //                LoadData(displayCmd, TableBody1);
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            DisplayAlert(ex);
-        //        }
-        //        finally
-        //        {
-        //            if (con.State == System.Data.ConnectionState.Open)
-        //            {
-        //                con.Close();
-        //            }
-        //        }
-        //    }
-        //}
-        
     }
 }

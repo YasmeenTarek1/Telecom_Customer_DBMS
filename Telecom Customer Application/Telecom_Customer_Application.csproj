@@ -71,9 +71,12 @@
   <ItemGroup>
     <Content Include="AdminDashboard\AccountUsagePage.aspx" />
     <Content Include="AdminDashboard\BenefitsPage.aspx" />
+    <Content Include="AdminDashboard\CashbackPage.aspx" />
     <Content Include="AdminDashboard\CustomersPage.aspx" />
+    <Content Include="AdminDashboard\ExclusiveOffersPage.aspx" />
     <Content Include="AdminDashboard\PaymentsPage.aspx" />
     <Content Include="AdminDashboard\PlansPage.aspx" />
+    <Content Include="AdminDashboard\PointsPage.aspx" />
     <Content Include="AdminDashboard\ShopsPage.aspx" />
     <Content Include="AdminDashboard\SubscriptionsPage.aspx" />
     <Content Include="AdminDashboard\TicketsPage.aspx" />
@@ -103,12 +106,26 @@
     <Compile Include="AdminDashboard\BenefitsPage.aspx.designer.cs">
       <DependentUpon>BenefitsPage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="AdminDashboard\CashbackPage.aspx.cs">
+      <DependentUpon>CashbackPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\CashbackPage.aspx.designer.cs">
+      <DependentUpon>CashbackPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AdminDashboard\CustomersPage.aspx.cs">
       <DependentUpon>CustomersPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="AdminDashboard\CustomersPage.aspx.designer.cs">
       <DependentUpon>CustomersPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\ExclusiveOffersPage.aspx.cs">
+      <DependentUpon>ExclusiveOffersPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\ExclusiveOffersPage.aspx.designer.cs">
+      <DependentUpon>ExclusiveOffersPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="AdminDashboard\PaymentsPage.aspx.cs">
       <DependentUpon>PaymentsPage.aspx</DependentUpon>
@@ -123,6 +140,13 @@
     </Compile>
     <Compile Include="AdminDashboard\PlansPage.aspx.designer.cs">
       <DependentUpon>PlansPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\PointsPage.aspx.cs">
+      <DependentUpon>PointsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\PointsPage.aspx.designer.cs">
+      <DependentUpon>PointsPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="AdminDashboard\ShopsPage.aspx.cs">
       <DependentUpon>ShopsPage.aspx</DependentUpon>

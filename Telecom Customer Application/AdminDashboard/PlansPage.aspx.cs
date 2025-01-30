@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Data;
-using System.Collections.Generic;
-using System.Web.Services;
-using System.Web.UI.WebControls;
 
 namespace Telecom_Customer_Application.AdminDashboard
 {
@@ -37,30 +34,6 @@ namespace Telecom_Customer_Application.AdminDashboard
 
         }
 
-        protected void BasicPlanLink_Click(object sender, EventArgs e)
-        {
-            Subscribers_for_plan("1");
-            SelectedPlan = 1;
-        }
-
-        protected void StandardPlanLink_Click(object sender, EventArgs e)
-        {
-            Subscribers_for_plan("2");
-            SelectedPlan = 2;
-        }
-
-        protected void PremiumPlanLink_Click(object sender, EventArgs e)
-        {
-            Subscribers_for_plan("3");
-            SelectedPlan = 3;
-        }
-
-        protected void UnlimitedPlanLink_Click(object sender, EventArgs e)
-        {
-            Subscribers_for_plan("4");
-            SelectedPlan = 4;
-        }
-
         private void Subscribers_for_plan(string planId)
         {
             try
@@ -70,7 +43,6 @@ namespace Telecom_Customer_Application.AdminDashboard
                 {
                     connection.Open();
                     SqlCommand cmd = new SqlCommand("GetSubscribersForPlan", connection);
-                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@PlanID", SqlDbType.Int) { Value = int.Parse(planId) });
                     PageUtilities.LoadData(cmd, TableBody);

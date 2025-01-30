@@ -30,7 +30,7 @@ namespace Controls
             }
             if (currentPage.Contains("TicketsPage.aspx")) return "ticketsTab";
             if (currentPage.Contains("PlansPage.aspx")) return "PlanInfoTab";
-            if (currentPage.Contains("BenefitsPage.aspx")) return "benefitsTab";
+            if (currentPage.Contains("BenefitsPage.aspx") || currentPage.Contains("PointsPage.aspx") || currentPage.Contains("ExclusiveOffersPage.aspx") || currentPage.Contains("CashbackPage.aspx")) return "benefitsTab";
             if (currentPage.Contains("AccountUsagePage.aspx")) return "accountUsageTab";
             if (currentPage.Contains("WalletsPage.aspx")) return "walletsTab";
             if (currentPage.Contains("PaymentsPage.aspx")) return "PaymentsTab";

@@ -211,7 +211,6 @@ body {
 }
 
 .cardBox .card {
-    position: relative;
     background: #f5f5f5;
     padding: 30px;
     border-radius: 20px;
@@ -220,6 +219,7 @@ body {
     cursor: pointer;
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
 }
+
 
 .cardBox .card .numbers {
     position: relative;
@@ -249,6 +249,17 @@ body {
 .cardBox .card:hover .iconBx {
     color: #f5f5f5;
 }
+
+.vs {
+    font-size: 36px;
+    font-weight: bold;
+    color: #03184c;
+    padding: 10px 20px;
+    margin: auto;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
 /*
     #9b9b9b --> grey
     #03184c --> dark blue
@@ -297,16 +308,16 @@ table td {
 }
 
 table caption {
-    font-size: 24px; 
+    font-size: 24px;
     font-weight: 600;
-    color: #333; 
-    text-align: left; 
-    padding: 12px 20px; 
-    background-color: #f4f8fb; 
-    border-top: 3px solid #0056b3;
-    border-bottom: 1px solid #e0e0e0; 
-    margin-bottom: 10px; 
-    letter-spacing: 1px; 
+    color: #333;
+    text-align: left;
+    padding: 12px 20px;
+    background-color: #f4f8fb;
+    border-top: 3px solid #007bff;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -410,12 +421,12 @@ table tr:hover {
     font-size: 20px;
     color: #333;
     margin: 25px 0 15px 5px;
-    display: block; /* Ensures it takes full width */
-    width: fit-content; /* Shrinks to fit content */
+    display: block;
+    width: fit-content;
     padding: 12px 18px;
     background-color: #f4f8fb;
     text-align: left;
-    border: 2px solid #0056b3;
+    border: 2px solid #007bff;
     border-radius: 8px;
     margin-bottom: 10px;
     letter-spacing: 1px;

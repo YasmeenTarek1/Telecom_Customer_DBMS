@@ -574,11 +574,15 @@ ON S.shopID = P.shopID;
 Go
 --Fetch number of cashback transactions per each wallet.
 CREATE VIEW Num_of_cashback As
-Select CB.walletID , count(*) AS 'count of transactions'
+Select CB.walletID, CP.first_name, CP.last_name, count(*) AS 'count of transactions', SUM(CH.amount_earned) AS 'Amount of cashback'
 From Customer_Cashback CH
-Inner Join Customer_Benefits CB
+INNER JOIN Customer_Benefits CB
 ON CH.benefitID = CB.benefitID
-Group by CB.walletID;
+INNER JOIN Customer_Account CA
+ON CA.mobileNo = CB.mobileNo
+INNER JOIN Customer_profile CP
+ON CP.nationalID = CA.nationalID
+Group by CB.walletID, CP.first_name, CP.last_name;
 
 Go 
 --List all accounts along with the service plans they are subscribed to
@@ -1575,6 +1579,8 @@ BEGIN
     ORDER BY SubscriptionCount DESC;
 END;
 
+execute calculateBenefitsTypePercentages
+
 GO
 CREATE PROCEDURE GetBenefitsExpiringSoon
 AS
@@ -1593,7 +1599,7 @@ GO
 CREATE PROCEDURE GetCustomersWithNoActiveBenefits
 AS
 BEGIN
-    SELECT P.first_name, P.last_name, A.nationalID, A.mobileNo, A.account_type, A.status
+    SELECT A.nationalID, P.first_name, P.last_name, A.mobileNo, A.account_type, A.status
     FROM Customer_Account A
     INNER JOIN Customer_profile P
     ON P.nationalID = A.nationalID
@@ -1714,7 +1720,56 @@ BEGIN
 END;
 
 
+GO
+CREATE VIEW TotalCashback As
+    SELECT
+    SUM(CH.amount_earned) AS TotalCashbackDistributed
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID;
 
+GO 
+CREATE VIEW TotalPayments As
+    SELECT
+    SUM(p.amount) AS TotalPayments
+    FROM Payment p;
+
+
+GO
+CREATE PROCEDURE CashbackHistory
+AS
+BEGIN
+    SELECT CH.CashbackID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Cashback Received Date',  CH.amount_earned
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    ORDER BY CB.start_date DESC; 
+END;
+
+GO
+CREATE PROCEDURE TopCustomersByCashback
+AS
+BEGIN
+    SELECT TOP 5 CP.first_name, CP.last_name, CB.mobileNo, SUM(CH.amount_earned) AS 'Total Cashback Earned'
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
+    ORDER BY SUM(CH.amount_earned) DESC;
+END;
+
+GO
+CREATE PROCEDURE calculatePlanCashbackPercentage
+AS
+BEGIN
+    SELECT sp.name AS PlanName, CAST(SUM(CH.amount_earned) * 100.0 / SUM(SUM(CH.amount_earned)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
+    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
+    GROUP BY sp.name;
+END;
 
 GO
 CREATE PROCEDURE InitializeSystem

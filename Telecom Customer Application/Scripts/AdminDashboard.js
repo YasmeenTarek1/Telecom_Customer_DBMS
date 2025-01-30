@@ -55,10 +55,6 @@ if (typeof __doPostBack === 'undefined') {
     }
 }
 
-function triggerPostback(planId) {
-    __doPostBack('PlanClicked', planId);
-}
-
 // Prevent dropdown from closing when clicking inside it
 document.querySelectorAll('.dropdown-content').forEach(dropdown => {
     dropdown.addEventListener('click', function (event) {
@@ -116,6 +112,60 @@ document.addEventListener("DOMContentLoaded", function () {
                         position: 'bottom',
                         display: true,
                         text: 'Customer Benefit Distribution'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (typeof cashbackPlanData !== 'undefined') {
+        var ctx = document.getElementById('cashback-plan-chart').getContext('2d');
+
+        var labels = cashbackPlanData.map(item => item.PlanName); 
+        var data = cashbackPlanData.map(item => item.Percentage); 
+
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels, 
+                datasets: [{
+                    data: data, 
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c'
+                    ],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        align: 'start',
+                        labels: {
+                            color: '#2a3d56',
+                            font: {
+                                size: 14,
+                            },
+                        }
+                    },
+                    title: {
+                        position: 'bottom',
+                        display: true,
+                        text: 'Cashback Distribution by Plan'
                     },
                     tooltip: {
                         callbacks: {
@@ -226,16 +276,90 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    if (typeof topCustomersData !== 'undefined') {
+        var ctx = document.getElementById('top-customers-chart').getContext('2d');
+
+        // Extract labels and data from topCustomersData
+        var labels = topCustomersData.map(item => `${item.first_name} ${item.last_name}`); // Combine first and last name
+        var data = topCustomersData.map(item => item['Total Cashback Earned']); // Use total cashback earned
+
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels, // Customer names as labels
+                datasets: [{
+                    label: 'Total Cashback Earned',
+                    data: data, // Total cashback earned as data
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false // Hide legend for a cleaner look
+                    },
+                    title: {
+                        display: true,
+                        text: 'Top 5 Customers by Cashback Earned',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Cashback Earned'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Customers'
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
 function togglePanel() {
     const panel = document.getElementById('rightSidePanel');
     panel.classList.toggle('open');
-
-    // Fetch and update chart data when the panel is opened
-    if (panel.classList.contains('open')) {
-        fetchSubscriptionData();
-    }
 }
 
 function triggerPostback(planId) {
     __doPostBack('PlanClicked', planId);  // Triggers the postback with the correct event args
+}
+
+function triggerPostback2(benefitID) {
+    __doPostBack('BenefitClicked', benefitID);  
 }
