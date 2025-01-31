@@ -1851,6 +1851,20 @@ BEGIN
 END;
 
 GO
+CREATE PROCEDURE TopCustomersByUsedPoints
+AS
+BEGIN
+    SELECT TOP 5 CP.first_name, CP.last_name, CB.mobileNo, SUM(P.points_earned) AS 'Total Points Earned'
+    FROM Customer_Points P
+    INNER JOIN Customer_Benefits CB ON P.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
+    ORDER BY SUM(P.points_earned) DESC;
+END;
+
+
+GO
 CREATE PROCEDURE ExclusiveOffersHistory
 AS
 BEGIN
@@ -1898,18 +1912,6 @@ BEGIN
     GROUP BY sp.name;
 END;
 
-GO
-CREATE PROCEDURE TopCustomersByUsedPoints
-AS
-BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, CB.mobileNo, SUM(P.points_earned) AS 'Total Points Earned'
-    FROM Customer_Points P
-    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(CH.amount_earned) DESC;
-END;
 
 GO
 CREATE PROCEDURE TopCustomersByUsedSMS

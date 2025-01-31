@@ -68,6 +68,7 @@ var subscriptionChartInstance = null;
 var cashbackPlanChartInstance = null;
 var topCustomersChartInstance = null;
 var pointsChartInstance = null;
+var topPointsChartInstance = null;
 
 // benefits types pie chart
 document.addEventListener("DOMContentLoaded", function () {
@@ -426,6 +427,84 @@ document.addEventListener("DOMContentLoaded", function () {
                                 let value = context.raw || 0;
                                 return `${label}: ${value}%`;
                             }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (typeof topCustomersPointsData !== 'undefined') {
+        let ctx = document.getElementById('top-points-chart')?.getContext('2d');
+
+        // Destroy existing chart if it exists
+        if (topPointsChartInstance != null) {
+            topPointsChartInstance.destroy();
+        }
+
+        var labels = topCustomersPointsData.map(item => `${item.first_name} ${item.last_name}`);
+        var data = topCustomersPointsData.map(item => item['Total Points Earned']);
+
+        topPointsChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Points Earned',
+                    data: data,
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Top 5 Customers by Points Earned',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Points Earned'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Customers'
                         }
                     }
                 }

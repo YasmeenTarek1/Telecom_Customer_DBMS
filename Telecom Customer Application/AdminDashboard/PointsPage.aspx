@@ -79,6 +79,10 @@
                     <div class="chart-container">
                         <canvas id="points-plan-chart" width="400" height="400"></canvas>
                     </div>
+                    <!-- TOP Customers awarded Points Bar Chart -->
+                    <div class="chart-container">
+                        <canvas id="top-points-chart" width="400" height="400"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
