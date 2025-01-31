@@ -80,13 +80,13 @@ namespace Telecom_Customer_Application.AdminDashboard
                     PageUtilities.ExecuteQueryWithHandling(query3, TableBody3, form1);
 
                     // Fetch data for the pie chart
-                    DataTable benefitTypesData = GetBenefitTypesData();
+                    DataTable benefitTypesData = GetData("calculateBenefitsTypePercentages");
                     string benefitTypesJson = JsonConvert.SerializeObject(benefitTypesData);
 
                     // Pass the JSON data to the front end
                     ScriptManager.RegisterStartupScript(this, GetType(), "benefitTypesData", $"var benefitTypesData = {benefitTypesJson};", true);
 
-                    Dictionary<string, int> benefitsStatus = GetActiveAndExpiredBenefits();
+                    DataTable benefitsStatus = GetData("calculateActiveExpiredBenefitsPercentage");
                     string benefitsStatusJson = JsonConvert.SerializeObject(benefitsStatus);
 
                     ScriptManager.RegisterStartupScript(this, GetType(), "benefitsStatusData", $"var benefitsStatusData = {benefitsStatusJson};", true);
@@ -98,7 +98,7 @@ namespace Telecom_Customer_Application.AdminDashboard
             }
         }
 
-        protected DataTable GetBenefitTypesData()
+        protected DataTable GetData(String query)
         {
             DataTable dataTable = new DataTable();
             using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
@@ -106,7 +106,6 @@ namespace Telecom_Customer_Application.AdminDashboard
                 try
                 {
                     con.Open();
-                    string query = "calculateBenefitsTypePercentages";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
@@ -122,33 +121,6 @@ namespace Telecom_Customer_Application.AdminDashboard
                 }
             }
             return dataTable;
-        }
-        protected Dictionary<string, int> GetActiveAndExpiredBenefits()
-        {
-            Dictionary<string, int> benefitsStatus = new Dictionary<string, int>();
-
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-            {
-                try
-                {
-                    con.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_Benefits WHERE status = 'active'", con))
-                    {
-                        int activeCount = Convert.ToInt32(cmd.ExecuteScalar());
-                        benefitsStatus.Add("Active", activeCount);
-                    }
-                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Customer_Benefits WHERE status = 'expired'", con))
-                    {
-                        int expiredCount = Convert.ToInt32(cmd.ExecuteScalar());
-                        benefitsStatus.Add("Expired", expiredCount);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PageUtilities.DisplayAlert(ex, form1);
-                }
-            }
-            return benefitsStatus;
         }
     }
 }

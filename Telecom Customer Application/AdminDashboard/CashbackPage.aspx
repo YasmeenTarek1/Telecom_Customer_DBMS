@@ -21,12 +21,12 @@
                 <h3 id="TabHeading" class="tab-heading">Cashback</h3>
 
                 <div class="cardBox" style="margin: 20px 170px;">
-                    <div class="card" style="height: 100px;">
+                    <div class="card">
                         <div>
-                            <div class="numbers" id="paymentCount" runat="server" style="margin-top:18px; margin-left:5px;">0</div>
-                            <div class="cardName" style="margin-bottom:5px; margin-left:5px;">Payments</div>
+                            <div class="numbers" id="paymentCount" runat="server">0</div>
+                            <div class="cardName">Payments</div>
                         </div>
-                        <div class="iconBx" style="margin-top:20px; margin-right:40px;">
+                        <div class="iconBx">
                             <i class="fa-solid fa-coins sidebar-icon"></i>
                         </div>
                     </div>
@@ -35,10 +35,10 @@
 
                     <div class="card" style="height: 100px;">
                         <div>
-                            <div class="numbers" id="cashbackCount" runat="server" style="margin-top:18px; margin-left:5px;">0</div>
-                            <div class="cardName" style="margin-bottom:5px; margin-left:5px;">Cashback</div>
+                            <div class="numbers" id="cashbackCount" runat="server">0</div>
+                            <div class="cardName">Cashback</div>
                         </div>
-                        <div class="iconBx" style="margin-top:20px;">
+                        <div class="iconBx">
                             <i class="fa-solid fa-money-bill-wave"></i>
                         </div>
                     </div>

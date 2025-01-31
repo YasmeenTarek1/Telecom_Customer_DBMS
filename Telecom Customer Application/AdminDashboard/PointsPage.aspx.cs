@@ -60,13 +60,13 @@ namespace Telecom_Customer_Application.AdminDashboard
                     expiredPointsCount.InnerText = UsedPointsCount.ToString();
 
                     // Fetch data for the pie chart
-                    DataTable pointsPlanData = GetPointsPlanData();
+                    DataTable pointsPlanData = GetData("calculatePlanPointsPercentage");
                     string pointsPlanJson = JsonConvert.SerializeObject(pointsPlanData);
 
                     // Pass the JSON data to the front end
                     ScriptManager.RegisterStartupScript(this, GetType(), "pointsPlanData", $"var pointsPlanData = {pointsPlanJson};", true);
 
-                    DataTable topCustomersPointsData = GetTopCustomersByPointsData();
+                    DataTable topCustomersPointsData = GetData("TopCustomersByUsedPoints");
                     string jsonData = JsonConvert.SerializeObject(topCustomersPointsData);
 
                     ScriptManager.RegisterStartupScript(this, GetType(), "topCustomersPointsData", $"var topCustomersPointsData = {jsonData};", true);
@@ -78,7 +78,7 @@ namespace Telecom_Customer_Application.AdminDashboard
                 }
             }
         }
-        protected DataTable GetPointsPlanData()
+        protected DataTable GetData(String query)
         {
             DataTable dataTable = new DataTable();
             using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
@@ -86,37 +86,9 @@ namespace Telecom_Customer_Application.AdminDashboard
                 try
                 {
                     con.Open();
-                    string query = "calculatePlanPointsPercentage";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                        {
-                            adapter.Fill(dataTable);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PageUtilities.DisplayAlert(ex, form1);
-                }
-            }
-            return dataTable;
-        }
-
-        protected DataTable GetTopCustomersByPointsData()
-        {
-            DataTable dataTable = new DataTable();
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-            {
-                try
-                {
-                    con.Open();
-                    string query = "TopCustomersByUsedPoints";
-
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
                         using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                         {
                             adapter.Fill(dataTable);

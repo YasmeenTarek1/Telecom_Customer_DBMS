@@ -149,9 +149,8 @@ document.addEventListener("DOMContentLoaded", function () {
             benefitsStatusChartInstance.destroy();
         }
 
-        // Extract labels and data from the JSON
-        var labels = Object.keys(benefitsStatusData); // ["Active", "Expired"]
-        var data = Object.values(benefitsStatusData); // [activeCount, expiredCount]
+        var labels = benefitsStatusData.map(item => item.status.charAt(0).toUpperCase() + item.status.slice(1));
+        var data = benefitsStatusData.map(item => item.Percentage);
 
         benefitsStatusChartInstance = new Chart(ctx, {
             type: 'pie',

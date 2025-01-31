@@ -48,13 +48,13 @@ namespace Telecom_Customer_Application.AdminDashboard
                     PageUtilities.ExecuteQueryWithHandling(query, TableBody2, form1);
 
                     // Fetch data for the pie chart
-                    DataTable cashbackPlanData = GetCashbackPlanData();
+                    DataTable cashbackPlanData = GetData("calculatePlanCashbackPercentage");
                     string cashbackPlanJson = JsonConvert.SerializeObject(cashbackPlanData);
 
                     // Pass the JSON data to the front end
                     ScriptManager.RegisterStartupScript(this, GetType(), "cashbackPlanData", $"var cashbackPlanData = {cashbackPlanJson};", true);
 
-                    DataTable dataTable = GetTopCustomersByCashbackData();
+                    DataTable dataTable = GetData("TopCustomersByCashback");
                     string jsonData = JsonConvert.SerializeObject(dataTable);
 
                     ScriptManager.RegisterStartupScript(this, GetType(), "topCustomersData", $"var topCustomersData = {jsonData};", true);
@@ -66,7 +66,7 @@ namespace Telecom_Customer_Application.AdminDashboard
             }
         }
 
-        protected DataTable GetCashbackPlanData()
+        protected DataTable GetData(String query)
         {
             DataTable dataTable = new DataTable();
             using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
@@ -74,37 +74,9 @@ namespace Telecom_Customer_Application.AdminDashboard
                 try
                 {
                     con.Open();
-                    string query = "calculatePlanCashbackPercentage";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                        {
-                            adapter.Fill(dataTable);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PageUtilities.DisplayAlert(ex, form1);
-                }
-            }
-            return dataTable;
-        }
-
-        protected DataTable GetTopCustomersByCashbackData()
-        {
-            DataTable dataTable = new DataTable();
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-            {
-                try
-                {
-                    con.Open();
-                    string query = "TopCustomersByCashback";
-
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure; 
                         using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                         {
                             adapter.Fill(dataTable);

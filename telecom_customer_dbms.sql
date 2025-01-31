@@ -1563,6 +1563,15 @@ BEGIN
         s.subscription_date DESC;
 END
 
+GO
+CREATE PROCEDURE calculateActiveExpiredBenefitsPercentage
+AS
+BEGIN
+    SELECT status, CAST(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM Customer_Benefits
+    GROUP BY status;
+END;
+
 Go
 CREATE PROCEDURE calculateBenefitsTypePercentages
 AS
@@ -1577,8 +1586,6 @@ BEGIN
     GROUP BY b.benefitID
     ORDER BY SubscriptionCount DESC;
 END;
-
-execute calculateBenefitsTypePercentages
 
 GO
 CREATE PROCEDURE GetBenefitsExpiringSoon
@@ -1748,7 +1755,6 @@ CREATE VIEW TotalPayments As
     SUM(p.amount) AS TotalPayments
     FROM Payment p;
 
-
 GO
 CREATE PROCEDURE CashbackHistory
 AS
@@ -1765,7 +1771,7 @@ GO
 CREATE PROCEDURE TopCustomersByCashback
 AS
 BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, CB.mobileNo, SUM(CH.amount_earned) AS 'Total Cashback Earned'
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CH.amount_earned) AS 'Total Cashback Earned'
     FROM Customer_Cashback CH
     INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
@@ -1785,7 +1791,6 @@ BEGIN
     INNER JOIN Service_Plan sp ON sp.planID = pp.planID
     GROUP BY sp.name;
 END;
-
 
 
 
@@ -1814,8 +1819,8 @@ END;
 
 GO 
 CREATE VIEW UsedPoints As   
-SELECT SUM(COALESCE(points_used, 0)) AS 'Used Points'
-FROM Benefit_Usage;
+    SELECT SUM(COALESCE(points_used, 0)) AS 'Used Points'
+    FROM Benefit_Usage;
 
 GO
 CREATE VIEW ExpiredPoints AS
@@ -1854,7 +1859,7 @@ GO
 CREATE PROCEDURE TopCustomersByUsedPoints
 AS
 BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, CB.mobileNo, SUM(P.points_earned) AS 'Total Points Earned'
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(P.points_earned) AS 'Total Points Earned'
     FROM Customer_Points P
     INNER JOIN Customer_Benefits CB ON P.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
@@ -1864,11 +1869,34 @@ BEGIN
 END;
 
 
+
+
+GO 
+CREATE VIEW TotalExclusiveOffers As
+    SELECT COUNT(*) AS 'Total Offers'
+    FROM Customer_Exclusive_Offers CE;
+
+GO 
+CREATE VIEW ActiveExclusiveOffers As
+    SELECT COUNT(*) AS 'Active Offers'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB
+    ON CB.benefitID = CE.benefitID
+    WHERE CB.status = 'active';
+
+GO 
+CREATE VIEW ExpiredExclusiveOffers As
+    SELECT COUNT(*) AS 'Expired Offers'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB
+    ON CB.benefitID = CE.benefitID
+    WHERE CB.status = 'expired';
+
 GO
 CREATE PROCEDURE ExclusiveOffersHistory
 AS
 BEGIN
-    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Offer Received Date',  CE.SMS_offered, CE.minutes_offered, CE.data_offered
+    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date',  CE.SMS_offered, CE.minutes_offered, CE.data_offered
     FROM Customer_Exclusive_Offers CE
     INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
@@ -1877,80 +1905,70 @@ BEGIN
 END;
 
 GO
-CREATE PROCEDURE calculatePlanOffersSMSPercentage
+CREATE PROCEDURE CustomersOfferNotUsed
 AS
 BEGIN
-    SELECT sp.name AS PlanName, CAST(SUM(CE.SMS_offered) * 100.0 / SUM(SUM(CE.SMS_offered)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date',  CE.SMS_offered, CE.minutes_offered, CE.data_offered
     FROM Customer_Exclusive_Offers CE
     INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
-    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
-    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
-    GROUP BY sp.name;
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    INNER JOIN Benefit_Usage bu ON bu.benefitID = CE.benefitID
+    WHERE bu.SMS_sent = 0 and bu.minutes_used = 0 and bu.data_consumption = 0
+    ORDER BY CB.start_date DESC; 
 END;
+
+exec CustomersOfferNotUsed
 
 GO
-CREATE PROCEDURE calculatePlanOffersMinutesPercentage
+CREATE PROCEDURE calculatePlanOffersPercentage
 AS
 BEGIN
-    SELECT sp.name AS PlanName, CAST(SUM(CE.minutes_offered) * 100.0 / SUM(SUM(CE.minutes_offered)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    SELECT sp.name AS PlanName, CAST(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS DECIMAL(5, 2)) AS Percentage
     FROM Customer_Exclusive_Offers CE
     INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
     INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
     INNER JOIN Service_Plan sp ON sp.planID = pp.planID
     GROUP BY sp.name;
 END;
-
-GO
-CREATE PROCEDURE calculatePlanOffersInternetPercentage
-AS
-BEGIN
-    SELECT sp.name AS PlanName, CAST(SUM(CE.data_offered) * 100.0 / SUM(SUM(CE.data_offered)) OVER () AS DECIMAL(5, 2)) AS Percentage
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
-    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
-    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
-    GROUP BY sp.name;
-END;
-
 
 GO
 CREATE PROCEDURE TopCustomersByUsedSMS
 AS
 BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, CB.mobileNo, SUM(CH.amount_earned) AS 'Total Cashback Earned'
-    FROM Customer_Cashback CH
-    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.SMS_offered) AS 'Total SMS Earned'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
     INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
     GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(CH.amount_earned) DESC;
+    ORDER BY SUM(CE.SMS_offered) DESC;
 END;
-
 
 GO
 CREATE PROCEDURE TopCustomersByUsedMinutes
 AS
 BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, CB.mobileNo, SUM(CH.amount_earned) AS 'Total Cashback Earned'
-    FROM Customer_Cashback CH
-    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.minutes_offered) AS 'Total Minutes Earned'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
     INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
     GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(CH.amount_earned) DESC;
+    ORDER BY SUM(CE.minutes_offered) DESC;
 END;
 
 GO
 CREATE PROCEDURE TopCustomersByUsedInternet
 AS
 BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, CB.mobileNo, SUM(CH.amount_earned) AS 'Total Cashback Earned'
-    FROM Customer_Cashback CH
-    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.data_offered) AS 'Total Internet Earned'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
     INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
     GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(CH.amount_earned) DESC;
+    ORDER BY SUM(CE.data_offered) DESC;
 END;
 
 GO

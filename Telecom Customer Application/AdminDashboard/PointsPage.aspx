@@ -36,7 +36,7 @@
                             <div class="numbers" id="usedPointsCount" runat="server">0</div>
                             <div class="cardName">Used Points</div>
                         </div>
-                        <div class="iconBx">
+                        <div class="iconBx" style="margin-right:20px;">
                             <i class="fa-solid fa-ticket"></i>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                             <div class="numbers" id="activePointsCount" runat="server">0</div>
                             <div class="cardName">Active Points</div>
                         </div>
-                        <div class="iconBx">
+                        <div class="iconBx" style="margin-right:20px;">
                             <i class="fa-solid fa-circle-check"></i>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                             <div class="numbers" id="expiredPointsCount" runat="server">0</div>
                             <div class="cardName">Expired Points</div>
                         </div>
-                        <div class="iconBx">
+                        <div class="iconBx" style="margin-right:20px;">
                             <i class="fa-solid fa-shop-slash"></i>
                         </div>
                     </div>
