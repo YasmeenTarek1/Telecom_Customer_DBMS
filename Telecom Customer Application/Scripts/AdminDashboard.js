@@ -69,6 +69,11 @@ var cashbackPlanChartInstance = null;
 var topCustomersChartInstance = null;
 var pointsChartInstance = null;
 var topPointsChartInstance = null;
+var offersPlanChartInstance = null;
+var topSMSChartInstance = null;
+var topMinutesChartInstance = null;
+var topInternetChartInstance = null;
+
 
 // benefits types pie chart
 document.addEventListener("DOMContentLoaded", function () {
@@ -79,7 +84,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (benefitTypesChartInstance !== null) {
             benefitTypesChartInstance.destroy();
         }
-
 
         // Sort the data by benefitID
         benefitTypesData.sort((a, b) => a.benefitID - b.benefitID);
@@ -498,6 +502,295 @@ document.addEventListener("DOMContentLoaded", function () {
                         title: {
                             display: true,
                             text: 'Total Points Earned'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Customers'
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.pathname.includes("ExclusiveOffersPage.aspx") && typeof offersPlanData !== 'undefined') {
+        let ctx = document.getElementById('offers-plan-chart')?.getContext('2d');
+
+        // Destroy existing chart if it exists
+        if (offersPlanChartInstance != null) {
+            offersPlanChartInstance.destroy();
+        }
+
+        var labels = offersPlanData.map(item => item.PlanName);
+        var data = offersPlanData.map(item => item.Percentage);
+
+        offersPlanChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c'
+                    ]
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        position: 'bottom',
+                        display: true,
+                        text: 'Offers Distribution by Plan'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (window.location.pathname.includes("ExclusiveOffersPage.aspx") && typeof topSMSData !== 'undefined') {
+        let ctx = document.getElementById('top-sms-chart')?.getContext('2d');
+
+        // Destroy existing chart if it exists
+        if (topSMSChartInstance != null) {
+            topSMSChartInstance.destroy();
+        }
+
+        var labels = topSMSData.map(item => `${item.first_name} ${item.last_name}`);
+        var data = topSMSData.map(item => item['Total SMS Earned']);
+
+        topSMSChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total SMS Earned',
+                    data: data,
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Top 5 Customers by SMS Earned',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total SMS Earned'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Customers'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (window.location.pathname.includes("ExclusiveOffersPage.aspx") && typeof topMinutesData !== 'undefined') {
+        let ctx = document.getElementById('top-minutes-chart')?.getContext('2d');
+
+        // Destroy existing chart if it exists
+        if (topMinutesChartInstance != null) {
+            topMinutesChartInstance.destroy();
+        }
+
+        var labels = topMinutesData.map(item => `${item.first_name} ${item.last_name}`);
+        var data = topMinutesData.map(item => item['Total Minutes Earned']);
+
+        topMinutesChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Minutes Earned',
+                    data: data,
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Top 5 Customers by Minutes Earned',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Minutes Earned'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Customers'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (window.location.pathname.includes("ExclusiveOffersPage.aspx") && typeof topInternetData !== 'undefined') {
+        let ctx = document.getElementById('top-data-chart')?.getContext('2d');
+
+        // Destroy existing chart if it exists
+        if (topInternetChartInstance != null) {
+            topInternetChartInstance.destroy();
+        }
+
+        var labels = topInternetData.map(item => `${item.first_name} ${item.last_name}`);
+        var data = topInternetData.map(item => item['Total Internet Earned']);
+
+        topInternetChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Data Earned',
+                    data: data,
+                    backgroundColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderColor: [
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
+                        '#03184c',
+                        '#2a3d56'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Top 5 Customers by Data Earned',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Data Earned'
                         }
                     },
                     x: {

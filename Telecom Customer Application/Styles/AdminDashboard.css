@@ -899,6 +899,7 @@ table tr:hover {
 
 .right-side-panel.open {
     transform: translateX(0); 
+    overflow-y: auto;
 }
 
 .toggle-panel-button {

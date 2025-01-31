@@ -56,8 +56,8 @@ namespace Telecom_Customer_Application.AdminDashboard
                     }
                     totalPointsCount.InnerText = TotalPointsCount.ToString();
                     usedPointsCount.InnerText = UsedPointsCount.ToString();
-                    activePointsCount.InnerText = TotalPointsCount.ToString();
-                    expiredPointsCount.InnerText = UsedPointsCount.ToString();
+                    activePointsCount.InnerText = ActivePointsCount.ToString();
+                    expiredPointsCount.InnerText = ExpiredPointsCount.ToString();
 
                     // Fetch data for the pie chart
                     DataTable pointsPlanData = GetData("calculatePlanPointsPercentage");

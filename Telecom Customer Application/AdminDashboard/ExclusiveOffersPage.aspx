@@ -20,46 +20,52 @@
 
                 <h3 id="TabHeading" class="tab-heading">Exclusive Offers</h3>
 
-                <div class="cardBox">
+                <div class="cardBox" style="grid-template-columns: repeat(3, 0.3fr); grid-gap: 100px; margin: 30px 60px 20px 60px;">
                     <div class="card">
                         <div>
-                            <div class="numbers" id="totalPointsCount" runat="server">0</div>
-                            <div class="cardName">Total Points</div>
+                            <div class="numbers" id="totalOffersCount" runat="server">0</div>
+                            <div class="cardName">Total Offers</div>
                         </div>
-                        <div class="iconBx">
-                            <i class="fa-solid fa-coins sidebar-icon"></i>
+                        <div class="iconBx" style="margin-right:10px;">
+                            <i class="fa-solid fa-comments"></i>
                         </div>
                     </div>
 
                     <div class="card">
                         <div>
-                            <div class="numbers" id="usedPointsCount" runat="server">0</div>
-                            <div class="cardName">Used Points</div>
+                            <div class="numbers" id="activeOffersCount" runat="server">0</div>
+                            <div class="cardName">Active Offers</div>
                         </div>
-                        <div class="iconBx" style="margin-right:20px;">
-                            <i class="fa-solid fa-ticket"></i>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div>
-                            <div class="numbers" id="activePointsCount" runat="server">0</div>
-                            <div class="cardName">Active Points</div>
-                        </div>
-                        <div class="iconBx" style="margin-right:20px;">
+                        <div class="iconBx" style="margin-right:10px;">
                             <i class="fa-solid fa-circle-check"></i>
                         </div>
                     </div>
 
                     <div class="card">
                         <div>
-                            <div class="numbers" id="expiredPointsCount" runat="server">0</div>
-                            <div class="cardName">Expired Points</div>
+                            <div class="numbers" id="expiredOffersCount" runat="server">0</div>
+                            <div class="cardName">Expired Offers</div>
                         </div>
-                        <div class="iconBx" style="margin-right:20px;">
+                        <div class="iconBx" style="margin-right:10px;">
                             <i class="fa-solid fa-shop-slash"></i>
                         </div>
                     </div>
                 </div>
+
+
+                <div class="table-responsive">
+                    <table>
+                        <caption>Exclusive Offers History</caption>
+                        <tbody id="TableBody1" runat="server"></tbody>
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <caption>Customers With No Active Exclusive Offers</caption>
+                        <tbody id="TableBody2" runat="server"></tbody>
+                    </table>
+                </div>
+
             </div>
 
             <div id="rightSidePanel" class="right-side-panel">
@@ -68,14 +74,24 @@
                 </button>
 
                 <div id="panelContent" class="panel-content">
-                    <!-- Cashback given by each Plan Pie Chart -->
+                    <!-- Number of offers given by each Plan Pie Chart -->
                     <div class="chart-container">
-                        <canvas id="cashback-plan-chart" width="400" height="400"></canvas>
+                        <canvas id="offers-plan-chart" width="400" height="400"></canvas>
                     </div>
-                    <!-- TOP Customers awarded Cashback Bar Chart -->
+
+                    <!-- TOP Customers offered offered SMS Bar Chart -->
                     <div class="chart-container">
-                        <canvas id="top-customers-chart" width="400" height="400"></canvas>
+                        <canvas id="top-sms-chart" width="400" height="400"></canvas>
                     </div>
+                    <!-- TOP Customers offered offered minutes Bar Chart -->
+                    <div class="chart-container">
+                        <canvas id="top-minutes-chart" width="400" height="400"></canvas>
+                    </div>
+                    <!-- TOP Customers offered offered data Bar Chart -->
+                    <div class="chart-container">
+                        <canvas id="top-data-chart" width="400" height="400"></canvas>
+                    </div>
+
                 </div>
             </div>
         </div>

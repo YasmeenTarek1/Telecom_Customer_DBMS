@@ -33,12 +33,12 @@
 
                     <div class="vs">VS</div>
 
-                    <div class="card" style="height: 100px;">
+                    <div class="card" ">
                         <div>
                             <div class="numbers" id="cashbackCount" runat="server">0</div>
                             <div class="cardName">Cashback</div>
                         </div>
-                        <div class="iconBx">
+                        <div class="iconBx" style="margin-right:10px;">
                             <i class="fa-solid fa-money-bill-wave"></i>
                         </div>
                     </div>

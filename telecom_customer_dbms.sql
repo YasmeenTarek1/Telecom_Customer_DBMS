@@ -1896,7 +1896,7 @@ GO
 CREATE PROCEDURE ExclusiveOffersHistory
 AS
 BEGIN
-    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date',  CE.SMS_offered, CE.minutes_offered, CE.data_offered
+    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date', CE.SMS_offered, CE.minutes_offered, CE.data_offered, CB.status
     FROM Customer_Exclusive_Offers CE
     INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
@@ -1908,7 +1908,7 @@ GO
 CREATE PROCEDURE CustomersOfferNotUsed
 AS
 BEGIN
-    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date',  CE.SMS_offered, CE.minutes_offered, CE.data_offered
+    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date',  CE.SMS_offered, CE.minutes_offered, CE.data_offered, CB.status
     FROM Customer_Exclusive_Offers CE
     INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
@@ -1917,8 +1917,6 @@ BEGIN
     WHERE bu.SMS_sent = 0 and bu.minutes_used = 0 and bu.data_consumption = 0
     ORDER BY CB.start_date DESC; 
 END;
-
-exec CustomersOfferNotUsed
 
 GO
 CREATE PROCEDURE calculatePlanOffersPercentage
@@ -1933,7 +1931,7 @@ BEGIN
 END;
 
 GO
-CREATE PROCEDURE TopCustomersByUsedSMS
+CREATE PROCEDURE TopCustomersByOfferedSMS
 AS
 BEGIN
     SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.SMS_offered) AS 'Total SMS Earned'
@@ -1946,7 +1944,7 @@ BEGIN
 END;
 
 GO
-CREATE PROCEDURE TopCustomersByUsedMinutes
+CREATE PROCEDURE TopCustomersByOfferedMinutes
 AS
 BEGIN
     SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.minutes_offered) AS 'Total Minutes Earned'
@@ -1959,7 +1957,7 @@ BEGIN
 END;
 
 GO
-CREATE PROCEDURE TopCustomersByUsedInternet
+CREATE PROCEDURE TopCustomersByOfferedInternet
 AS
 BEGIN
     SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.data_offered) AS 'Total Internet Earned'
