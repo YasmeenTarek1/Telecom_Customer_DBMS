@@ -66,7 +66,7 @@ namespace Telecom_Customer_Application.AdminDashboard
             }
         }
 
-        protected DataTable GetData(String query)
+        protected DataTable GetData(string query)
         {
             DataTable dataTable = new DataTable();
             using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))

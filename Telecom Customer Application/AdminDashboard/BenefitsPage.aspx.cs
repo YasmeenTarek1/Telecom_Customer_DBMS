@@ -49,12 +49,12 @@ namespace Telecom_Customer_Application.AdminDashboard
                             TotalBenefits = Convert.ToInt32(cmd.ExecuteScalar());
                         }
 
-                        using (SqlCommand cmd = new SqlCommand("SELECT SUM(points_earned) FROM Customer_Points", con))
+                        using (SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(COALESCE(points_earned, 0)), 0) FROM Customer_Points", con))
                         {
                             TotalPoints = Convert.ToInt32(cmd.ExecuteScalar());
                         }
 
-                        using (SqlCommand cmd = new SqlCommand("SELECT SUM(amount_earned) FROM Customer_Cashback", con))
+                        using (SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(COALESCE(amount_earned, 0)), 0) FROM Customer_Cashback", con))
                         {
                             TotalCashback = Convert.ToInt32(cmd.ExecuteScalar());
                         }
@@ -86,8 +86,8 @@ namespace Telecom_Customer_Application.AdminDashboard
                     // Pass the JSON data to the front end
                     ScriptManager.RegisterStartupScript(this, GetType(), "benefitTypesData", $"var benefitTypesData = {benefitTypesJson};", true);
 
-                    DataTable benefitsStatus = GetData("calculateActiveExpiredBenefitsPercentage");
-                    string benefitsStatusJson = JsonConvert.SerializeObject(benefitsStatus);
+                    DataTable benefitsStatusData = GetData("calculateActiveExpiredBenefitsPercentage");
+                    string benefitsStatusJson = JsonConvert.SerializeObject(benefitsStatusData);
 
                     ScriptManager.RegisterStartupScript(this, GetType(), "benefitsStatusData", $"var benefitsStatusData = {benefitsStatusJson};", true);
                 }
@@ -98,7 +98,7 @@ namespace Telecom_Customer_Application.AdminDashboard
             }
         }
 
-        protected DataTable GetData(String query)
+        protected DataTable GetData(string query)
         {
             DataTable dataTable = new DataTable();
             using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))

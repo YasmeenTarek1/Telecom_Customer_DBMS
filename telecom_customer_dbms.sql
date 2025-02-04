@@ -1578,13 +1578,11 @@ AS
 BEGIN
     SELECT 
         b.benefitID,
-        COUNT(s.mobileNo) AS SubscriptionCount,
         CAST(COUNT(s.mobileNo) * 100.0 / SUM(COUNT(s.mobileNo)) OVER () AS DECIMAL(5, 2)) AS Percentage
     FROM Subscription s
     INNER JOIN Plan_Provides_Benefits ppb ON s.planID = ppb.planID
     INNER JOIN Benefits b ON ppb.benefitID = b.benefitID
-    GROUP BY b.benefitID
-    ORDER BY SubscriptionCount DESC;
+    GROUP BY b.benefitID;
 END;
 
 GO
@@ -1626,6 +1624,8 @@ BEGIN
                         WHERE B.status = 'active' AND A.mobileNo = B.mobileNo
                     )
 END;
+
+SELECT SUM(COALESCE(p.points_earned,0)) FROM Customer_Points p
 
 GO
 CREATE PROCEDURE GetCustomersWithBenefits
