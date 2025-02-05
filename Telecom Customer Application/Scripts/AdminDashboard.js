@@ -17,14 +17,10 @@ window.onload = function () {
 
     // Restore the state of each dropdown individually
     const storesDropdownState = document.getElementById(dropdownStates.dataset.storesDropdown).value;
-    const plansDropdownState = document.getElementById(dropdownStates.dataset.plansDropdown).value;
     const transactionDropdownState = document.getElementById(dropdownStates.dataset.transactionDropdown).value;
 
     if (storesDropdownState === "open") {
         document.querySelector('#shopsTab + .dropdown-content').style.display = "block";
-    }
-    if (plansDropdownState === "open") {
-        document.querySelector('#plansTab + .dropdown-content').style.display = "block";
     }
     if (transactionDropdownState === "open") {
         document.querySelector('#transactionsTab + .dropdown-content').style.display = "block";

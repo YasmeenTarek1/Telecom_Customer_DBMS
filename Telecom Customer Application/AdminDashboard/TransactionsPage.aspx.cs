@@ -10,119 +10,70 @@ namespace Telecom_Customer_Application.AdminDashboard
         {
             if (!IsPostBack)
             {
-                string subtab = Request.QueryString["subtab"];
-
-                if (!string.IsNullOrEmpty(subtab))
+                using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
                 {
-                    switch (subtab.ToLower())
+                    try
                     {
-                        case "details":
-                            LoadTransactionDetails(sender, e);
-                            break;
-
-                        case "average":
-                            LoadAverageTransactions(sender, e);
-                            break;
+                        con.Open();
+                        SqlCommand cmd = new SqlCommand("SELECT * From TransactionsHistory", con);
+                        PageUtilities.LoadData(cmd, TableBody);
+                    }
+                    catch (Exception ex)
+                    {
+                        PageUtilities.DisplayAlert(ex, TableBody);
                     }
                 }
             }
         }
 
-        protected void LoadTransactionDetails(object sender, EventArgs e)
+        protected void ApplyFilterButton_Click(object sender, EventArgs e)
         {
-            TabHeading.InnerText = "Transaction Details";
 
-            DateContainer1.Style["display"] = "none";
-            DateInput1.Text = "";
-
-            DateContainer2.Style["display"] = "none";
-            DateInput2.Text = "";
-
-            TextBoxContainer2.Style["display"] = "block";
-            MobileEditText.Text = "";
-
-            TextBoxContainer3.Style["display"] = "none";
-            WalletEditText.Text = "";
-
-            LabelOut.Style["display"] = "none";
-            LabelOut.Text = "";
-
-            TableBody.Style["display"] = "block";
-        }
-
-        protected void LoadAverageTransactions(object sender, EventArgs e)
-        {
-            TabHeading.InnerText = "Average Transaction Amount";
-
-            DateContainer1.Style["display"] = "block";
-            DateInput1.Text = "";
-
-            DateContainer2.Style["display"] = "block";
-            DateInput2.Text = "";
-
-            TextBoxContainer2.Style["display"] = "none";
-            MobileEditText.Text = "";
-
-            TextBoxContainer3.Style["display"] = "block";
-            WalletEditText.Text = "";
-
-            LabelOut.Style["display"] = "block";
-            LabelOut.Text = "";
-
-            TableBody.Style["display"] = "none";
-        }
-
-        protected void SearchButton_Click(object sender, EventArgs e)
-        {
             using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
             {
-                SqlCommand cmd = null;
-
                 try
                 {
-                    string subtab = Request.QueryString["subtab"];
+                    con.Open();
 
-                    if (subtab == "details")
-                    {
-                        cmd = new SqlCommand("Account_Payment_Points", con);
-                        string mobileNo = MobileEditText.Text;
-                        PageUtilities.checkValidMobileNum(mobileNo);
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11)).Value = mobileNo;
-                        con.Open();
-                        PageUtilities.LoadData(cmd, TableBody);
-                    }
-                    else if (subtab == "average")
-                    {
-                        cmd = new SqlCommand("SELECT dbo.Wallet_Transfer_Amount(@walletID, @start_date, @end_date)", con);
-                        string walletId = WalletEditText.Text;
-                        PageUtilities.CheckValidWalletID(walletId);
-                        cmd.Parameters.Add(new SqlParameter("@walletID", walletId));
-                        cmd.Parameters.Add(new SqlParameter("@start_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput1.Text) });
-                        cmd.Parameters.Add(new SqlParameter("@end_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput2.Text) });
-                        con.Open();
-                        LoadLabel(cmd);
-                    }
+                    string walletId = WalletEditText.Text;
+                    PageUtilities.CheckValidWalletID(walletId);
+
+
+                    SqlCommand cmd = new SqlCommand("Wallet_Transaction_History", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@walletID", walletId));
+                    PageUtilities.LoadData(cmd, TableBody);
+
+                    SqlCommand cmd1 = new SqlCommand("SELECT dbo.Wallet_Average_Sent(@walletID, @start_date, @end_date)", con);
+                    cmd1.Parameters.Add(new SqlParameter("@walletID", walletId));
+                    cmd1.Parameters.Add(new SqlParameter("@start_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput1.Text) });
+                    cmd1.Parameters.Add(new SqlParameter("@end_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput2.Text) });
+
+                    SqlCommand cmd2 = new SqlCommand("SELECT dbo.Wallet_Average_Received(@walletID, @start_date, @end_date)", con);
+                    cmd2.Parameters.Add(new SqlParameter("@walletID", walletId));
+                    cmd2.Parameters.Add(new SqlParameter("@start_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput1.Text) });
+                    cmd2.Parameters.Add(new SqlParameter("@end_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput2.Text) });
+
+                    AverageSentLabel.Style["display"] = "block";
+                    AverageReceivedLabel.Style["display"] = "block";
+
+                    LoadLabel(cmd1, cmd2);
                 }
                 catch (Exception ex)
                 {
-                    PageUtilities.DisplayAlert(ex, TableBody);
+                    PageUtilities.DisplayAlert(ex, form1);
                 }
             }
         }
-        protected void LoadLabel(SqlCommand cmd)
+        protected void LoadLabel(SqlCommand cmd1, SqlCommand cmd2)
         {
-            object result = cmd.ExecuteScalar();
+            object result = cmd1.ExecuteScalar();
+            int data = Convert.ToInt32(result);
+            AverageSentLabel.Text = $"Average Sent Transactions: {data}";
 
-            if (result != null && result != DBNull.Value)
-            {
-                int data = Convert.ToInt32(result);
-                LabelOut.Text = $"Average Transactions Amount: {data}";
-            }
-            else
-            {
-                throw new Exception("No cashback available for this wallet and plan combination.");
-            }
+            result = cmd2.ExecuteScalar();
+            data = Convert.ToInt32(result);
+            AverageReceivedLabel.Text = $"Average Received Transactions: {data}";
         }
     }
 }

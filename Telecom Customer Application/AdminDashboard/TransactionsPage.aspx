@@ -17,38 +17,37 @@
 
             <div id="sharedContent" class="tab-content">
 
-                <h3 id="TabHeading" class="tab-heading" runat="server">Average Transaction Amount</h3>
+                <h3 id="TabHeading" class="tab-heading" runat="server">Transactions</h3>
 
-                   <div id="DateContainer1" runat="server" class="date-picker-container" style="display: none;">
-                        <label id="DateLabel1" runat="server" for="DateInput1" class="date-picker-label">Start Date:</label>
-                        <asp:TextBox ID="DateInput1" runat="server" CssClass="date-picker" TextMode="Date"></asp:TextBox>
+                <div id="FilterContainer" runat="server" class="filter-container">
+                    <div id="filterOption1" runat="server">
+                        <label for="WalletEditText" class="filter-label">Wallet ID:</label>
+                        <asp:TextBox ID="WalletEditText" runat="server" CssClass="filter-input" placeholder="Enter Wallet ID"></asp:TextBox>
                     </div>
-                   <div id="DateContainer2" runat="server" class="date-picker-container" style="display: none;">
-                       <label id="DateLabel2" runat="server" for="DateInput2" class="date-picker-label">End Date:</label>
-                       <asp:TextBox ID="DateInput2" runat="server" CssClass="date-picker" TextMode="Date"></asp:TextBox>
-                   </div>
+                    <div id="filterOption2" runat="server">
+                        <label for="DateInput1" class="filter-label">Start Date:</label>
+                        <asp:TextBox ID="DateInput1" runat="server" CssClass="filter-input" TextMode="Date"></asp:TextBox>
+                    </div>
+                    <div id="filterOption3" runat="server">
+                        <label for="DateInput2" class="filter-label">End Date:</label>
+                        <asp:TextBox ID="DateInput2" runat="server" CssClass="filter-input" TextMode="Date"></asp:TextBox>
+                    </div>
+                    <div id="filterOption4" runat="server">
+                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="styled-button" Text="Apply" OnClick="ApplyFilterButton_Click" Style="font-size: 12px;" />
+                    </div>
+                </div>
 
-                   <div id="TextBoxContainer2" runat="server" class="input-container" style="display: none;">
-                       <label for="MobileEditText" class="input-label">Mobile Number:</label>
-                       <asp:TextBox ID="MobileEditText" runat="server" CssClass="styled-input" placeholder="Enter Mobile Number"></asp:TextBox>
-                   </div>
-
-                   <div id="TextBoxContainer3" runat="server" class="input-container" style="display: none;">
-                       <label for="WalletEditText" class="input-label">Wallet ID:</label>
-                       <asp:TextBox ID="WalletEditText" runat="server" CssClass="styled-input" placeholder="Enter Wallet ID"></asp:TextBox>
-                   </div>
-
-                   <div class="button-container">
-                       <asp:Button ID="SearchButton" runat="server" CssClass="styled-button" Text="Search" OnClick="SearchButton_Click" />
-                   </div>
-                 
                 <div class="output-container">
-                     <asp:Label ID="LabelOut" runat="server" CssClass="output-label" Text="" style="display: none;"></asp:Label>
-                 </div>
+                     <asp:Label ID="AverageSentLabel" runat="server" CssClass="output-label" Text="" style="display: none;"></asp:Label>
+                </div>
+                <div class="output-container">
+                     <asp:Label ID="AverageReceivedLabel" runat="server" CssClass="output-label" Text="" style="display: none;"></asp:Label>
+                </div>
 
-                <div class="table-responsive" >
+
+                <div class="table-responsive">
                     <table>
-                        <tbody id="TableBody" runat="server" style="display: none;"></tbody>
+                        <tbody id="TableBody" runat="server"></tbody>
                     </table>
                 </div>
             </div>

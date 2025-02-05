@@ -76,7 +76,6 @@ namespace Telecom_Customer_Application.AdminDashboard
                     cmd.Parameters.AddWithValue("@SubscriptionStatus", subscriptionStatus);
                     cmd.Parameters.AddWithValue("@SelectedPlan", SelectedPlan+1);
 
-                    // Load the data into the target UI element
                     PageUtilities.LoadData(cmd, TableBody);
                 }
                 catch (Exception ex)

@@ -37,7 +37,7 @@ BEGIN
     );
 
 
-        --------------- Wallet and Money Transfers ------------------------
+    --------------- Wallet and Money Transfers ------------------------
 
 
 
@@ -757,22 +757,53 @@ Return @Amount_of_cashback
 END
 
 
+GO
+CREATE VIEW TransactionsHistory AS
+    Select t.transfer_id AS 'Transfer ID', t.walletID1 , t.walletID2, t.amount, t.transfer_date
+    FROM Transfer_money t
+
+
 Go
 --Retrieve the average of the sent wallet transaction amounts from the input wallet within a certain duration
-CREATE FUNCTION Wallet_Transfer_Amount(@walletID int,@start_date date, @end_date date)
+CREATE FUNCTION Wallet_Average_Sent(@walletID int,@start_date date, @end_date date)
 returns Float
 AS
 BEGIN
 
-    -- should we consider payments & Wallet --> Wallets Only
     Declare @Transaction_amount_average Float
 
-    Select @Transaction_amount_average = AVG(t.amount) from transfer_money t
+    Select @Transaction_amount_average = ISNULL(COALESCE(AVG(t.amount),0),0) from transfer_money t
     where t.walletID1 = @walletID 
     AND t.transfer_date BETWEEN @start_date AND @end_date
 
     Return @Transaction_amount_average
 END;
+
+Go
+--Retrieve the average of the received wallet transaction amounts by the input wallet within a certain duration
+CREATE FUNCTION Wallet_Average_Received(@walletID int,@start_date date, @end_date date)
+returns Float
+AS
+BEGIN
+
+    Declare @Transaction_amount_average Float
+
+    Select @Transaction_amount_average = ISNULL(COALESCE(AVG(t.amount), 0), 0) from transfer_money t
+    where t.walletID2 = @walletID 
+    AND t.transfer_date BETWEEN @start_date AND @end_date
+
+    Return @Transaction_amount_average
+END;
+
+Go
+CREATE PROCEDURE Wallet_Transaction_History
+@walletID int
+AS
+    Select *
+    From Transfer_money
+    Where walletID1 = @walletID OR walletID2 = @walletID
+    Order by transfer_date DESC;
+
 
 GO
 --Take mobileNo as an input, return true if this number is linked to a wallet, otherwise return false.
