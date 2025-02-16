@@ -7,232 +7,9 @@
      <!-- Import Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
-    <title>Admin Login</title>
-    <style>
-       body {
-             margin: 0;
-             padding: 0;
-             font-family: 'Arial', sans-serif;
-             height: 100vh;
-             overflow: hidden;
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             background: linear-gradient(
-                     135deg,
-                     rgba(229, 232, 239, 1), /* Light Gray */
-                     rgba(92, 190, 255, 0.5) /* Light Blue */
-                 ),
-                 radial-gradient(
-                     circle at 20% 80%,
-                     rgba(255, 190, 0, 0.7), /* Yellow */
-                     transparent 60%
-                 ),
-                 radial-gradient(
-                     circle at 70% 20%,
-                     rgba(76, 198, 110, 0.6), /* Green */
-                     transparent 70%
-                 ),
-                 radial-gradient(
-                     circle at 50% 50%,
-                     rgba(255, 216, 12, 0.6), /* Bright Yellow */
-                     transparent 80%
-                 ),
-                 radial-gradient(
-                     circle at 90% 90%,
-                     rgba(178, 68, 241, 0.5), /* Purple */
-                     transparent 80%
-                 );
-             background-blend-mode: screen, overlay, multiply;
-         }
-          .header {
-              position: fixed;
-              left:0;
-              top: 0;
-              width: 100%;
-              background-color: rgba(0, 123, 255, 0.9); /* New Header Color */
-              display: flex;
-              align-items: center;
-              padding: 10px 20px;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-              z-index: 1000;
-          }
-
-          .header img {
-              height: 50px;
-              margin-right: 10px;
-          }
-
-          .header h2 {
-              font-size: 24px;
-              color: #ffffff; /* White */
-              margin: 0;
-              font-family: 'Poppins', sans-serif;
-          }
-
-          .nav {
-              margin-left: 1150px; /* Push navigation to the left */
-              display: flex;
-              gap: 20px;
-          }
-
-          .nav a {
-              text-decoration: none;
-              color: #ffffff; /* White */
-              font-size: 18px;
-              font-family: 'Arial', sans-serif;
-              transition: color 0.3s;
-          }
-
-          .nav a:hover {
-              color: rgba(255, 255, 0, 0.8); /* Yellow hover effect */
-          }
-           .alert {
-             padding: 15px;
-             margin: 10px 0;
-             border-radius: 5px;
-             font-size: 14px;
-             color: white;
-             background-color: #dc3545;
-             border: 1px solid #dc3545;
-             position: fixed;
-             top: 0;
-             left: 50%;
-             transform: translateX(-50%);
-             z-index: 9999;
-             width: 70%;
-             max-width: 600px;
-             text-align: center;
-        }
-        .container {
-            display: flex;
-            background-color:  rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
-            width: 1300px;
-            height: 650px;
-            margin-top:20px;
-        }
-       .image-section {
-              margin-top: 0px;
-              width: 714px;
-              height: auto;
-              align-content:center;
-              background: 
-                  linear-gradient(
-                      rgba(7, 156, 255, 0.8), /* Semi-transparent blue overlay */
-                      rgba(0, 123, 255, 0.3)
-                  );
-              background-size: cover;
-              background-blend-mode: overlay; /* Blends the overlay with the image */
-              filter: brightness(0,9) saturate(1); /* Adjust brightness and saturation for a closer match */
-       }
-
-        .form-section {
-            flex: 1;
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Poppins', sans-serif; /* Professional and Rounded Font */
-        }
-        .form-section h2 {
-            margin-bottom: 30px;
-            color: rgba(7, 156, 255, 1);
-            font-size: 32px;
-            margin-right:30px;
-        }
-        .form-group {
-            width: 350px;
-            margin-bottom: 20px;
-            margin-right:30px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 16px;
-            color: #333;
-        }
-        .form-group input {
-            width: 350px;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #4A90E2;
-            box-shadow: 0 0 5px #4A90E2;
-
-        }
-        .error-message {
-            color: #FF6B6B;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .btn {
-            margin-right:30px;
-            display: block;
-            width: 350px;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            background-color: rgba(7, 156, 255, 1);
-            color: #FFFFFF;
-            font-size: 18px;
-            cursor: pointer;
-            text-align: center;
-        }
-        .btn:hover {
-            background-color: #357ABD;
-        }
-        .top-left-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: transparent;
-            border: none;
-            cursor: pointer; 
-            padding: 10px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .top-left-button::before {
-            content: "\f0a8"; /* Unicode for Font Awesome's arrow-left icon */
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            color: rgba(7, 156, 255, 1);
-            font-size: 20px; /* icon size */
-            margin-right: 8px;
-        }
-
-        .top-left-button:hover::before {
-            color: #0056b3;
-        }
-        
-        #togglePassword {
-            color: #999;
-            transition: color 0.3s ease;
-        }
-
-        #togglePassword:hover {
-            color: #007bff; 
-        }
-
-        
-        #TextBox2 {
-            padding-right: 40px; 
-        }
-
-    </style>
+    <script src="../Scripts/Logins.js"></script> 
+    <link href="../Styles/Logins.css" rel="stylesheet"/>
+    <title>Customer Login</title>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -240,7 +17,7 @@
             <img src="TeleSphere.png" alt="TeleSphere Logo" />
             <h2>TeleSphere</h2>
             <div class="nav">
-                <a href="#" runat="server" onserverclick="BackToHome">Home</a>
+                <a href="WelcomePage.aspx" runat="server">Home</a>
                 <a href="#">About</a>
                 <a href="#">Services</a>
                 <a href="#">Contact</a>
@@ -258,9 +35,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="TextBox2">Password</label>
+                    <label for="txtPassword">Password</label>
                     <div style="position: relative;">
-                        <asp:TextBox ID="TextBox2" runat="server" TextMode="Password" placeholder="Enter Password"></asp:TextBox>
+                        <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" placeholder="Enter Password"></asp:TextBox>
                         <i class="fas fa-eye" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #ccc;"></i>
                     </div>
                 </div>
@@ -274,21 +51,5 @@
         </div>
 
     </form>
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const togglePassword = document.querySelector("#togglePassword");
-        const passwordField = document.querySelector("#TextBox2");
-
-        togglePassword.addEventListener("click", function () {
-            // Toggle the type attribute
-            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
-            passwordField.setAttribute("type", type);
-
-            // Toggle the eye icon
-            this.classList.toggle("fa-eye");
-            this.classList.toggle("fa-eye-slash");
-        });
-    });
-    </script>
 </body>
 </html>

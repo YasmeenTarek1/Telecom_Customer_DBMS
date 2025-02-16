@@ -726,7 +726,7 @@ table tr:hover {
 }
 
 .plan-card {
-    width: 100%;
+    flex: 1;
     background-color: #ffffff;
     border-radius: 8px;
     padding: 25px;
@@ -921,4 +921,90 @@ table tr:hover {
 .panel-content h3 {
     margin-bottom: 20px;
     text-align: center;
+}
+
+.mainContainer {
+    width: 1200px;
+    display: flex;
+    flex-direction: column;
+    margin: 100px 380px 100px 560px;
+}
+
+.UsagesContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding: 25px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+/* Card Styling */
+.UsageElement {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+}
+
+/* Circular Progress Bar */
+.progress-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.progress-circle::before {
+    content: "";
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.progress-circle span {
+    font-size: 24px;
+    font-weight: bold;
+    color: #03184c;
+    z-index: 1;
+}
+
+.basic-plan.progress-circle {
+    background: conic-gradient(#64b5f6 var(--progress), #ffffff 0);
+}
+
+.standard-plan.progress-circle {
+    background: conic-gradient(#fbd977 var(--progress), #ffffff 0);
+}
+
+.premium-plan.progress-circle {
+    background: conic-gradient(#81c784 var(--progress), #ffffff 0);
+}
+
+.unlimited-plan.progress-circle {
+    background: conic-gradient(#ce85f7 var(--progress), #ffffff 0);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.UsageElement {
+    animation: fadeIn 0.5s ease-in-out;
 }

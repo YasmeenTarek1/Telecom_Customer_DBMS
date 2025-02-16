@@ -17,13 +17,9 @@ window.onload = function () {
 
     // Restore the state of each dropdown individually
     const storesDropdownState = document.getElementById(dropdownStates.dataset.storesDropdown).value;
-    const transactionDropdownState = document.getElementById(dropdownStates.dataset.transactionDropdown).value;
 
     if (storesDropdownState === "open") {
         document.querySelector('#shopsTab + .dropdown-content').style.display = "block";
-    }
-    if (transactionDropdownState === "open") {
-        document.querySelector('#transactionsTab + .dropdown-content').style.display = "block";
     }
 };
 
@@ -814,3 +810,25 @@ function triggerPostback2(benefitID) {
     __doPostBack('BenefitClicked', benefitID);  
 }
 
+function toggleBenefits(planID) {
+    var benefitsDiv = document.getElementById("benefits-" + planID);
+    if (benefitsDiv.innerHTML.trim() === "") {
+        fetch(`GetPlanBenefits.aspx?planID=${planID}`)
+            .then(response => response.text())
+            .then(data => {
+                benefitsDiv.innerHTML = data;
+                benefitsDiv.style.display = "block";
+            });
+    } else {
+        benefitsDiv.style.display = (benefitsDiv.style.display === "none") ? "block" : "none";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Apply circular progress effect
+    document.querySelectorAll(".circle").forEach(circle => {
+        let progress = circle.getAttribute("data-progress"); // Get progress from HTML
+        circle.style.setProperty("--progress", progress + "%");
+        circle.innerHTML = `<span>${progress}%</span>`; // Display percentage
+    });
+});

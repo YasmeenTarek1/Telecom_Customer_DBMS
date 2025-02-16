@@ -192,7 +192,7 @@ BEGIN
     CREATE TABLE Customer_Points (
         pointID INT IDENTITY(1,1),
         benefitID INT,
-        points_earned INT,
+        points_offered INT,
         CONSTRAINT PK_Customer_Points PRIMARY KEY (pointID, benefitID),
         CONSTRAINT FK_benefit_ID_Customer_Points FOREIGN KEY (benefitID) REFERENCES Customer_Benefits(benefitID),
     );
@@ -219,9 +219,9 @@ BEGIN
     CREATE TABLE Benefit_Usage(           
         benefitID INT,
         points_used INT,
-        data_consumption INT,
+        data_used INT,
         minutes_used INT,
-        SMS_sent INT,
+        SMS_used INT,
         usage_date DATE, -- Date when the benefit was 
         CONSTRAINT PK_Benefit_Usage PRIMARY KEY(benefitID),
         CONSTRAINT FK_benefitID_Benefit_Usage FOREIGN KEY(benefitID) REFERENCES Customer_Benefits(benefitID)
@@ -439,12 +439,6 @@ CREATE VIEW allServicePlans AS  -- General Info
 SELECT *
 FROM Service_Plan;
 
-
-GO
-CREATE VIEW allBenefits AS     -- General Info
-SELECT *
-FROM Benefits;
-
 Go 
 --Fetch details for all shops.
 CREATE VIEW allShops As
@@ -467,7 +461,7 @@ BEGIN
 
         -- Cursor to iterate through expired benefits
         DECLARE benefit_cursor CURSOR FOR
-        SELECT CB.benefitID, CB.mobileNo, CP.points_earned, ISNULL(BU.points_used, 0)
+        SELECT CB.benefitID, CB.mobileNo, CP.points_offered, ISNULL(BU.points_used, 0)
         FROM Customer_Benefits CB
         INNER JOIN Customer_Points CP ON CB.benefitID = CP.benefitID
         LEFT JOIN Benefit_Usage BU ON CB.benefitID = BU.benefitID
@@ -690,7 +684,7 @@ CREATE PROCEDURE Benefits_Account_Plan
 AS
 BEGIN
     SELECT 
-        @points_earned = ISNULL(CP.points_earned, 0),
+        @points_earned = ISNULL(CP.points_offered, 0),
         @cashback_earned = ISNULL(CH.amount_earned, 0),
         @data_offered = ISNULL(CE.data_offered, 0),
         @minutes_offered = ISNULL(CE.minutes_offered, 0),
@@ -724,7 +718,7 @@ Go
 CREATE PROCEDURE Account_Payment_Points
 @mobile_num char(11)
 AS
-    Select Count(P.paymentID) AS 'Total Number of Accepted Payments' , ISNULL(SUM(CP.points_earned), 0) AS 'Total Amount of Points'
+    Select Count(P.paymentID) AS 'Total Number of Accepted Payments' , ISNULL(SUM(CP.points_offered), 0) AS 'Total Amount of Points'
     From Payment P 
     inner join Customer_Benefits CB
     ON P.paymentID = CB.PaymentID
@@ -756,12 +750,10 @@ BEGIN
 Return @Amount_of_cashback
 END
 
-
 GO
 CREATE VIEW TransactionsHistory AS
     Select t.transfer_id AS 'Transfer ID', t.walletID1 , t.walletID2, t.amount, t.transfer_date
     FROM Transfer_money t
-
 
 Go
 --Retrieve the average of the sent wallet transaction amounts from the input wallet within a certain duration
@@ -919,17 +911,16 @@ RETURN (
 
 
 GO
---Retrieve the number of technical support tickets that are NOT �Resolved� 
---for each account of the input customer.
+--Retrieve the number of technical support tickets that are NOT Resolved for each account of the input customer.
 CREATE PROCEDURE Ticket_Account_Customer
 @NID int
 AS
-SELECT COUNT(t.ticketID) as UnresolvedTickets 
-FROM Customer_Account c                        
-Inner JOIN Technical_Support_Ticket t
-ON t.mobileNo = c.mobileNo
-where c.nationalID = @NID AND t.status <> 'Resolved'
-Group by c.mobileNo;
+    SELECT COUNT(t.ticketID) as UnresolvedTickets 
+    FROM Customer_Account c                        
+    Inner JOIN Technical_Support_Ticket t
+    ON t.mobileNo = c.mobileNo
+    where c.nationalID = @NID AND t.status <> 'Resolved'
+    Group by c.mobileNo;
 
 
 GO
@@ -937,13 +928,13 @@ GO
 CREATE PROCEDURE Account_Highest_Voucher
 @mobile_num char(11)
 AS
-SELECT v.voucherID
-FROM Voucher v
-where v.value = (
-                    SELECT MAX(v1.value)
-                    from Voucher v1 
-                    where v1.mobileNo = @mobile_num
-                )
+    SELECT v.voucherID
+    FROM Voucher v
+    where v.value = (
+                        SELECT MAX(v1.value)
+                        from Voucher v1 
+                        where v1.mobileNo = @mobile_num
+                    )
 
 
 -------------- purple part ------------------
@@ -1025,7 +1016,6 @@ RETURN (
                         AND Service_Plan.planID = s.planID
                     )
        );
-
 
 
 GO
@@ -1176,7 +1166,7 @@ BEGIN TRY
     SET @cashback_amount = (@cashback_percentage / 100.0) * @amount;
 
     If @points_earned > 0
-        INSERT INTO Customer_Points (benefitID, points_earned) VALUES (@benefitID, @points_earned)
+        INSERT INTO Customer_Points (benefitID, points_offered) VALUES (@benefitID, @points_earned)
     If @cashback_percentage > 0 and @balance >= @price
         INSERT INTO Customer_Cashback(benefitID, amount_earned) VALUES (@benefitID, @cashback_amount)
     If @data_offered > 0 or @minutes_offered > 0 or @SMS_offered > 0
@@ -1195,7 +1185,7 @@ BEGIN TRY
     SET points = points + @points_earned
     WHERE mobileNo = @mobile_num;
 
-    INSERT INTO Benefit_Usage (benefitID, points_used, data_consumption, minutes_used, SMS_sent, usage_date) 
+    INSERT INTO Benefit_Usage (benefitID, points_used, data_used, minutes_used, SMS_used, usage_date) 
     VALUES(@benefitID, 0, 0, 0, 0, NULL)
 
     COMMIT TRANSACTION;
@@ -1328,7 +1318,7 @@ BEGIN
 
         -- Retrieve all active points benefits for the customer, ordered by expiry_date (earliest first)
         DECLARE benefit_cursor CURSOR FOR
-        SELECT CB.benefitID, CP.points_earned, ISNULL(BU.points_used, 0)
+        SELECT CB.benefitID, CP.points_offered, ISNULL(BU.points_used, 0)
         FROM Customer_Benefits CB
         INNER JOIN Customer_Points CP ON CB.benefitID = CP.benefitID
         LEFT JOIN Benefit_Usage BU ON CB.benefitID = BU.benefitID
@@ -1426,7 +1416,7 @@ BEGIN
                     SET @DataOffered = @DataOffered - @DataToConsume;
 
                     UPDATE Benefit_Usage
-                    SET data_consumption = data_consumption + @DataToConsume, usage_date = CURRENT_TIMESTAMP
+                    SET data_used = data_used + @DataToConsume, usage_date = CURRENT_TIMESTAMP
                     WHERE benefitID = @ExclusiveOfferID;
                 END
 
@@ -1458,7 +1448,7 @@ BEGIN
                     SET @SMSOffered = @SMSOffered - @SMSToConsume;
 
                     UPDATE Benefit_Usage
-                    SET SMS_sent = SMS_sent + @SMSToConsume
+                    SET SMS_used = SMS_used + @SMSToConsume
                     WHERE benefitID = @ExclusiveOfferID;
                 END
 
@@ -1556,19 +1546,6 @@ BEGIN
     END CATCH;
 END;
 
-GO
-CREATE PROCEDURE GetPlans
-AS
-BEGIN
-    SELECT 
-        planID, 
-        name AS PlanName
-    FROM 
-        Service_Plan
-    ORDER BY 
-        name;
-END
-
 Go
 CREATE PROCEDURE GetSubscribersForPlan
     @PlanID INT
@@ -1621,9 +1598,9 @@ CREATE PROCEDURE GetBenefitsExpiringSoon
 AS
 BEGIN
     SELECT cb.benefitID, P.first_name, P.last_name, cb.mobileNo, 
-        SUM(COALESCE(cpnt.points_earned, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
-        SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_sent, 0)) AS remaining_SMS,
-        SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_consumption, 0)) AS remaining_data,
+        SUM(COALESCE(cpnt.points_offered, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
+        SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_used, 0)) AS remaining_SMS,
+        SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_used, 0)) AS remaining_data,
         SUM(COALESCE(ceo.minutes_offered, 0)) - SUM(COALESCE(bu.minutes_used, 0)) AS remaining_minutes, cb.expiry_date
     FROM Customer_Benefits cb
     INNER JOIN Customer_Account A
@@ -1656,8 +1633,6 @@ BEGIN
                     )
 END;
 
-SELECT SUM(COALESCE(p.points_earned,0)) FROM Customer_Points p
-
 GO
 CREATE PROCEDURE GetCustomersWithBenefits
 AS
@@ -1670,9 +1645,9 @@ SELECT
     cb.PaymentID ,
     sp.name AS 'Plan' , 
     SUM(COALESCE(cc.amount_earned, 0)) AS awarded_cashback,
-    SUM(COALESCE(cpnt.points_earned, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
-    SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_sent, 0)) AS remaining_SMS,
-    SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_consumption, 0)) AS remaining_data,
+    SUM(COALESCE(cpnt.points_offered, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
+    SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_used, 0)) AS remaining_SMS,
+    SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_used, 0)) AS remaining_data,
     SUM(COALESCE(ceo.minutes_offered, 0)) - SUM(COALESCE(bu.minutes_used, 0)) AS remaining_minutes
 FROM 
     Customer_profile cp
@@ -1866,7 +1841,7 @@ GO
 CREATE PROCEDURE PointsHistory
 AS
 BEGIN
-    SELECT P.pointID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Credit Date',  P.points_earned
+    SELECT P.pointID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Credit Date',  P.points_offered
     FROM Customer_Points P
     INNER JOIN Customer_Benefits CB ON P.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
@@ -1878,7 +1853,7 @@ GO
 CREATE PROCEDURE calculatePlanPointsPercentage
 AS
 BEGIN
-    SELECT sp.name AS PlanName, CAST(SUM(CP.points_earned) * 100.0 / SUM(SUM(CP.points_earned)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    SELECT sp.name AS PlanName, CAST(SUM(CP.points_offered) * 100.0 / SUM(SUM(CP.points_offered)) OVER () AS DECIMAL(5, 2)) AS Percentage
     FROM Customer_Points CP
     INNER JOIN Customer_Benefits CB ON CP.benefitID = CB.benefitID
     INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
@@ -1890,13 +1865,13 @@ GO
 CREATE PROCEDURE TopCustomersByUsedPoints
 AS
 BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, SUM(P.points_earned) AS 'Total Points Earned'
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(P.points_offered) AS 'Total Points Earned'
     FROM Customer_Points P
     INNER JOIN Customer_Benefits CB ON P.benefitID = CB.benefitID
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
     INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
     GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(P.points_earned) DESC;
+    ORDER BY SUM(P.points_offered) DESC;
 END;
 
 
@@ -1945,7 +1920,7 @@ BEGIN
     INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
     INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
     INNER JOIN Benefit_Usage bu ON bu.benefitID = CE.benefitID
-    WHERE bu.SMS_sent = 0 and bu.minutes_used = 0 and bu.data_consumption = 0
+    WHERE bu.SMS_used = 0 and bu.minutes_used = 0 and bu.data_used = 0
     ORDER BY CB.start_date DESC; 
 END;
 
@@ -1999,6 +1974,33 @@ BEGIN
     GROUP BY CP.first_name, CP.last_name, CB.mobileNo
     ORDER BY SUM(CE.data_offered) DESC;
 END;
+
+GO
+CREATE PROCEDURE LoadSubscribedPlans
+@mobileNo CHAR(11)
+AS
+BEGIN
+SELECT sp.planID, sp.name, sp.SMS_offered, sp.minutes_offered, sp.data_offered, pu.SMS_sent, pu.minutes_used, pu.data_consumption
+                    FROM Subscription s
+                    JOIN Service_Plan sp ON s.planID = sp.planID
+                    LEFT JOIN Plan_Usage pu ON s.planID = pu.planID AND s.mobileNo = pu.mobileNo
+                    WHERE s.mobileNo = @mobileNo AND s.status = 'active';
+END;
+
+GO
+CREATE PROCEDURE LoadPlanBenefits
+@planID INT
+AS
+BEGIN
+SELECT ce.SMS_offered, ce.data_offered, ce.minutes_offered,cp.points_offered, bu.SMS_used, bu.data_used, bu.minutes_used, bu.points_used
+                    FROM Customer_Benefits cb
+                    INNER JOIN Customer_Points cp ON cp.benefitID = cb.benefitID
+                    INNER JOIN Customer_Exclusive_Offers ce ON ce.benefitID = cb.benefitID
+                    INNER JOIN Benefit_Usage bu ON bu.benefitID = cb.benefitID
+                    INNER JOIN Process_Payment p ON p.paymentID = cb.PaymentID
+                    WHERE cb.mobileNo = mobileNo AND p.planID = @planID;
+END;
+
 
 GO
 CREATE PROCEDURE InitializeSystem
@@ -2228,15 +2230,15 @@ VALUES
 INSERT INTO Customer_Benefits (mobileNo, PaymentID, walletID, start_date, expiry_date)
 VALUES
 -- Customer 1 (Basic Plan)
-('01010101010', 1, 1, '2025-01-01', '2025-02-01'),
+('01010101010', 1, 1, '2025-01-01', '2025-04-01'),
 -- Customer 2 (Standard Plan)
-('01020202020', 2, 2, '2025-01-01', '2025-02-01'),
+('01020202020', 2, 2, '2025-01-01', '2025-04-01'),
 -- Customer 3 (Premium Plan)
-('01030303030', 3, 3, '2025-01-01', '2025-02-01'),
+('01030303030', 3, 3, '2025-01-01', '2025-04-01'),
 -- Customer 4 (Unlimited Plan)
-('01040404040', 4, 4, '2025-01-01', '2025-02-01');
+('01040404040', 4, 4, '2025-01-01', '2025-04-01');
 
-INSERT INTO Customer_Points (benefitID, points_earned)
+INSERT INTO Customer_Points (benefitID, points_offered)
 VALUES
 -- Customer 1 (Basic Plan)
 (1, 50), 
@@ -2269,7 +2271,7 @@ VALUES
 -- Customer 4 (Unlimited Plan)
 (4, 1024, 100, 0); -- Free 100 SMS Bundle + Bonus 100 Minutes + Extra 1GB internet
 
-INSERT INTO Benefit_Usage (benefitID, points_used, data_consumption, minutes_used, SMS_sent, usage_date)
+INSERT INTO Benefit_Usage (benefitID, points_used, data_used, minutes_used, SMS_used, usage_date)
 VALUES
 -- Customer 1 (Basic Plan)
 (1, 10, 0, 0, 20, '2023-10-15'), 
@@ -2365,3 +2367,21 @@ SELECT * FROM Technical_Support_Ticket;
 --EXEC Benefits_Account @mobile_num = '01010101010', @plan_id = 3;
 ---- Delete Expired points and remove the rest from the customer's points if exists
 --EXEC Handle_Expired_Points;
+
+SELECT sp.planID, sp.name, sp.SMS_offered, sp.minutes_offered, sp.data_offered, pu.SMS_sent, pu.minutes_used, pu.data_consumption
+                FROM Subscription s
+                JOIN Service_Plan sp ON s.planID = sp.planID
+                LEFT JOIN Plan_Usage pu ON s.planID = pu.planID AND s.mobileNo = pu.mobileNo
+                WHERE s.mobileNo = '01010101010' AND s.status = 'active';
+
+
+
+select cb.benefitID,ce.SMS_offered, ce.data_offered, ce.minutes_offered,cp.points_offered, bu.SMS_used, bu.data_used, bu.minutes_used, bu.points_used
+from Customer_Benefits cb
+inner join Customer_Points cp on cp.benefitID = cb.benefitID
+inner join Customer_Exclusive_Offers ce on ce.benefitID = cb.benefitID
+inner join Benefit_Usage bu on bu.benefitID = cb.benefitID
+inner join Process_Payment p on p.paymentID = cb.PaymentID
+where cb.mobileNo = '01010101010' and p.planID = 1;
+
+

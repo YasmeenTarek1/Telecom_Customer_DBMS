@@ -1,6 +1,6 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="Sidebar.ascx.cs" Inherits="Controls.Sidebar" %>
- <script src="../Scripts/AdminDashboard.js"></script> 
- <link href="../Styles/AdminDashboard.css" rel="stylesheet"/>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="AdminSidebar.ascx.cs" Inherits="Controls.AdminSidebar" %>
+ <script src="../Scripts/Dashboards.js"></script> 
+ <link href="../Styles/Dashboards.css" rel="stylesheet"/>
 
  <!-- Sidebar -->
 <div class="sidebar">

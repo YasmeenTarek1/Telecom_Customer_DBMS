@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BenefitsPage.aspx.cs" Inherits="Telecom_Customer_Application.AdminDashboard.BenefitsPage" %>
-<%@ Register Src="../Controls/Sidebar.ascx" TagName="Sidebar" TagPrefix="uc" %>
+<%@ Register Src="../Controls/AdminSidebar.ascx" TagName="Sidebar" TagPrefix="uc" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,8 +8,8 @@
     <meta charset="UTF-8">
     <title>Benefits Page</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1"></script>
-    <script src="../Scripts/AdminDashboard.js"></script> 
-    <link href="../Styles/AdminDashboard.css" rel="stylesheet"/>
+    <script src="../Scripts/Dashboards.js"></script> 
+    <link href="../Styles/Dashboards.css" rel="stylesheet"/>
 </head>
 <body>
     <form id="form1" runat="server">
