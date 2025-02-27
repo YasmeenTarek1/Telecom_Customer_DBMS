@@ -286,14 +286,13 @@ BEGIN
 
     ------------- Technical Support ----------------------------
 
-
-
     CREATE TABLE Technical_Support_Ticket(
         ticketID INT IDENTITY(1,1),
         mobileNo CHAR(11),
         Issue_description VARCHAR(50),
         priority_level INT,
         status VARCHAR(50) CHECK(status IN('Open','In Progress','Resolved')),
+        submissionDate DATE,
         CONSTRAINT PK_Technical_Support_Ticket PRIMARY KEY (ticketID , mobileNo),
         CONSTRAINT FK_mobileNo_Technical_Support_Ticket FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo)
     );
@@ -922,6 +921,15 @@ AS
     where c.nationalID = @NID AND t.status <> 'Resolved'
     Group by c.mobileNo;
 
+GO
+--Retrieve technical support tickets for the input customer.
+CREATE PROCEDURE Tickets_Account
+@mobile_num char(11)
+AS
+    SELECT t.ticketID, t.Issue_description, t.priority_level, t.status, t.submissionDate
+    FROM Technical_Support_Ticket t
+    WHERE t.mobileNo = @mobile_num
+    ORDER BY CASE t.status WHEN 'Open' THEN 1 WHEN 'In Progress' THEN 2 ELSE 3 END, t.priority_level DESC;
 
 GO
 --Return the voucher with the highest value for the input account.
@@ -2324,26 +2332,26 @@ VALUES
 (700, '2024-06-01', 1400, '01141414141', 14, NULL),
 (750, '2024-07-01', 1500, '01151515151', 15, NULL);
 
-INSERT INTO Technical_Support_Ticket (mobileNo, Issue_description, priority_level, status)
+INSERT INTO Technical_Support_Ticket (mobileNo, Issue_description, priority_level, status, submissionDate)
 VALUES
-('01010101010', 'Network connectivity issue', 3, 'Open'),
-('01020202020', 'Account billing discrepancy', 2, 'Open'),
-('01030303030', 'Unable to make outgoing calls', 1, 'Resolved'),
-('01040404040', 'Data not working', 2, 'Resolved'),
-('01050505050', 'Overcharged for last month', 2, 'In Progress'),
-('01060606060', 'SIM card not activated', 1, 'In Progress'),
-('01070707070', 'Unable to top-up account', 3, 'Open'),
-('01080808080', 'Account suspended error', 2, 'Resolved'),
-('01090909090', 'Payment not reflected in balance', 3, 'Open'),
-('01101010101', 'Unable to use data services', 1, 'Open'),
-('01111111111', 'No signal in the area', 2, 'Resolved'),
-('01121212121', 'Balance not updating after recharge', 3, 'In Progress'),
-('01131313131', 'System outage', 1, 'Resolved'),
-('01141414141', 'Wrong plan applied', 2, 'Open'),
-('01151515151', 'Service interruption', 3, 'Resolved'),
-('01161616161', 'Account frozen due to suspicious activity', 1, 'In Progress'),
-('01171717171', 'Mobile number transfer issue', 2, 'In Progress'),
-('01181818181', 'No internet access', 1, 'In Progress');
+('01010101010', 'Network connectivity issue', 3, 'Open', CURRENT_TIMESTAMP),
+('01020202020', 'Account billing discrepancy', 2, 'Open', CURRENT_TIMESTAMP),
+('01030303030', 'Unable to make outgoing calls', 1, 'Resolved', CURRENT_TIMESTAMP),
+('01040404040', 'Data not working', 2, 'Resolved', CURRENT_TIMESTAMP),
+('01050505050', 'Overcharged for last month', 2, 'In Progress', CURRENT_TIMESTAMP),
+('01060606060', 'SIM card not activated', 1, 'In Progress', CURRENT_TIMESTAMP),
+('01070707070', 'Unable to top-up account', 3, 'Open', CURRENT_TIMESTAMP),
+('01080808080', 'Account suspended error', 2, 'Resolved', CURRENT_TIMESTAMP),
+('01090909090', 'Payment not reflected in balance', 3, 'Open', CURRENT_TIMESTAMP),
+('01101010101', 'Unable to use data services', 1, 'Open', CURRENT_TIMESTAMP),
+('01111111111', 'No signal in the area', 2, 'Resolved', CURRENT_TIMESTAMP),
+('01121212121', 'Balance not updating after recharge', 3, 'In Progress', CURRENT_TIMESTAMP),
+('01131313131', 'System outage', 1, 'Resolved', CURRENT_TIMESTAMP),
+('01141414141', 'Wrong plan applied', 2, 'Open', CURRENT_TIMESTAMP),
+('01151515151', 'Service interruption', 3, 'Resolved', CURRENT_TIMESTAMP),
+('01161616161', 'Account frozen due to suspicious activity', 1, 'In Progress', CURRENT_TIMESTAMP),
+('01171717171', 'Mobile number transfer issue', 2, 'In Progress', CURRENT_TIMESTAMP),
+('01181818181', 'No internet access', 1, 'In Progress', CURRENT_TIMESTAMP);
 
 SELECT * FROM Customer_profile;
 SELECT * FROM Customer_Account;
@@ -2390,5 +2398,3 @@ SELECT * FROM Technical_Support_Ticket;
 --EXEC Benefits_Account @mobile_num = '01010101010', @plan_id = 3;
 ---- Delete Expired points and remove the rest from the customer's points if exists
 --EXEC Handle_Expired_Points;
-
-

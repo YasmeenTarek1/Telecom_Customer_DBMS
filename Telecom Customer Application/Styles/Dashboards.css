@@ -28,7 +28,6 @@ body {
 
 /* Content Area */
 .container {
-
     display: flex;
     flex-direction: row;
     overflow: hidden;
