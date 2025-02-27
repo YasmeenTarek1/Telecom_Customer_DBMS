@@ -49,7 +49,7 @@ namespace Telecom_Customer_Application.AdminDashboard
                             TotalBenefits = Convert.ToInt32(cmd.ExecuteScalar());
                         }
 
-                        using (SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(COALESCE(points_earned, 0)), 0) FROM Customer_Points", con))
+                        using (SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(COALESCE(points_offered, 0)), 0) FROM Customer_Points", con))
                         {
                             TotalPoints = Convert.ToInt32(cmd.ExecuteScalar());
                         }

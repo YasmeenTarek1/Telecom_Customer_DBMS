@@ -725,11 +725,28 @@ table tr:hover {
     width: 100%;
 }
 
+/* Button Styling */
+.PlanCardsContainer button,
+.PlanCardsContainer input[type="submit"] {
+    flex: 1;
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.PlanCardsContainer button:hover,
+.PlanCardsContainer input[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
 .plan-card {
     flex: 1;
     background-color: #ffffff;
     border-radius: 8px;
-    padding: 25px;
+    padding: 60px 25px 25px 25px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
@@ -739,37 +756,78 @@ table tr:hover {
 }
 
 .plan-card:hover {
-    transform: translateY(-10px); 
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); 
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .plan-name {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #fff; 
+    color: #fff;
 }
 
 .plan-id {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.8); 
+    color: rgba(255, 255, 255, 0.8);
     margin-bottom: 10px;
 }
 
 .plan-details {
     font-size: 16px;
-    color: rgba(255, 255, 255, 0.9); 
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 20px;
 }
 
 .plan-price {
     font-size: 22px;
     font-weight: bold;
-    color: #fff; 
-    background-color: rgba(0, 0, 0, 0.1); 
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.1);
     padding: 10px 15px;
     border-radius: 8px;
     display: inline-block;
+    margin-bottom: 10px;
+}
+
+.plan-offerings,
+.plan-benefits {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.plan-offerings h4,
+.plan-benefits h4 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.plan-offerings ul,
+.plan-benefits ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    text-align: left; 
+}
+
+.plan-offerings li,
+.plan-benefits li {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.plan-offerings li::before,
+.plan-benefits li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #03184c;
 }
 
 /* Unique Styling for Each Plan */

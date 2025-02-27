@@ -6,28 +6,28 @@ namespace Telecom_Customer_Application.CustomerDashboard
 {
     public partial class HomePage : System.Web.UI.Page
     {
+        private static string MobileNo;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                string mobileNo = Session["MobileNo"] as string;
-                if (!string.IsNullOrEmpty(mobileNo))
-                {
-                    LoadSubscribedPlans(mobileNo);
-                }
+                MobileNo = Session["MobileNo"].ToString();
+                LoadSubscribedPlans();
             }
         }
 
-        private void LoadSubscribedPlans(string mobileNo)
+        private void LoadSubscribedPlans()
         {
             using (SqlConnection conn = new SqlConnection(PageUtilities.connectionString))
             {
-                SqlCommand cmd = null;
-                cmd = new SqlCommand("LoadSubscribedPlans", conn);
-                PageUtilities.checkValidMobileNum(mobileNo);
+                SqlCommand cmd = new SqlCommand("LoadSubscribedPlans", conn);
+                PageUtilities.checkValidMobileNum(MobileNo);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@mobileNo", SqlDbType.Char, 11)).Value = mobileNo;
+                cmd.Parameters.AddWithValue("@mobileNo", MobileNo);
                 conn.Open();
+
+                string fullHtml = ""; // All HTML content
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -44,107 +44,75 @@ namespace Telecom_Customer_Application.CustomerDashboard
                         int dataUsed = reader.IsDBNull(7) ? 0 : reader.GetInt32(7);
 
                         // Plan Card
-                        string planCard = GeneratePlanCard(planID, planName);
-                        PlanCardContainer.InnerHtml = planCard;
+                        fullHtml += GeneratePlanCard(planID, planName);
 
-                        // Plan Usage Cards
-                        string planSMSCard = $@"
-                            <div class='UsageElement' id='plan-{planID}'>
-                                <div class='{GetPlanColorClass(planID)} progress-circle' style='--progress: {CalculatePercentage(smsUsed, smsOffered)}%'><span>{CalculatePercentage(smsUsed, smsOffered)}%</span></div>
-                                <h4 style='color: #03184c;'>{smsUsed} / {smsOffered} SMS</h4>
-                            </div>";
-                        PlanContainer.InnerHtml += planSMSCard;
+                        // Plan Usage
+                        fullHtml += $@"
+                        <div class='mainContainer'>
+                            <h3 class='tab-heading' style='margin: 0px auto 40px auto; font-size: 26px;'>Plan Usage</h3>
+                            <div class='UsagesContainer'>
+                                {GenerateUsageElement(planID, "SMS", smsUsed, smsOffered)}
+                                {GenerateUsageElement(planID, "Minutes", minutesUsed, minutesOffered)}
+                                {GenerateUsageElement(planID, "Data", dataUsed, dataOffered)}
+                            </div>
+                        </div>";
 
-                        string planMinutesCard = $@"
-                            <div class='UsageElement' id='plan-{planID}'>
-                                <div class='{GetPlanColorClass(planID)} progress-circle' style='--progress: {CalculatePercentage(minutesUsed, minutesOffered)}%'><span>{CalculatePercentage(minutesUsed, minutesOffered)}%</span></div>
-                                <h4 style='color: #03184c;'>{minutesUsed} / {minutesOffered} minutes</h4>
-                            </div>";
-                        PlanContainer.InnerHtml += planMinutesCard;
-
-                        string planDataCard = $@"
-                            <div class='UsageElement' id='plan-{planID}'>
-                                <div class='{GetPlanColorClass(planID)} progress-circle' style='--progress:{CalculatePercentage(dataUsed, dataOffered)}%'><span>{CalculatePercentage(dataUsed, dataOffered)}%</span></div>
-                                <h4 style='color: #03184c;'>{dataUsed} / {dataOffered} MB</h4>
-                            </div>";
-                        PlanContainer.InnerHtml += planDataCard;
-
-                        // Load benefits for this plan
-                        LoadPlanBenefits(planID);
+                        // Plan Benefits
+                        fullHtml += LoadPlanBenefits(planID);
                     }
                 }
-                
+
+                // Set the full HTML inside the container
+                PlansContainer.InnerHtml = fullHtml;
             }
         }
 
-        private void LoadPlanBenefits(int planID)
+
+        private string LoadPlanBenefits(int planID)
         {
             using (SqlConnection conn = new SqlConnection(PageUtilities.connectionString))
             {
-
-                SqlCommand cmd = null;
-                cmd = new SqlCommand("LoadPlanBenefits", conn);
                 PageUtilities.checkValidPlanID(planID.ToString());
+                PageUtilities.checkValidMobileNum(MobileNo);
+
+                SqlCommand cmd = new SqlCommand("LoadPlanBenefits", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@planID", SqlDbType.Int) { Value = planID });
+                cmd.Parameters.AddWithValue("@mobile_num", MobileNo);
+                cmd.Parameters.AddWithValue("@planID", planID);
                 conn.Open();
-        
+
+                string benefitsHTML = $@"
+                <div class='mainContainer'>
+                    <h3 class='tab-heading' style='margin: 0px auto 40px auto; font-size: 26px;'>Benefits Usage</h3>
+                    <div class='UsagesContainer'>";
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        int SMSOffered = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
-                        int dataOffered = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
-                        int minutesOffered = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
-                        int pointsOffered = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
-
-                        int SMSUsed = reader.IsDBNull(4) ? 0 : reader.GetInt32(4);
-                        int dataUsed = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
-                        int minutesUsed = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
-                        int pointsUsed = reader.IsDBNull(7) ? 0 : reader.GetInt32(7);
-
-                        if (SMSOffered > 0)
-                        {
-                            string benefitSMSCard = $@"
-                            <div class='UsageElement'>
-                                <div class='progress-circle {GetPlanColorClass(planID)}' style='--progress: {CalculatePercentage(SMSUsed, SMSOffered)}%'><span>{CalculatePercentage(SMSUsed, SMSOffered)}%</span></div>
-                                <h4 style='color: #03184c;'>{SMSUsed} / {SMSOffered} SMS</h4>
-                            </div>";
-                            benefitsContainer.InnerHtml += benefitSMSCard;
-                        }
-
-                        if (minutesOffered > 0)
-                        {
-                            string benefitMinutesCard = $@"
-                            <div class='UsageElement'>
-                                <div class='progress-circle {GetPlanColorClass(planID)}' style='--progress: {CalculatePercentage(minutesUsed, minutesOffered)}%'><span>{CalculatePercentage(minutesUsed, minutesOffered)}%</span></div>
-                                <h4 style='color: #03184c;'>{minutesUsed} / {minutesOffered} Minutes</h4>
-                            </div>";
-                            benefitsContainer.InnerHtml += benefitMinutesCard;
-                        }
-
-                        if (dataOffered > 0)
-                        {
-                            string benefitDataCard = $@"
-                            <div class='UsageElement'>
-                                <div class='progress-circle {GetPlanColorClass(planID)}' style='--progress: {CalculatePercentage(dataUsed, dataOffered)}%'><span>{CalculatePercentage(dataUsed, dataOffered)}%</span></div>
-                                <h4 style='color: #03184c;'>{dataUsed} / {dataOffered} MB</h4>
-                            </div>";
-                            benefitsContainer.InnerHtml += benefitDataCard;
-                        }
-
-                        if (pointsOffered > 0)
-                        {
-                            string benefitPointsCard = $@"
-                            <div class='UsageElement'>
-                                <div class='progress-circle {GetPlanColorClass(planID)}' style='--progress: {CalculatePercentage(pointsUsed, pointsOffered)}%'><span>{CalculatePercentage(pointsUsed, pointsOffered)}%</span></div>
-                                <h4 style='color: #03184c;'>{pointsUsed} / {pointsOffered} Points</h4>
-                            </div>";
-                            benefitsContainer.InnerHtml += benefitPointsCard;
-                        }
+                        benefitsHTML += GenerateUsageElement(planID, "SMS", reader.IsDBNull(4) ? 0 : reader.GetInt32(4), reader.IsDBNull(0) ? 0 : reader.GetInt32(0));
+                        benefitsHTML += GenerateUsageElement(planID, "Minutes", reader.IsDBNull(6) ? 0 : reader.GetInt32(6), reader.IsDBNull(2) ? 0 : reader.GetInt32(2));
+                        benefitsHTML += GenerateUsageElement(planID, "Data", reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.IsDBNull(1) ? 0 : reader.GetInt32(1));
+                        benefitsHTML += GenerateUsageElement(planID, "Points", reader.IsDBNull(7) ? 0 : reader.GetInt32(7), reader.IsDBNull(3) ? 0 : reader.GetInt32(3));
                     }
                 }
+
+                benefitsHTML += "</div></div>";
+                return benefitsHTML;
             }
+        }
+
+
+        private string GenerateUsageElement(int planID, string type, int used, int offered)
+        {
+            if (offered == 0) return "";
+            return $@"
+                    <div class='UsageElement'>
+                        <div class='{GetPlanColorClass(planID)} progress-circle' style='--progress: {CalculatePercentage(used, offered)}%'>
+                            <span>{CalculatePercentage(used, offered)}%</span>
+                        </div>
+                        <h4 style='color: #03184c;'>{used} / {offered} {type}</h4>
+                    </div>";
         }
 
         protected string CalculatePercentage(object used, object total)
@@ -169,6 +137,7 @@ namespace Telecom_Customer_Application.CustomerDashboard
                     return "";
             }
         }
+
         private string GeneratePlanCard(int planID, string planName)
         {
             string planClass = GetPlanColorClass(planID);
@@ -201,7 +170,7 @@ namespace Telecom_Customer_Application.CustomerDashboard
             }
 
             return $@"
-                <div class='plan-card {planClass}' style='width: 500px; margin: 100px 450px 150px 870px; transform: scale(1.4);'>
+                <div class='plan-card {planClass}' style='width: 500px; margin: 200px 450px 150px 870px; transform: scale(1.4);'>
                     <i class='fas {icon}'></i>
                     <div class='plan-name'>{planName}</div>
                     <div class='plan-id'>Plan ID: {planID}</div>
@@ -209,6 +178,5 @@ namespace Telecom_Customer_Application.CustomerDashboard
                     <div class='plan-price'>Price: {price}</div>
                 </div>";
         }
-
     }
 }

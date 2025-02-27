@@ -1033,6 +1033,7 @@ END;
 
 
 GO
+--Retrieve the benefits given by this plan
 CREATE PROCEDURE Benefits_Plan
     @plan_id INT,
     @points_earned INT OUTPUT,
@@ -1042,160 +1043,192 @@ CREATE PROCEDURE Benefits_Plan
     @SMS_offered INT OUTPUT
 AS
 BEGIN
+    SELECT @points_earned = COALESCE(SUM(PG.amount), 0)
+    FROM Plan_Provides_Benefits pp
+    INNER JOIN Points_Group PG ON PG.benefitID = pp.benefitID
+    WHERE pp.planID = @plan_id;
+
+    SELECT @cashback_percentage = COALESCE(SUM(C.percentage), 0)
+    FROM Plan_Provides_Benefits pp
+    INNER JOIN Cashback C ON C.benefitID = pp.benefitID
+    WHERE pp.planID = @plan_id;
+
     SELECT 
-        @points_earned = COALESCE(SUM(PG.amount), 0),
-        @cashback_percentage = COALESCE(SUM(C.percentage), 0),
         @data_offered = COALESCE(SUM(EO.internet_offered), 0),
         @minutes_offered = COALESCE(SUM(EO.minutes_offered), 0),
         @SMS_offered = COALESCE(SUM(EO.SMS_offered), 0)
     FROM Plan_Provides_Benefits pp
-    INNER JOIN Points_Group PG ON PG.benefitID = pp.benefitID
-    INNER JOIN Cashback C ON C.benefitID = pp.benefitID
     INNER JOIN Exclusive_Offer EO ON EO.benefitID = pp.benefitID
     WHERE pp.planID = @plan_id;
-   
 END;
 
+
 GO
--- Initiate an accepted payment for the input account for plan renewal and 
--- update the status of the subscription accordingly.
+-- Procedure to handle plan renewal or subscription for a customer
 CREATE PROCEDURE renew_or_subscribe_plan
-@mobile_num char(11) ,
-@plan_id int
+    @mobile_num CHAR(11),  -- Input: Customer's mobile number
+    @plan_id INT           -- Input: Plan ID to subscribe/renew
 AS
+BEGIN
+    -- Start a transaction to ensure atomicity
+    BEGIN TRANSACTION;
 
-BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @payment_id INT;      
+        DECLARE @price INT;           -- price of the selected plan
+        DECLARE @balance INT;         -- customer's current balance
+        DECLARE @amount INT;          -- amount to be deducted from the balance
 
-BEGIN TRY
+        -- Retrieve the price of the selected plan
+        SELECT @price = price 
+        FROM Service_Plan 
+        WHERE planID = @plan_id; 
 
+        -- Retrieve the customer's current balance
+        SELECT @balance = balance
+        FROM Customer_Account
+        WHERE mobileNo = @mobile_num;
 
-    IF dbo.subscribe_or_renew_plan(@mobile_num, @plan_id) = 'Renew' and (Select status From Subscription WHERE mobileNo = @mobile_num AND planID = @plan_id) = 'active'
-    BEGIN
-        RAISERROR('You are already subscribed in this plan.', 16, 1);
+        -- Determine the amount to deduct (either the full price or the remaining balance)
+        IF @balance < @price
+            SET @amount = @balance;  -- Deduct only the available balance
+        ELSE
+            SET @amount = @price;    -- Deduct the full plan price
+
+        -- Insert a new payment record for the transaction
+        INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
+        VALUES (@amount, CURRENT_TIMESTAMP, NULL, 'successful', @mobile_num);
+
+        -- Retrieve the newly generated payment ID
+        SET @payment_id = SCOPE_IDENTITY();
+
+        -- Deduct the payment amount from the customer's balance
+        UPDATE Customer_Account
+        SET balance = balance - @amount
+        WHERE mobileNo = @mobile_num;
+
+        -- Link the payment to the plan in the process_payment table
+        INSERT INTO process_payment (paymentID, planID) 
+        VALUES (@payment_id, @plan_id);
+
+        -- Check if the payment covers the full plan price
+        IF (SELECT remaining_balance FROM process_payment WHERE planID = @plan_id AND paymentID = @payment_id) = 0 
+        BEGIN
+            -- If the plan is being renewed, update the subscription status to 'active'
+            IF dbo.subscribe_or_renew_plan(@mobile_num, @plan_id) = 'Renew'
+                UPDATE Subscription
+                SET status = 'active', subscription_date = CURRENT_TIMESTAMP
+                WHERE mobileNo = @mobile_num AND planID = @plan_id;
+            ELSE
+                -- If it's a new subscription, insert a new record with 'active' status
+                INSERT INTO Subscription (mobileNo, planID, subscription_date, status)
+                VALUES (@mobile_num, @plan_id, CURRENT_TIMESTAMP, 'active');
+        END
+        ELSE
+        BEGIN
+            -- If the payment does not cover the full plan price, set the status to 'onhold'
+            IF dbo.subscribe_or_renew_plan(@mobile_num, @plan_id) = 'Renew'
+                UPDATE Subscription
+                SET status = 'onhold', subscription_date = CURRENT_TIMESTAMP
+                WHERE mobileNo = @mobile_num AND planID = @plan_id;
+            ELSE
+                INSERT INTO Subscription (mobileNo, planID, subscription_date, status)
+                VALUES (@mobile_num, @plan_id, CURRENT_TIMESTAMP, 'onhold');
+        END;
+
+        -- Calculate the expiry date for the plan based on the plan's expiry interval
+        DECLARE @expiry_date DATE;
+        DECLARE @expiryIntervalDays INT;
+
+        SELECT @expiryIntervalDays = expiryIntervalDays 
+        FROM Service_Plan 
+        WHERE planID = @plan_id;
+
+        SET @expiry_date = DATEADD(DAY, @expiryIntervalDays, CURRENT_TIMESTAMP);
+
+        -- Insert a new record into Plan_Usage to track the plan's usage
+        INSERT INTO Plan_Usage (start_date, expiry_date, data_consumption, minutes_used, SMS_sent, mobileNo, planID)
+        VALUES (CURRENT_TIMESTAMP, @expiry_date, 0, 0, 0, @mobile_num, @plan_id);
+
+        -- Retrieve the customer's wallet ID
+        DECLARE @walletID INT;
+
+        SELECT @walletID = walletID
+        FROM Wallet 
+        WHERE mobileNo = @mobile_num;
+
+        -- Insert a new record into Customer_Benefits to track benefits associated with the payment
+        INSERT INTO Customer_Benefits (mobileNo, PaymentID, walletID, start_date, expiry_date)
+        VALUES (@mobile_num, @payment_id, @walletID, CURRENT_TIMESTAMP, @expiry_date);
+
+        -- Retrieve the newly generated benefit ID
+        DECLARE @benefitID INT;
+        SET @benefitID = SCOPE_IDENTITY();
+
+        -- Declare variables to store benefit details
+        DECLARE @points_earned INT;
+        DECLARE @cashback_percentage INT;
+        DECLARE @data_offered INT;
+        DECLARE @minutes_offered INT;
+        DECLARE @SMS_offered INT;
+
+        -- Retrieve benefit details for the selected plan
+        EXEC Benefits_Plan 
+            @plan_id = @plan_id,
+            @points_earned = @points_earned OUTPUT,
+            @cashback_percentage = @cashback_percentage OUTPUT,
+            @data_offered = @data_offered OUTPUT,
+            @minutes_offered = @minutes_offered OUTPUT,
+            @SMS_offered = @SMS_offered OUTPUT;
+
+        -- Calculate cashback amount based on the cashback percentage
+        DECLARE @cashback_amount DECIMAL(10,2);
+        SET @cashback_amount = (@cashback_percentage / 100.0) * @amount;
+
+        -- Insert earned points into Customer_Points if applicable
+        IF @points_earned > 0
+            INSERT INTO Customer_Points (benefitID, points_offered) 
+            VALUES (@benefitID, @points_earned);
+
+        -- Insert cashback amount into Customer_Cashback if applicable
+        IF @cashback_percentage > 0 AND @balance >= @price
+            INSERT INTO Customer_Cashback (benefitID, amount_earned) 
+            VALUES (@benefitID, @cashback_amount);
+
+        -- Insert exclusive offers (data, minutes, SMS) into Customer_Exclusive_Offers if applicable
+        IF @data_offered > 0 OR @minutes_offered > 0 OR @SMS_offered > 0
+            INSERT INTO Customer_Exclusive_Offers (benefitID, data_offered, minutes_offered, SMS_offered) 
+            VALUES (@benefitID, @data_offered, @minutes_offered, @SMS_offered);
+
+        -- Update the wallet balance with the cashback amount
+        UPDATE Wallet
+        SET current_balance = current_balance + @cashback_amount, last_modified_date = CURRENT_TIMESTAMP
+        WHERE walletID = @walletID;
+
+        -- Ensure expired points are handled correctly
+        EXEC Handle_Expired_Points;
+
+        -- Update the customer's points balance
+        UPDATE Customer_Account
+        SET points = points + @points_earned
+        WHERE mobileNo = @mobile_num;
+
+        -- Insert a new record into Benefit_Usage to track benefit usage
+        INSERT INTO Benefit_Usage (benefitID, points_used, data_used, minutes_used, SMS_used, usage_date) 
+        VALUES (@benefitID, 0, 0, 0, 0, NULL);
+
+        -- Commit the transaction if everything succeeds
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        -- Rollback the transaction in case of any error
         ROLLBACK TRANSACTION;
-        RETURN;
-    END
-
-    DECLARE @payment_id INT
-    DECLARE @price INT
-    DECLARE @balance INT
-    DECLARE @amount INT
-
-    Select @price = price 
-    from Service_Plan 
-    where planID = @plan_id; 
-
-    Select @balance = balance
-    From Customer_Account
-    Where mobileNo = @mobile_num;
-
-    If @balance < @price
-        Set @amount = @balance
-    Else
-        Set @amount = @price
-
-    INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
-    VALUES (@amount, CURRENT_TIMESTAMP, NULL , 'successful', @mobile_num);
-
-    SET @payment_id = SCOPE_IDENTITY();
-
-    UPDATE Customer_Account
-    Set balance = balance - @amount
-    Where mobileNo = @mobile_num;
-
-
-    INSERT INTO process_payment(paymentID, planID) 
-    VALUES(@payment_id, @plan_id)
-
-    IF(SELECT remaining_balance FROM process_payment WHERE planID = @plan_id AND paymentID = @payment_id) = 0 
-    BEGIN
-        IF  dbo.subscribe_or_renew_plan(@mobile_num, @plan_id) = 'Renew'
-            UPDATE Subscription
-            SET status = 'active', subscription_date = CURRENT_TIMESTAMP
-            WHERE mobileNo = @mobile_num AND planID = @plan_id;
-        ELSE
-            INSERT INTO Subscription (mobileNo, planID, subscription_date, status)
-            VALUES(@mobile_num, @plan_id, CURRENT_TIMESTAMP, 'active');
-    END
-    ELSE
-    BEGIN
-        IF dbo.subscribe_or_renew_plan(@mobile_num, @plan_id) = 'Renew'
-            UPDATE Subscription
-            SET status = 'onhold', subscription_date = CURRENT_TIMESTAMP
-            WHERE mobileNo = @mobile_num AND planID = @plan_id;
-        ELSE
-            INSERT INTO Subscription (mobileNo, planID, subscription_date, status)
-            VALUES(@mobile_num, @plan_id, CURRENT_TIMESTAMP, 'onhold');
-    END;
-
-    DECLARE @expiry_date DATE
-    DECLARE @expiryIntervalDays INT
-    Select @expiryIntervalDays = expiryIntervalDays 
-    from Service_Plan 
-    where planID = @plan_id
-
-    Set @expiry_date = DATEADD(DAY, @expiryIntervalDays, CURRENT_TIMESTAMP);
-    INSERT INTO Plan_Usage (start_date, expiry_date, data_consumption, minutes_used, SMS_sent, mobileNo, planID)
-    VALUES(CURRENT_TIMESTAMP, @expiry_date, 0, 0, 0, @mobile_num, @plan_id);
- 
-    DECLARE @walletID INT;
-    Select @walletID = walletID
-    From Wallet 
-    Where mobileNo = @mobile_num
-
-    INSERT INTO Customer_Benefits (mobileNo, PaymentID, walletID, start_date, expiry_date)
-    VALUES(@mobile_num, @payment_id, @walletID, CURRENT_TIMESTAMP, @expiry_date);
-    DECLARE @benefitID INT;
-    SET @benefitID = SCOPE_IDENTITY();     -- Retrieve the last inserted benefitID
-
-    DECLARE @points_earned INT;
-    DECLARE @cashback_percentage INT;
-    DECLARE @data_offered INT;
-    DECLARE @minutes_offered INT;
-    DECLARE @SMS_offered INT;
-
-    EXEC Benefits_Plan 
-        @plan_id = @plan_id,
-        @points_earned = @points_earned OUTPUT,
-        @cashback_percentage = @cashback_percentage OUTPUT,
-        @data_offered = @data_offered OUTPUT,
-        @minutes_offered = @minutes_offered OUTPUT,
-        @SMS_offered = @SMS_offered OUTPUT;
-
-    DECLARE @cashback_amount DECIMAL(10,2);
-    SET @cashback_amount = (@cashback_percentage / 100.0) * @amount;
-
-    If @points_earned > 0
-        INSERT INTO Customer_Points (benefitID, points_offered) VALUES (@benefitID, @points_earned)
-    If @cashback_percentage > 0 and @balance >= @price
-        INSERT INTO Customer_Cashback(benefitID, amount_earned) VALUES (@benefitID, @cashback_amount)
-    If @data_offered > 0 or @minutes_offered > 0 or @SMS_offered > 0
-        INSERT INTO Customer_Exclusive_Offers(benefitID, data_offered, minutes_offered, SMS_offered) VALUES (@benefitID, @data_offered, @minutes_offered, @SMS_offered);
-
-    -- Add Cashback
-    UPDATE Wallet
-    SET current_balance = current_balance + @cashback_amount, last_modified_date = CURRENT_TIMESTAMP
-    WHERE walletID = @WalletID;
-
-    -- Ensure Points value is correct
-    EXEC Handle_Expired_Points;
-
-    -- Add Points
-    UPDATE Customer_Account
-    SET points = points + @points_earned
-    WHERE mobileNo = @mobile_num;
-
-    INSERT INTO Benefit_Usage (benefitID, points_used, data_used, minutes_used, SMS_used, usage_date) 
-    VALUES(@benefitID, 0, 0, 0, 0, NULL)
-
-    COMMIT TRANSACTION;
-END TRY
-BEGIN CATCH
-    ROLLBACK TRANSACTION;
-    THROW;
-END CATCH
-
+        -- Re-throw the error to the caller
+        THROW;
+    END CATCH
+END;
 GO
+
 --Execute a transfer from wallet to wallet
 CREATE PROCEDURE Wallet_transfer
 @mobile_num1 char(11),
@@ -1984,12 +2017,14 @@ SELECT sp.planID, sp.name, sp.SMS_offered, sp.minutes_offered, sp.data_offered, 
                     FROM Subscription s
                     JOIN Service_Plan sp ON s.planID = sp.planID
                     LEFT JOIN Plan_Usage pu ON s.planID = pu.planID AND s.mobileNo = pu.mobileNo
-                    WHERE s.mobileNo = @mobileNo AND s.status = 'active';
+                    WHERE s.mobileNo = @mobileNo AND s.status <> 'expired';
 END;
+
 
 GO
 CREATE PROCEDURE LoadPlanBenefits
-@planID INT
+@planID INT,
+@mobile_num CHAR(11)
 AS
 BEGIN
 SELECT ce.SMS_offered, ce.data_offered, ce.minutes_offered,cp.points_offered, bu.SMS_used, bu.data_used, bu.minutes_used, bu.points_used
@@ -1998,7 +2033,7 @@ SELECT ce.SMS_offered, ce.data_offered, ce.minutes_offered,cp.points_offered, bu
                     INNER JOIN Customer_Exclusive_Offers ce ON ce.benefitID = cb.benefitID
                     INNER JOIN Benefit_Usage bu ON bu.benefitID = cb.benefitID
                     INNER JOIN Process_Payment p ON p.paymentID = cb.PaymentID
-                    WHERE cb.mobileNo = mobileNo AND p.planID = @planID;
+                    WHERE cb.mobileNo = @mobile_num AND p.planID = @planID;
 END;
 
 
@@ -2367,21 +2402,4 @@ SELECT * FROM Technical_Support_Ticket;
 --EXEC Benefits_Account @mobile_num = '01010101010', @plan_id = 3;
 ---- Delete Expired points and remove the rest from the customer's points if exists
 --EXEC Handle_Expired_Points;
-
-SELECT sp.planID, sp.name, sp.SMS_offered, sp.minutes_offered, sp.data_offered, pu.SMS_sent, pu.minutes_used, pu.data_consumption
-                FROM Subscription s
-                JOIN Service_Plan sp ON s.planID = sp.planID
-                LEFT JOIN Plan_Usage pu ON s.planID = pu.planID AND s.mobileNo = pu.mobileNo
-                WHERE s.mobileNo = '01010101010' AND s.status = 'active';
-
-
-
-select cb.benefitID,ce.SMS_offered, ce.data_offered, ce.minutes_offered,cp.points_offered, bu.SMS_used, bu.data_used, bu.minutes_used, bu.points_used
-from Customer_Benefits cb
-inner join Customer_Points cp on cp.benefitID = cb.benefitID
-inner join Customer_Exclusive_Offers ce on ce.benefitID = cb.benefitID
-inner join Benefit_Usage bu on bu.benefitID = cb.benefitID
-inner join Process_Payment p on p.paymentID = cb.PaymentID
-where cb.mobileNo = '01010101010' and p.planID = 1;
-
 
