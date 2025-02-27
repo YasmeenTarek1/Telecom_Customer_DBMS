@@ -192,26 +192,25 @@ public class PageUtilities
         }
     }
 
-    public static void DisplayAlert(Exception ex, Control form)
+    public static void DisplayAlert(Exception ex, Control form, string alertType = "alert-danger")
     {
-        string errorMessage = $@"
-                <div id='errorAlert' class='alert alert-danger' role='alert'>{ex.Message}</div>
-                <script>
-                    var alertBox = document.getElementById('errorAlert');
-                    if (alertBox) {{
-                        alertBox.style.cssText = 'opacity: 1; transition: opacity 0.5s ease-out;';
-                        setTimeout(function() {{
-                            alertBox.style.opacity = '0';
-                            setTimeout(function() {{
-                                alertBox.style.visibility = 'hidden';
-                            }}, 500);
-                        }}, 2500);
-                    }}
-                </script>";
+        string alertMessage = $@"
+        <div id='errorAlert' class='alert {alertType}' role='alert'>{ex.Message}</div>
+        <script>
+            var alertBox = document.getElementById('errorAlert');
+            if (alertBox) {{
+                alertBox.style.cssText = 'opacity: 1; transition: opacity 0.5s ease-out;';
+                setTimeout(function() {{
+                    alertBox.style.opacity = '0';
+                    setTimeout(function() {{
+                        alertBox.style.visibility = 'hidden';
+                    }}, 500);
+                }}, 2500);
+            }}
+        </script>";
 
-        form.Controls.Add(new Literal { Text = errorMessage });
+        form.Controls.Add(new Literal { Text = alertMessage });
     }
-
     public static void checkValidPlanID(string planID)
     {
         if (string.IsNullOrEmpty(planID))

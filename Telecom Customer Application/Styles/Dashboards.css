@@ -28,6 +28,7 @@ body {
 
 /* Content Area */
 .container {
+
     display: flex;
     flex-direction: row;
     overflow: hidden;
@@ -333,7 +334,6 @@ table tr:nth-child(odd) {
 
 table tr:hover {
     background-color: #e2edff;
-    transition: background-color 0.3s ease;
 }
 
 /* Status badges */
@@ -411,8 +411,6 @@ table tr:hover {
     border-radius: 5px;
     font-size: 14px;
     color: white;
-    background-color: #dc3545;
-    border: 1px solid #dc3545;
     position: fixed;
     top: 0;
     left: 50%;
@@ -421,6 +419,22 @@ table tr:hover {
     width: 70%;
     max-width: 600px;
     text-align: center;
+}
+
+.alert-danger {
+    background-color: #dc3545; /* Red */
+    border: 1px solid #dc3545;
+}
+
+.alert-success {
+    background-color: #28a745; /* Green */
+    border: 1px solid #28a745;
+}
+
+.alert-warning {
+    background-color: #ffc107; /* Yellow */
+    border: 1px solid #ffc107;
+    color: #212529; /* Darker text for readability on yellow */
 }
 
 .tab-heading {
@@ -1065,4 +1079,52 @@ table tr:hover {
 
 .UsageElement {
     animation: fadeIn 0.5s ease-in-out;
+}
+.disabled-btn {
+    opacity: 0.6;
+    cursor: default !important;
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+}
+
+/* Tooltip with Bottom Arrow */
+/* Tooltip with Bottom Arrow */
+.tooltip {
+    position: absolute;
+    z-index: 1070;
+    display: block;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+    text-align: start;
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: none;
+    letter-spacing: normal;
+    word-break: normal;
+    word-spacing: normal;
+    white-space: normal;
+    line-break: auto;
+    font-size: 0.875rem;
+    word-wrap: break-word;
+    opacity: 0;
+}
+
+.tooltip.show {
+    opacity: 0.9;
+}
+
+.tooltip .tooltip-inner {
+    max-width: 300px;
+    width: 300px;
+    padding: 8px 12px;
+    color: #fff;
+    text-align: center;
+    background-color: #000;
+    border-radius: 0.25rem;
 }

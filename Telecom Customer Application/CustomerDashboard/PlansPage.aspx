@@ -5,8 +5,17 @@
 <html lang="en">
 <head runat="server">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <meta charset="UTF-8">
     <title>Plans Page</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -143,18 +152,18 @@
                 </div>
                     
                 <div class="PlanCardsContainer" id="ButtonsContainer" runat="server" style="margin-top: -20px;">
-                    <!-- Button for Basic Plan -->
-                    <asp:Button ID="btnPlan1" runat="server" Text="Subscribe" CommandArgument="1" OnClick="PlanButton_Click" style="background: linear-gradient(135deg, #64b5f6, #1976d2);"/>
+                     <!-- Basic Plan Button -->
+                     <asp:Button ID="btnPlan1" runat="server" Text="Subscribe" CommandArgument="1" OnClick="PlanButton_Click" style="background: linear-gradient(135deg, #64b5f6, #1976d2);" />
 
-                    <!-- Button for Standard Plan -->
-                    <asp:Button ID="btnPlan2" runat="server" Text="Subscribe" CommandArgument="2" OnClick="PlanButton_Click" style="background: linear-gradient(135deg, #fbd977, #e9ab22);"/>
+                     <!-- Standard Plan Button -->
+                     <asp:Button ID="btnPlan2" runat="server" Text="Subscribe" CommandArgument="2" OnClick="PlanButton_Click" style="background: linear-gradient(135deg, #fbd977, #e9ab22);" />
 
-                    <!-- Button for Premium Plan -->
-                    <asp:Button ID="btnPlan3" runat="server" Text="Subscribe" CommandArgument="3" OnClick="PlanButton_Click" style="background: linear-gradient(135deg, #81c784, #388e3c);"/>
+                     <!-- Premium Plan Button -->
+                     <asp:Button ID="btnPlan3" runat="server" Text="Subscribe" CommandArgument="3" OnClick="PlanButton_Click" style="background: linear-gradient(135deg, #81c784, #388e3c);" />
 
-                    <!-- Button for Unlimited Plan -->
-                    <asp:Button ID="btnPlan4" runat="server" Text="Subscribe" CommandArgument="4" OnClick="PlanButton_Click" style="background: linear-gradient(135deg, #ce85f7, #b345f0);"/>
-                </div>
+                     <!-- Unlimited Plan Button -->
+                     <asp:Button ID="btnPlan4" runat="server" Text="Subscribe" CommandArgument="4" OnClick="PlanButton_Click" style="background: linear-gradient(135deg, #ce85f7, #b345f0);" />
+              </div>
             </div>
         </div>
     </form>
