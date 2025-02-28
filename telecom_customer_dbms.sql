@@ -576,18 +576,6 @@ INNER JOIN Customer_profile CP
 ON CP.nationalID = CA.nationalID
 Group by CB.walletID, CP.first_name, CP.last_name;
 
-Go 
---List all accounts along with the service plans they are subscribed to
-CREATE PROCEDURE Account_Plan AS
-Select S.mobileNo, S.planID, Sp.name AS 'Plan Name', Sp.description, Sp.SMS_offered, Sp.data_offered, Sp.minutes_offered, S.subscription_date, S.status AS 'Subscription Status'
-From Customer_Account C 
-Inner join Subscription S 
-ON C.mobileNo = S.mobileNo 
-Inner join Service_Plan Sp 
-ON S.planID = Sp.planID
-ORDER BY S.subscription_date DESC;
-
-
 
 -------------- Green part ------------------
 

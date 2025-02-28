@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    if (window.location.pathname.includes("SubscriptionsPage.aspx")  && typeof data !== 'undefined') {
+    if (window.location.pathname.includes("PlansPage.aspx")  && typeof data !== 'undefined') {
         let ctx = document.getElementById('subscriptionPieChart')?.getContext('2d');
 
 

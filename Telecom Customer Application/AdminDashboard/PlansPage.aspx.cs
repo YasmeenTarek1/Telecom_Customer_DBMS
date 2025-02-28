@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Data;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Web.UI;
 
 namespace Telecom_Customer_Application.AdminDashboard
 {
@@ -32,6 +35,13 @@ namespace Telecom_Customer_Application.AdminDashboard
                 Subscribers_for_plan(eventArgument);  // Fetch subscribers for the selected plan
             }
 
+            // Fetch data for the pie chart
+            Dictionary<string, int> subscriptionsStatus = GetSubscriptionStatistics();
+            string subscriptionsStatusJson = JsonConvert.SerializeObject(subscriptionsStatus);
+
+            // Pass the JSON data to the front end
+            ScriptManager.RegisterStartupScript(this, GetType(), "data", $"var data = {subscriptionsStatusJson};", true);
+            
         }
 
         private void Subscribers_for_plan(string planId)
@@ -83,6 +93,32 @@ namespace Telecom_Customer_Application.AdminDashboard
                     PageUtilities.DisplayAlert(ex, form1);
                 }
             }
+        }
+
+        public static Dictionary<string, int> GetSubscriptionStatistics()
+        {
+            var statistics = new Dictionary<string, int>();
+            string procedureName = "GetSubscriptionStatistics";
+
+            using (SqlConnection connection = new SqlConnection(PageUtilities.connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(procedureName, connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string planName = reader["PlanName"].ToString();
+                            int subscriptionCount = Convert.ToInt32(reader["SubscriptionCount"]);
+                            statistics[planName] = subscriptionCount;
+                        }
+                    }
+                }
+            }
+
+            return statistics;
         }
     }
 }

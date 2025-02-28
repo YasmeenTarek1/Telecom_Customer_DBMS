@@ -78,7 +78,6 @@
     <Content Include="AdminDashboard\PlansPage.aspx" />
     <Content Include="AdminDashboard\PointsPage.aspx" />
     <Content Include="AdminDashboard\ShopsPage.aspx" />
-    <Content Include="AdminDashboard\SubscriptionsPage.aspx" />
     <Content Include="AdminDashboard\TicketsPage.aspx" />
     <Content Include="AdminDashboard\TransactionsPage.aspx" />
     <Content Include="AdminDashboard\WalletsPage.aspx" />
@@ -162,13 +161,6 @@
     </Compile>
     <Compile Include="AdminDashboard\ShopsPage.aspx.designer.cs">
       <DependentUpon>ShopsPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="AdminDashboard\SubscriptionsPage.aspx.cs">
-      <DependentUpon>SubscriptionsPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="AdminDashboard\SubscriptionsPage.aspx.designer.cs">
-      <DependentUpon>SubscriptionsPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="AdminDashboard\TicketsPage.aspx.cs">
       <DependentUpon>TicketsPage.aspx</DependentUpon>

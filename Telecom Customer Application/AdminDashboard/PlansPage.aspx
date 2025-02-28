@@ -84,6 +84,17 @@
                     </table>
                 </div>
             </div>
+
+            <div id="rightSidePanel" class="right-side-panel">
+                <button id="togglePanelButton" class="toggle-panel-button" type="button" onclick="togglePanel()">
+                    <i class="fas fa-chart-pie"></i>
+                </button>
+                <div id="panelContent" class="panel-content">
+                    <div class="chart-container">
+                        <canvas id="subscriptionPieChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
 </body>

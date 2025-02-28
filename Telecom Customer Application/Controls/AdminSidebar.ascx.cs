@@ -20,7 +20,6 @@ namespace Controls
         private string GetActiveTabId(string currentPage)
         {
             if (currentPage.Contains("CustomersPage.aspx")) return "customersTab";
-            if (currentPage.Contains("SubscriptionsPage.aspx")) return "subscriptionsTab";
             if (currentPage.Contains("ShopsPage.aspx"))
             {
                 string subtab = Request.QueryString["subtab"];

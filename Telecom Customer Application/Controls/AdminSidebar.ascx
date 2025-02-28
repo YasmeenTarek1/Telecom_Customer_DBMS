@@ -22,10 +22,6 @@
         <i class="fa-solid fa-gift sidebar-icon"></i>Benefits
     </a>
 
-    <a href="~/AdminDashboard/SubscriptionsPage.aspx" id="subscriptionsTab" runat="server">
-        <i class="fa-solid fa-sim-card sidebar-icon"></i>Subscriptions
-    </a>
-
     <a href="~/AdminDashboard/PaymentsPage.aspx" id="paymentsTab" runat="server">
         <i class="fa-solid fa-coins sidebar-icon"></i>Payments
     </a>
