@@ -788,11 +788,14 @@ END;
 
 Go
 CREATE PROCEDURE Wallet_Transaction_History
-@walletID int
+@walletID int,
+@start_date date, 
+@end_date date
 AS
     Select *
     From Transfer_money
     Where walletID1 = @walletID OR walletID2 = @walletID
+    AND transfer_date BETWEEN @start_date AND @end_date
     Order by transfer_date DESC;
 
 
@@ -2398,3 +2401,4 @@ SELECT * FROM Technical_Support_Ticket;
 --EXEC Benefits_Account @mobile_num = '01010101010', @plan_id = 3;
 ---- Delete Expired points and remove the rest from the customer's points if exists
 --EXEC Handle_Expired_Points;
+
