@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    if (window.location.pathname.includes("PlansPage.aspx")  && typeof data !== 'undefined') {
+    if (window.location.pathname.includes("PlansPage.aspx") && typeof subscriptionsData !== 'undefined') {
         let ctx = document.getElementById('subscriptionPieChart')?.getContext('2d');
 
 
@@ -198,12 +198,15 @@ document.addEventListener("DOMContentLoaded", function () {
             subscriptionChartInstance.destroy();
         }
 
+        var labels = subscriptionsData.map(item => item.PlanName);
+        var data = subscriptionsData.map(item => item.Percentage);
+
         subscriptionChartInstance = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: Object.keys(data),
+                labels: labels,
                 datasets: [{
-                    data: Object.values(data),
+                    data: data,
                     backgroundColor: [
                         '#00FFFF',
                         '#00b3e0',

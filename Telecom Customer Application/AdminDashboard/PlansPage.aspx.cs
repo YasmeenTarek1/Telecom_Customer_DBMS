@@ -36,11 +36,11 @@ namespace Telecom_Customer_Application.AdminDashboard
             }
 
             // Fetch data for the pie chart
-            Dictionary<string, int> subscriptionsStatus = GetSubscriptionStatistics();
+            DataTable subscriptionsStatus = GetSubscriptionStatistics();
             string subscriptionsStatusJson = JsonConvert.SerializeObject(subscriptionsStatus);
 
             // Pass the JSON data to the front end
-            ScriptManager.RegisterStartupScript(this, GetType(), "data", $"var data = {subscriptionsStatusJson};", true);
+            ScriptManager.RegisterStartupScript(this, GetType(), "subscriptionsData", $"var subscriptionsData = {subscriptionsStatusJson};", true);
             
         }
 
@@ -94,31 +94,29 @@ namespace Telecom_Customer_Application.AdminDashboard
                 }
             }
         }
-
-        public static Dictionary<string, int> GetSubscriptionStatistics()
+        protected DataTable GetSubscriptionStatistics()
         {
-            var statistics = new Dictionary<string, int>();
-            string procedureName = "GetSubscriptionStatistics";
-
-            using (SqlConnection connection = new SqlConnection(PageUtilities.connectionString))
+            DataTable dataTable = new DataTable();
+            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
             {
-                using (SqlCommand command = new SqlCommand(procedureName, connection))
+                try
                 {
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    connection.Open();
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand("GetSubscriptionStatistics", con))
                     {
-                        while (reader.Read())
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                         {
-                            string planName = reader["PlanName"].ToString();
-                            int subscriptionCount = Convert.ToInt32(reader["SubscriptionCount"]);
-                            statistics[planName] = subscriptionCount;
+                            adapter.Fill(dataTable);
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    PageUtilities.DisplayAlert(ex, form1);
+                }
             }
-
-            return statistics;
+            return dataTable;
         }
     }
 }

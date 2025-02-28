@@ -1697,7 +1697,7 @@ AS
 BEGIN
     SELECT 
         SP.name AS PlanName, 
-        COUNT(S.planID) AS SubscriptionCount
+        CAST(COUNT(S.planID) * 100.0 / SUM(COUNT(S.planID)) OVER () AS DECIMAL(5, 2)) AS Percentage
     FROM 
         Service_Plan SP
     LEFT JOIN 
