@@ -7,8 +7,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Vouchers Page</title>
-    <script src="../Scripts/Dashboards.js"></script> 
-    <link href="../Styles/Dashboards.css" rel="stylesheet"/>
 </head>
 <body>
     <form id="form1" runat="server">

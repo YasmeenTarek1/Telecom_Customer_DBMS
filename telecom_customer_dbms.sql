@@ -2338,6 +2338,8 @@ VALUES
 INSERT INTO Technical_Support_Ticket (mobileNo, Issue_description, priority_level, status, submissionDate)
 VALUES
 ('01010101010', 'Network connectivity issue', 3, 'Open', CURRENT_TIMESTAMP),
+('01010101010', 'Unable to make outgoing calls', 1, 'Resolved', CURRENT_TIMESTAMP),
+('01010101010', 'Balance not updating after recharge', 3, 'In Progress', CURRENT_TIMESTAMP),
 ('01020202020', 'Account billing discrepancy', 2, 'Open', CURRENT_TIMESTAMP),
 ('01030303030', 'Unable to make outgoing calls', 1, 'Resolved', CURRENT_TIMESTAMP),
 ('01040404040', 'Data not working', 2, 'Resolved', CURRENT_TIMESTAMP),
@@ -2401,4 +2403,3 @@ SELECT * FROM Technical_Support_Ticket;
 --EXEC Benefits_Account @mobile_num = '01010101010', @plan_id = 3;
 ---- Delete Expired points and remove the rest from the customer's points if exists
 --EXEC Handle_Expired_Points;
-

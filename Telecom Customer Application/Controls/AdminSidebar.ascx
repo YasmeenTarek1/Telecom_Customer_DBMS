@@ -57,7 +57,7 @@
         <i class="fa-solid fa-ticket sidebar-icon"></i>Tickets
     </a>
 
-    <asp:LinkButton ID="logoutTab" runat="server" Class="logout-link" OnClick="logoutTab_Click">
+    <a href="~/AdminLogin.aspx" runat="server" Class="logout-link">
         <i class="fa-solid fa-right-from-bracket sidebar-icon"></i>Logout
-    </asp:LinkButton>
+    </a>
 </div>

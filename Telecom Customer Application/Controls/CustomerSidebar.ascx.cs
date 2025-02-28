@@ -17,10 +17,6 @@ namespace Controls
                 SetActiveTab(activeTabId);
             }
         }
-        protected void logoutTab_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("~/CustomerLogin.aspx");
-        }
         private string GetActiveTabId(string currentPage)
         {
             if (currentPage.Contains("HomePage.aspx")) return "homeTab";
