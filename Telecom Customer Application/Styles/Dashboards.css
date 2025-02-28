@@ -1127,3 +1127,23 @@ table tr:hover {
     background-color: #000;
     border-radius: 0.25rem;
 }
+
+
+.sidebar .logout-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #dc3545 ; 
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    background-color: transparent; 
+    border: none;
+    cursor: pointer; 
+    font-family: inherit; 
+    font-size: inherit;
+}
+
+
+    .sidebar .logout-link .sidebar-icon {
+        margin-right: 10px;
+    }

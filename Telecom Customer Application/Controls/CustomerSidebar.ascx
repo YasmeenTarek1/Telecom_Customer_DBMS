@@ -34,4 +34,8 @@
         <i class="fa-solid fa-ticket-simple sidebar-icon"></i>Vouchers
     </a>
 
+    <asp:LinkButton ID="logoutTab" runat="server" Class="logout-link" OnClick="logoutTab_Click">
+    <i class="fa-solid fa-right-from-bracket sidebar-icon"></i>Logout
+    </asp:LinkButton>
+
 </div>
