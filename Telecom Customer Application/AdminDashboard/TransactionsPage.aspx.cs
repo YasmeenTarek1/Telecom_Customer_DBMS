@@ -42,6 +42,8 @@ namespace Telecom_Customer_Application.AdminDashboard
                     SqlCommand cmd = new SqlCommand("Wallet_Transaction_History", con);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@walletID", walletId));
+                    cmd.Parameters.Add(new SqlParameter("@start_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput1.Text) });
+                    cmd.Parameters.Add(new SqlParameter("@end_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput2.Text) });
                     PageUtilities.LoadData(cmd, TableBody);
 
                     SqlCommand cmd1 = new SqlCommand("SELECT dbo.Wallet_Average_Sent(@walletID, @start_date, @end_date)", con);

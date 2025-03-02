@@ -28,7 +28,6 @@ body {
 
 /* Content Area */
 .container {
-
     display: flex;
     flex-direction: row;
     overflow: hidden;
@@ -324,7 +323,7 @@ table td {
     padding: 3px;
 }
 
-table caption {
+table caption, .caption {
     font-size: 24px;
     font-weight: 600;
     color: #333;
@@ -1292,5 +1291,9 @@ table tr:hover {
     margin: 15px 0;
     line-height: 1.6;
     font-weight: 500;
-    text-align: left
+    text-align: left;
+}
+
+.ticket-detail-content strong {
+    font-weight: bold;
 }

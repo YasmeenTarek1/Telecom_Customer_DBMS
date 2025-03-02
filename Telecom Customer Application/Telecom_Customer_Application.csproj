@@ -84,7 +84,6 @@
     <Content Include="Controls\AdminSidebar.ascx" />
     <Content Include="Controls\CustomerSidebar.ascx" />
     <Content Include="CustomerDashboard\HomePage.aspx" />
-    <Content Include="CustomerDashboard\PaymentsPage.aspx" />
     <Content Include="CustomerDashboard\PlansPage.aspx" />
     <Content Include="CustomerDashboard\TicketsPage.aspx" />
     <Content Include="CustomerDashboard\VouchersPage.aspx" />
@@ -204,13 +203,6 @@
     </Compile>
     <Compile Include="CustomerDashboard\HomePage.aspx.designer.cs">
       <DependentUpon>HomePage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="CustomerDashboard\PaymentsPage.aspx.cs">
-      <DependentUpon>PaymentsPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CustomerDashboard\PaymentsPage.aspx.designer.cs">
-      <DependentUpon>PaymentsPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="CustomerDashboard\PlansPage.aspx.cs">
       <DependentUpon>PlansPage.aspx</DependentUpon>

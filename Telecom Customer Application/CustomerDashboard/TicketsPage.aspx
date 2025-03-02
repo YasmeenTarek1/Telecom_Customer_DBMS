@@ -22,10 +22,10 @@
 
                     // Update detail content
                     document.querySelector('.ticket-detail-content h3').textContent = ticketId;
-                    document.querySelector('.ticket-detail-content .description').textContent = `Description: ${description}`;
-                    document.querySelector('.ticket-detail-content .priority').textContent = `Priority: ${priority}`;
-                    document.querySelector('.ticket-detail-content .date').textContent = `Submitted: ${dateSubmitted}`;
-                    document.querySelector('.ticket-detail-content .status').textContent = `Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+                    document.querySelector('.ticket-detail-content .description .desc-value').textContent = description;
+                    document.querySelector('.ticket-detail-content .priority .priority-value').textContent = priority;
+                    document.querySelector('.ticket-detail-content .date .date-value').textContent = dateSubmitted;
+                    document.querySelector('.ticket-detail-content .status .status-value').textContent = status.charAt(0).toUpperCase() + status.slice(1);
 
                     // Apply status class to detail
                     detail.className = `ticket-detail ${status}`;
@@ -57,10 +57,10 @@
                     <div class="ticket-detail">
                         <div class="ticket-detail-content">
                             <h3>Ticket ID</h3>
-                            <p class="description">Description: [Description]</p>
-                            <p class="priority">Priority: [Priority]</p>
-                            <p class="date">Submitted: [Date]</p>
-                            <p class="status">Status: [Status]</p>
+                            <p class="description"><strong>Description:</strong> <span class="desc-value">[Description]</span></p>
+                            <p class="priority"><strong>Priority:</strong> <span class="priority-value">[Priority]</span></p>
+                            <p class="date"><strong>Submitted:</strong> <span class="date-value">[Date]</span></p>
+                            <p class="status"><strong>Status:</strong> <span class="status-value">[Status]</span></p>
                         </div>
                     </div>
                 </div>

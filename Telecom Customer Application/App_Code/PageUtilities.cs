@@ -194,22 +194,32 @@ public class PageUtilities
 
     public static void DisplayAlert(Exception ex, Control form, string alertType = "alert-danger")
     {
-        string alertMessage = $@"
-        <div id='errorAlert' class='alert {alertType}' role='alert'>{ex.Message}</div>
-        <script>
-            var alertBox = document.getElementById('errorAlert');
-            if (alertBox) {{
+
+        string script = $@"
+        <script type='text/javascript'>
+            function showAlert() {{
+                var alertBox = document.createElement('div');
+                alertBox.className = 'alert {alertType}';
+                alertBox.role = 'alert';
+                alertBox.innerHTML = '{ex.Message.Replace("'", @"\'").Replace("\r\n", " ")}';
+                document.body.insertBefore(alertBox, document.body.firstChild);
+                
                 alertBox.style.cssText = 'opacity: 1; transition: opacity 0.5s ease-out;';
                 setTimeout(function() {{
                     alertBox.style.opacity = '0';
                     setTimeout(function() {{
-                        alertBox.style.visibility = 'hidden';
+                        alertBox.parentNode.removeChild(alertBox);
                     }}, 500);
                 }}, 2500);
             }}
+            if (document.readyState !== 'loading') {{
+                showAlert();
+            }} else {{
+                document.addEventListener('DOMContentLoaded', showAlert);
+            }}
         </script>";
 
-        form.Controls.Add(new Literal { Text = alertMessage });
+        ScriptManager.RegisterStartupScript(form, form.GetType(), "DisplayAlert", script, false);
     }
     public static void checkValidPlanID(string planID)
     {

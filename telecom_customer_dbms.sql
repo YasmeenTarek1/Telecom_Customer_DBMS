@@ -774,7 +774,7 @@ BEGIN
     Return @Transaction_amount_average
 END;
 
-Go
+GO
 CREATE PROCEDURE Wallet_Transaction_History
 @walletID int,
 @start_date date, 
@@ -782,7 +782,7 @@ CREATE PROCEDURE Wallet_Transaction_History
 AS
     Select *
     From Transfer_money
-    Where walletID1 = @walletID OR walletID2 = @walletID
+    Where (walletID1 = @walletID OR walletID2 = @walletID)
     AND transfer_date BETWEEN @start_date AND @end_date
     Order by transfer_date DESC;
 
@@ -922,18 +922,61 @@ AS
     WHERE t.mobileNo = @mobile_num
     ORDER BY CASE t.status WHEN 'Open' THEN 1 WHEN 'In Progress' THEN 2 ELSE 3 END, t.priority_level DESC;
 
+
+--------- Vouchers ---------
+
 GO
---Return the voucher with the highest value for the input account.
-CREATE PROCEDURE Account_Highest_Voucher
+--Return the non-redeemed vouchers from physical stores for the input account.
+CREATE PROCEDURE Account_Active_Physical_Voucher
 @mobile_num char(11)
 AS
-    SELECT v.voucherID
+    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.expiry_date, sh.name, sh.category, s.address, s.working_hours
     FROM Voucher v
-    where v.value = (
-                        SELECT MAX(v1.value)
-                        from Voucher v1 
-                        where v1.mobileNo = @mobile_num
-                    )
+    INNER JOIN Shop sh
+    ON sh.shopID = v.shopID
+    INNER JOIN Physical_Shop s
+    ON s.shopID = v.shopID
+    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date >= CURRENT_TIMESTAMP
+    ORDER BY v.value DESC;
+
+GO
+--Return the non-redeemed vouchers from online stores for the input account.
+CREATE PROCEDURE Account_Active_Eshop_Voucher
+@mobile_num char(11)
+AS
+    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.expiry_date, sh.name, sh.category, s.rating, s.URL
+    FROM Voucher v
+    INNER JOIN Shop sh
+    ON sh.shopID = v.shopID
+    INNER JOIN E_SHOP s
+    ON s.shopID = v.shopID
+    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date >= CURRENT_TIMESTAMP
+    ORDER BY v.value DESC;
+
+
+GO
+--Return the redeemed vouchers for the input account.
+CREATE PROCEDURE Account_Redeemed_Voucher
+@mobile_num char(11)
+AS
+    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.redeem_date, s.name
+    FROM Voucher v
+    INNER JOIN Shop s
+    ON s.shopID = v.shopID
+    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NOT NULL
+    ORDER BY v.value DESC;
+                    
+GO
+--Return the expired non-redeemed vouchers for the input account.
+CREATE PROCEDURE Account_Expired_Voucher
+@mobile_num char(11)
+AS
+    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.redeem_date, v.expiry_date, s.name
+    FROM Voucher v
+    INNER JOIN Shop s
+    ON s.shopID = v.shopID
+    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date < CURRENT_TIMESTAMP
+    ORDER BY v.value DESC;
 
 
 -------------- purple part ------------------
@@ -1098,7 +1141,7 @@ BEGIN
 
         -- Insert a new payment record
         INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
-        VALUES (@amount, CURRENT_TIMESTAMP, NULL, 'successful', @mobile_num);
+        VALUES (@amount, CURRENT_TIMESTAMP, 'cash', 'successful', @mobile_num);
 
         SET @payment_id = SCOPE_IDENTITY();
 
@@ -1283,11 +1326,11 @@ BEGIN;
     END CATCH;
 END;
 
-
 GO
 CREATE PROCEDURE Redeem_voucher_points
     @mobile_num CHAR(11),
-    @voucher_id INT
+    @voucher_id INT,
+    @message NVARCHAR(100) OUTPUT  -- Output: Message indicating result
 AS
 BEGIN
     BEGIN TRANSACTION;
@@ -1317,21 +1360,31 @@ BEGIN
         FROM Customer_Account
         WHERE mobileNo = @mobile_num;
 
-        -- Check if the customer has enough points
-        IF @CurrentPoints < @RequiredPoints
+        
+        -- Check if the voucher is expired 
+        IF @voucherExpiryDate < CURRENT_TIMESTAMP
         BEGIN
-            RAISERROR ('Insufficient points to redeem this voucher.', 16, 1);
+            set @message = 'Voucher is expired.';
             ROLLBACK TRANSACTION;
             RETURN;
         END
 
-        -- Check if the voucher is expired or already redeemed
-        IF @voucherExpiryDate < CURRENT_TIMESTAMP OR @RedeemDateIfExists IS NOT NULL
+        -- Check if the voucher is already redeemed
+        IF @RedeemDateIfExists IS NOT NULL
         BEGIN
-            RAISERROR('Voucher is either expired or already redeemed.', 16, 1);
+            set @message = 'Voucher is already redeemed.';
             ROLLBACK TRANSACTION;
             RETURN;
         END
+
+        -- Check if the customer has enough points
+        IF @CurrentPoints < @RequiredPoints
+        BEGIN
+            set @message = 'Insufficient points to redeem this voucher.';
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
 
         -- Remaining points to deduct
         SET @RemainingPoints = @RequiredPoints;
@@ -1381,6 +1434,8 @@ BEGIN
         UPDATE Voucher
         SET mobileNo = @mobile_num, redeem_date = CURRENT_TIMESTAMP
         WHERE voucherID = @voucher_id;
+
+        set @message = 'Voucher is redeemed successfully.'
 
         COMMIT TRANSACTION;
     END TRY
@@ -2307,9 +2362,14 @@ VALUES
 
 INSERT INTO Voucher (value, expiry_date, points, mobileNo, shopID, redeem_date)
 VALUES
-(50, '2025-05-02', 100, '01010101010', 1, NULL),
+(50, '2025-05-02', 50, '01010101010', 2, NULL),
+(50, '2025-05-02', 50, '01010101010', 1, NULL),
+(50, '2025-05-02', 100, '01010101010', 2, NULL),
 (100, '2023-06-01', 200, '01010101010', 2, NULL),
 (150, '2025-07-03', 300, '01010101010', 3, NULL),
+(150, '2025-07-03', 300, '01010101010', 3, NULL),
+(200, '2025-07-03', 300, '01010101010', 3, NULL),
+(50, '2025-07-03', 300, '01010101010', 3, NULL),
 (200, '2023-08-01', 400, '01040404040', 4, NULL),
 (250, '2023-09-01', 500, '01050505050', 5, NULL),
 (300, '2023-10-01', 600, '01060606060', 6, NULL),
