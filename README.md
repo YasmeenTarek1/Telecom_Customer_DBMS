@@ -1,28 +1,46 @@
 # <img src="https://raw.githubusercontent.com/YasmeenTarek1/Telecom_Customer_DBMS/main/Telecom%20Customer%20Application/TeleSphere.png" alt="Telesphere Icon" width="40" style="vertical-align: middle; margin-right: 10px;"> Telesphere
 
-
-
-## Project Overview
-Telesphere is a web application designed to interact with a database, allowing administrators and customers to manage telecom-related functionalities efficiently. The platform provides distinct dashboards for both admin and customer users, ensuring seamless interaction and service management.
+**A cutting-edge web application for managing telecom customer data with powerful dashboards for admins and customers alike.**
 
 ---
 
-## Features
+## 🚀 Project Overview
+Welcome to **Telesphere**, a sleek and robust web application designed to streamline telecom customer management. From customer profiles and service plans to payments, benefits, and vouchers, Telesphere empowers administrators with a feature-rich dashboard for seamless oversight while offering customers an intuitive interface to manage their telecom services. Built with modern technologies, Telesphere is your one-stop solution for telecom data management.
+
+---
+
+## ✨ Key Features
+
 ### Admin Dashboard
-- Secure login using hardcoded credentials.
-- View customer profiles and their active accounts.
-- Access details of physical stores and redeemed vouchers.
-- Monitor resolved tickets and customer service plans.
-- Retrieve customer accounts subscribed to specific plans on certain dates.
-- Track total usage per account for each subscribed plan.
-- Manage benefits and offers associated with customer accounts.
-- Display SMS offers for specific accounts.
-- Manage wallets, e-shops, transactions, and cashback details.
-- Evaluate accepted transactions and earned points.
-- Check wallet-linking status for mobile numbers.
-- Update earned points for specific customers.
+The admin dashboard is the control hub for telecom operations, packed with tools to monitor and manage customer data efficiently:
+- **Customer Page**: 
+  - View total number of customers, payments, transactions, and subscribed plans.
+  - Access a detailed table with customer information.
+- **Plans Tab**: 
+  - Explore all company-offered plans with filters for subscription start date and status.
+  - Visualize subscription rates with an interactive chart.
+- **Benefits Page**: 
+  - Track total benefits, points, cashback, and exclusive offers.
+  - Browse tables for:
+    - Customers with active benefits.
+    - Customers with no active benefits.
+    - Benefits expiring soon.
+  - Analyze charts for customer benefit distribution and active vs. expired benefits.
+- **Payments Tab**: 
+  - Review a comprehensive table of payment details.
+- **Wallets Tab**: 
+  - Inspect wallet information in an organized table.
+- **Transactions Tab**: 
+  - View transaction details with filters by wallet ID and time duration.
+- **Account Usage Tab**: 
+  - Input a start date and mobile number to retrieve account usage since that date.
+- **Shops Tab**: 
+  - Access details about e-shops and physical stores.
+- **Tickets Tab**: 
+  - Monitor customer support tickets with detailed insights.
 
 ### Customer Dashboard
+An intuitive interface tailored for customers to manage their telecom experience:
 - Login using mobile number and password.
 - View service plan details and consumption statistics.
 - Discover available plans not currently subscribed to.
@@ -35,52 +53,56 @@ Telesphere is a web application designed to interact with a database, allowing a
 
 ---
 
-## Technologies Used
-- Frontend: [Specify frontend technology, e.g., HTML, CSS, JavaScript, React, etc.]
-- Backend: [Specify backend technology, e.g., ASP.NET, Node.js, etc.]
-- Database: SQL Server
-- Hosting: [If applicable, mention hosting service]
+## 🛠️ Technologies Used
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: ASP.NET, C#
+- **Database**: Microsoft SQL Server (with PL/pgSQL for advanced queries)
 
 ---
 
-## Installation & Setup
-1. Extract the provided `.zip` file.
+## 📦 Installation & Setup
+Get Telesphere up and running in no time:
+1. Extract the `.zip` file from the repository.
 2. Set up the database using the provided SQL script.
-3. Configure the web server and database connection.
-4. Run the application in your preferred development environment.
-5. Access the platform via the designated URL.
+3. Configure the web server and database connection strings in the application settings.
+4. Launch the app in your preferred development environment (e.g., Visual Studio).
+5. Access Telesphere locally via your browser (e.g., `http://localhost:port` after running the application).
 
 ---
 
-## Usage
-1. **Admin Login:** Use the hardcoded credentials to access the admin dashboard.
-2. **Customer Login:** Sign in using a registered mobile number and password.
-3. **Navigation:** Utilize the UI to explore different functionalities without changing URLs manually.
+## 🎮 How to Use
+1. **Admin Access**: Log in with hardcoded credentials to unlock the admin dashboard.
+2. **Customer Access**: Sign in with your registered mobile number and password.
+3. **Navigation**: Explore features effortlessly through the user-friendly UI.
 
 ---
 
-## Collaborators
-- [@YasmeenTarek1](https://github.com/YasmeenTarek1)
-- [@maihazem607](https://github.com/maihazem607)
-- [@malakelkady7](https://github.com/malakelkady7)
-- [@EsraaTarek382](https://github.com/EsraaTarek382)
-- [@HanaAyman33](https://github.com/HanaAyman33)
+## 👥 Collaborators
+A big shoutout to our talented team:
+- [@YasmeenTarek1](https://github.com/YasmeenTarek1)  
+- [@maihazem607](https://github.com/maihazem607)  
+- [@malakelkady7](https://github.com/malakelkady7)  
+- [@EsraaTarek382](https://github.com/EsraaTarek382)  
+- [@HanaAyman33](https://github.com/HanaAyman33)  
 
 ---
 
-## Screenshots
-[Add project screenshots here]
+## 📊 Language Breakdown
+- **ASP.NET**: 30.1%  
+- **PL/pgSQL**: 26.9%  
+- **C#**: 24.4%  
+- **JavaScript**: 9.4%  
+- **CSS**: 9.2%  
 
 ---
 
-## Additional Notes
-[Leave space for details about the dashboards, to be added later]
+## 📸 Screenshots
+[Coming soon! Stay tuned for visuals of Telesphere in action.]
 
 ---
 
 
-## Contact
-For any issues or inquiries, reach out to the project collaborators.
+## 📬 Contact
+Got questions or feedback? Reach out to the team via GitHub or email. We’d love to hear from you!
 
 ---
-
