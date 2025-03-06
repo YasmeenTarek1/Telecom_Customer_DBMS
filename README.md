@@ -87,15 +87,6 @@ A big shoutout to our talented team:
 
 ---
 
-## 📊 Language Breakdown
-- **ASP.NET**: 30.1%  
-- **PL/pgSQL**: 26.9%  
-- **C#**: 24.4%  
-- **JavaScript**: 9.4%  
-- **CSS**: 9.2%  
-
----
-
 ## 📸 Screenshots
 [Coming soon! Stay tuned for visuals of Telesphere in action.]
 
