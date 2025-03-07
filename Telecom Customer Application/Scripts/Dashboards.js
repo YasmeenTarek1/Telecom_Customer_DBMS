@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         align: 'start',
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         align: 'start',
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -409,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -470,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -540,7 +540,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -601,7 +601,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -679,7 +679,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -757,7 +757,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -798,6 +798,38 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.pathname.includes("BenefitsPage.aspx") && typeof benefitsStatusData !== 'undefined') {
+        let ctx = document.getElementById('benefits-status-chart')?.getContext('2d');
+        if (benefitsStatusChartInstance != null) {
+            benefitsStatusChartInstance.destroy();
+        }
+        var labels = benefitsStatusData.map(item => item.status.charAt(0).toUpperCase() + item.status.slice(1));
+        var data = benefitsStatusData.map(item => item.Percentage);
+        benefitsStatusChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: ['#02194C', 'rgb(234, 37, 26)']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { position: 'bottom', display: true, text: 'Active vs Expired Benefits' },
+                    tooltip: { callbacks: { label: function (context) { let label = context.label || ''; let value = context.raw || 0; return `${label}: ${value}%`; } } }
+                }
+            }
+        });
+    }
+});
+
 
 function triggerPostback(planId) {
     __doPostBack('PlanClicked', planId);  // Triggers the postback with the correct event args
@@ -900,34 +932,10 @@ function initializeCharts() {
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     plugins: {
                         legend: { align: 'start', labels: { color: '#2a3d56', font: { size: 14 } } },
                         title: { position: 'bottom', display: true, text: 'Customer Benefit Distribution' },
-                        tooltip: { callbacks: { label: context => `${context.label}: ${context.raw}%` } }
-                    }
-                }
-            });
-        }
-
-        const statusCtx = document.getElementById('benefits-status-chart');
-        if (statusCtx && typeof benefitsStatusData !== 'undefined') {
-            if (benefitsStatusChartInstance) benefitsStatusChartInstance.destroy();
-            benefitsStatusChartInstance = new Chart(statusCtx.getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: benefitsStatusData.map(item => item.status.charAt(0).toUpperCase() + item.status.slice(1)),
-                    datasets: [{
-                        data: benefitsStatusData.map(item => item.Percentage),
-                        backgroundColor: ['#02194C', 'rgb(234, 37, 26)']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' },
-                        title: { position: 'bottom', display: true, text: 'Active vs Expired Benefits' },
                         tooltip: { callbacks: { label: context => `${context.label}: ${context.raw}%` } }
                     }
                 }

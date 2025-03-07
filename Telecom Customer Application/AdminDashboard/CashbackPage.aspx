@@ -59,22 +59,29 @@
 
             </div>
 
+
             <div id="rightSidePanel" class="right-side-panel">
                 <button id="togglePanelButton" class="toggle-panel-button" type="button" onclick="togglePanel()">
                     <i class="fas fa-chart-pie"></i>
                 </button>
-
                 <div id="panelContent" class="panel-content">
-                    <!-- Cashback given by each Plan Pie Chart -->
-                    <div class="chart-container">
-                        <canvas id="cashback-plan-chart" width="400" height="400"></canvas>
-                    </div>
-                    <!-- TOP Customers awarded Cashback Bar Chart -->
-                    <div class="chart-container">
-                        <canvas id="top-customers-chart" width="400" height="400"></canvas>
+                    <div class="chart-navigation">
+                        <button id="prevChart" class="nav-arrow left-arrow" type="button" onclick="prevChart(event)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="chart-container" data-index="0">
+                            <canvas id="cashback-plan-chart" width="400" height="400"></canvas>
+                        </div>
+                        <div class="chart-container" data-index="1">
+                            <canvas id="top-customers-chart" width="400" height="400"></canvas>
+                        </div>
+                        <button id="nextChart" class="nav-arrow right-arrow" type="button" onclick="nextChart(event)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
+
         </div>
     </form>
 </body>
