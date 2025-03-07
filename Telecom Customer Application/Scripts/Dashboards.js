@@ -862,6 +862,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+
 var benefitTypesChartInstance = null;
 var benefitsStatusChartInstance = null;
 
@@ -957,4 +958,239 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextButton) {
         nextButton.addEventListener('click', nextChart);
     }
+
+// Wallet page functionality
+function initializeWalletPage() {
+    const mobileNo = document.getElementById('HiddenMobileNo').value;
+
+    if (mobileNo) {
+        fetchCustomerData(mobileNo);
+    } else {
+        console.error('Mobile number not found in session');
+        updateCreditCard('Unknown', 'User', 'N/A');
+        updateStats(0, 0, 0, 0);
+    }
+
+    // Transfer arrows
+    const transferCells = document.querySelectorAll('#TableBody1 tr td:first-child');
+    transferCells.forEach(cell => {
+        if (cell.textContent.trim() === 'Sent') {
+            cell.innerHTML = '';
+            cell.classList.add('transfer-arrow-sent');
+        } else if (cell.textContent.trim() === 'Received') {
+            cell.innerHTML = '';
+            cell.classList.add('transfer-arrow-received');
+        }
+    });
+
+    // Styling Due Amount
+    const dueAmountCells = document.querySelectorAll('#TableBody2 tr td:nth-child(2)');
+    dueAmountCells.forEach(cell => {
+        const dueAmountText = cell.textContent.trim();
+        const amountValue = parseFloat(dueAmountText.replace(' egp', ''));
+        if (!isNaN(amountValue) && amountValue > 0) {
+            cell.classList.add('due-amount-red');
+        }
+    });
+
+    // Credit card hover effect
+    const creditCardBox = document.querySelector('.credit-card-box');
+    creditCardBox.addEventListener('mouseenter', () => creditCardBox.classList.add('hover'));
+    creditCardBox.addEventListener('mouseleave', () => creditCardBox.classList.remove('hover'));
+
+    // Event listeners for action boxes
+    document.getElementById('rechargeBox').addEventListener('click', function () {
+        document.getElementById('rechargeDialog').classList.add('active');
+    });
+
+    document.getElementById('transferBox').addEventListener('click', function () {
+        document.getElementById('transferDialog').classList.add('active');
+    });
+
+    // Close dialog buttons
+    document.querySelectorAll('.close-dialog, .cancel-btn').forEach(function (element) {
+        element.addEventListener('click', function () {
+            document.querySelectorAll('.dialog-overlay').forEach(function (dialog) {
+                dialog.classList.remove('active');
+            });
+        });
+    });
+
+    // Recharge confirmation
+    document.getElementById('confirmRecharge').addEventListener('click', function () {
+        const amount = document.getElementById('rechargeAmount').value;
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        const mobileNo = document.getElementById('HiddenMobileNo').value;
+
+        if (!amount || amount <= 0) {
+            // Using form as a placeholder - in actual implementation, this would be the form reference
+            PageUtilities.DisplayAlert(new Error("Please enter a valid amount"), document.forms[0], "alert-danger");
+            return;
+        }
+
+        rechargeBalance(mobileNo, amount, paymentMethod);
+    });
+
+    // Transfer confirmation
+    document.getElementById('confirmTransfer').addEventListener('click', function () {
+        const recipientMobile = document.getElementById('recipientMobile').value;
+        const amount = document.getElementById('transferAmount').value;
+        const mobileNo = document.getElementById('HiddenMobileNo').value;
+
+        if (!recipientMobile || recipientMobile.length < 10) {
+            PageUtilities.DisplayAlert(new Error("Please enter a valid recipient mobile number"), document.forms[0], "alert-danger");
+            return;
+        }
+
+        if (!amount || amount <= 0) {
+            PageUtilities.DisplayAlert(new Error("Please enter a valid amount"), document.forms[0], "alert-danger");
+            return;
+        }
+
+        transferMoney(mobileNo, recipientMobile, amount);
+    });
+}
+
+// Fetching Wallet Info
+function fetchCustomerData(mobileNo) {
+    fetch('WalletPage.aspx/GetCustomerInfo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify({ mobileNo: mobileNo })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.d) {
+                const customerData = JSON.parse(data.d);
+                if (!customerData.error) {
+                    updateCreditCard(customerData.first_name, customerData.last_name, customerData.mobileNo);
+                    updateStats(
+                        customerData.balance || 0,
+                        customerData.cashback || 0,
+                        customerData.sentTransactions || 0,
+                        customerData.receivedTransactions || 0
+                    );
+                } else {
+                    throw new Error(customerData.error);
+                }
+            } else {
+                throw new Error('Invalid response format');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            updateCreditCard('Unknown', 'User', mobileNo);
+            updateStats(0, 0, 0, 0);
+            PageUtilities.DisplayAlert(error, document.forms[0], "alert-danger");
+        });
+}
+
+function updateCreditCard(firstName, lastName, mobileNo) {
+    const formattedMobileNo = mobileNo.match(/.{1,4}/g)?.join(' ') || mobileNo;
+    document.querySelector('.card-holder div').textContent = `${firstName} ${lastName}`;
+    document.querySelector('.number').textContent = formattedMobileNo;
+    document.querySelector('.ccv div').textContent = '***';
+    document.querySelector('.card-expiration-date div').textContent = '12/25';
+}
+
+function updateStats(balance, cashback, sent, received) {
+    document.getElementById('balance').textContent = `$${balance.toLocaleString()}`;
+    document.getElementById('cashback').textContent = `$${cashback.toLocaleString()}`;
+    document.getElementById('sent').textContent = `$${sent.toLocaleString()}`;
+    document.getElementById('received').textContent = `$${received.toLocaleString()}`;
+}
+
+// Function to recharge balance
+function rechargeBalance(mobileNo, amount, paymentMethod) {
+    fetch('WalletPage.aspx/RechargeBalance', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify({
+            mobileNo: mobileNo,
+            amount: amount,
+            paymentMethod: paymentMethod
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.d && JSON.parse(data.d).success) {
+                PageUtilities.DisplayAlert(new Error("Balance recharged successfully"), document.forms[0], "alert-success");
+                document.getElementById('rechargeDialog').classList.remove('active');
+                // Update the balance in UI
+                const currentBalance = parseFloat(document.getElementById('balance').textContent.replace('$', '').replace(',', ''));
+                document.getElementById('balance').textContent = `$${(currentBalance + parseFloat(amount)).toLocaleString()}`;
+                // Reset form
+                document.getElementById('rechargeAmount').value = '';
+            } else {
+                throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error recharging balance:', error);
+            PageUtilities.DisplayAlert(error, document.forms[0], "alert-danger");
+        });
+}
+
+// Function to transfer money
+function transferMoney(senderMobile, recipientMobile, amount) {
+    fetch('WalletPage.aspx/TransferMoney', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify({
+            senderMobile: senderMobile,
+            recipientMobile: recipientMobile,
+            amount: amount
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.d && JSON.parse(data.d).success) {                
+                PageUtilities.DisplayAlert(new Error("Money transferred successfully!"), document.forms[0], "alert-success");
+                document.getElementById('transferDialog').classList.remove('active');
+                // Update the balance and sent transactions in UI
+                const currentBalance = parseFloat(document.getElementById('balance').textContent.replace('$', '').replace(',', ''));
+                const currentSent = parseFloat(document.getElementById('sent').textContent.replace('$', '').replace(',', ''));
+                document.getElementById('balance').textContent = `$${(currentBalance - parseFloat(amount)).toLocaleString()}`;
+                document.getElementById('sent').textContent = `$${(currentSent + parseFloat(amount)).toLocaleString()}`;
+                // Reset form
+                document.getElementById('recipientMobile').value = '';
+                document.getElementById('transferAmount').value = '';
+            } else {
+                throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error transferring money:', error);
+            PageUtilities.DisplayAlert(error, document.forms[0], "alert-danger");
+        });
+}
+
+// Initialize wallet page when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function () {
+    initializeWalletPage();
+
 });

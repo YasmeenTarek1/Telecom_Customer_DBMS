@@ -10,19 +10,8 @@ namespace Telecom_Customer_Application.AdminDashboard
         {
             if (!IsPostBack)
             {
-                using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-                {
-                    try
-                    {
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand("SELECT * From TransactionsHistory", con);
-                        PageUtilities.LoadData(cmd, TableBody);
-                    }
-                    catch (Exception ex)
-                    {
-                        PageUtilities.DisplayAlert(ex, TableBody);
-                    }
-                }
+                string query = "SELECT * From TransactionsHistory";
+                PageUtilities.ExecuteQueryWithHandling(query, TableBody, form1);
             }
         }
 
