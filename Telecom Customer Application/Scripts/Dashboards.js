@@ -958,6 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextButton) {
         nextButton.addEventListener('click', nextChart);
     }
+});
 
 // Wallet page functionality
 function initializeWalletPage() {
@@ -1192,5 +1193,4 @@ function transferMoney(senderMobile, recipientMobile, amount) {
 // Initialize wallet page when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function () {
     initializeWalletPage();
-
 });
