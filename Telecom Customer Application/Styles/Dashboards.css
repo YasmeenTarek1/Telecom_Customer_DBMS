@@ -1,4 +1,4 @@
-﻿/* General Body and Layout */
+﻿ /* General Body and Layout */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f5f5f5;
@@ -236,24 +236,24 @@ body {
     font-weight: 500;
     font-size: 2.5rem;
     color: #03184c;
-    margin-top:18px; 
-    margin-left:5px;
+    margin-top: 18px;
+    margin-left: 5px;
 }
 
 .cardBox .card .cardName {
     color: #9b9b9b;
     font-size: 1.1rem;
     margin-top: 5px;
-    margin-bottom:5px; 
-    margin-left:5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
 }
 
 .cardBox .card .iconBx {
     font-size: 3.5rem;
     color: #007bff;
     margin-right: 20px;
-    margin-top:20px; 
-    margin-right:40px;
+    margin-top: 20px;
+    margin-right: 40px;
 }
 
 .cardBox .card:hover {
@@ -765,6 +765,7 @@ table tr:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
 }
+
 .plan-card {
     flex: 1;
     background-color: #ffffff;
@@ -833,7 +834,7 @@ table tr:hover {
     padding: 0;
     margin: 0;
     display: inline-block;
-    text-align: left; 
+    text-align: left;
 }
 
 .plan-offerings li,
@@ -898,7 +899,7 @@ table tr:hover {
 /* Icons for Each Plan */
 .plan-card i {
     font-size: 40px;
-    color: rgba(255, 255, 255, 0.8); 
+    color: rgba(255, 255, 255, 0.8);
     margin-bottom: 20px;
     display: block;
     z-index: 2;
@@ -953,17 +954,6 @@ table tr:hover {
 }
 
 
-/* pie chart */
-.chart-container {
-    width: 100%; 
-    height: 100%; 
-}
-
-.chart-container:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease-in-out;
-}
-
 /* right side panel */
 .right-side-panel {
     position: fixed;
@@ -979,13 +969,13 @@ table tr:hover {
 }
 
 .right-side-panel.open {
-    transform: translateX(0); 
+    transform: translateX(0);
 }
 
 .toggle-panel-button {
-    position: fixed;
-    left: -64px;
-    top: 20px;
+    position: absolute;
+    left: -12%;
+    top: 3%;
     background-color: #03184c;
     color: white;
     border: none;
@@ -995,14 +985,6 @@ table tr:hover {
     border-radius: 8px 0 0 8px;
 }
 
-.panel-content {
-    padding: 20px;
-}
-
-.panel-content h3 {
-    margin-bottom: 20px;
-    text-align: center;
-}
 
 .mainContainer {
     width: 1200px;
@@ -1089,6 +1071,7 @@ table tr:hover {
 .UsageElement {
     animation: fadeIn 0.5s ease-in-out;
 }
+
 .disabled-btn {
     opacity: 0.6;
     cursor: default !important;
@@ -1298,8 +1281,40 @@ table tr:hover {
     font-weight: bold;
 }
 
+.right-side-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 550px;
+    height: 100%;
+    background-color: #f4f4f4;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    transform: translateX(100%);
+    z-index: 1000;
+}
+
+.right-side-panel.open {
+    transform: translateX(0);
+}
+
+.panel-content {
+    width: 100%;
+    height: calc(100% - 60px);
+    padding: 20px;
+    position: relative;
+    margin-top: 20%;
+}
+
+.chart-navigation {
+    position: relative;
+    width: 100%;
+    height: 400px;
+}
+
+
 /* Vouchers Styling */
-.voucher-details {
+.voucher-details{
     width: 550px;
     padding: 30px 60px;
     background: #fff;
@@ -1431,7 +1446,56 @@ table tr:hover {
     justify-content: center;
 }
 
-.left div {
+.chart-container {
+    width: 350px;
+    height: 350px;
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.chart-container {
+    width: 350px;
+    height: 350px;
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.chart-container.active {
+    display: block !important;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 350px;
+    max-height: 350px;
+    margin: 0 auto;
+    display: block;
+}
+
+.nav-arrow {
+    background: rgba(128, 128, 128, 0.3);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.left div{
     transform: rotate(-90deg);
     white-space: nowrap;
     font-weight: bold;
@@ -1475,7 +1539,25 @@ table tr:hover {
     justify-content: center;
 }
 
-.right div {
+.nav-arrow:hover {
+    background: rgba(80, 80, 80, 0.8);
+}
+
+.nav-arrow:disabled {
+    display: none;
+}
+
+.left-arrow {
+    top: 75%;
+    left: 1%;
+}
+
+.right-arrow {
+    top: 75%;
+    right: 4%;
+}
+
+.right div{
     font-family: "Libre Barcode 128 Text";
     font-size: 3rem;
     font-weight: 400;

@@ -14,12 +14,16 @@ function toggleDropdown(element, hiddenFieldId) {
 // Restore dropdown states when the page loads
 window.onload = function () {
     const dropdownStates = document.getElementById('dropdownStates');
+    // Add null check for dropdownStates
+    if (dropdownStates && dropdownStates.dataset && dropdownStates.dataset.storesDropdown) {
+        // Restore the state of each dropdown individually
+        const storesDropdownState = document.getElementById(dropdownStates.dataset.storesDropdown).value;
 
-    // Restore the state of each dropdown individually
-    const storesDropdownState = document.getElementById(dropdownStates.dataset.storesDropdown).value;
-
-    if (storesDropdownState === "open") {
-        document.querySelector('#shopsTab + .dropdown-content').style.display = "block";
+        if (storesDropdownState === "open") {
+            document.querySelector('#shopsTab + .dropdown-content').style.display = "block";
+        }
+    } else {
+        console.warn('dropdownStates element or its dataset is not available');
     }
 };
 
@@ -66,7 +70,6 @@ var topSMSChartInstance = null;
 var topMinutesChartInstance = null;
 var topInternetChartInstance = null;
 
-
 // benefits types pie chart
 document.addEventListener("DOMContentLoaded", function () {
     if (window.location.pathname.includes("BenefitsPage.aspx") && !typeof benefitTypesData !== 'undefined') {
@@ -80,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Sort the data by benefitID
         benefitTypesData.sort((a, b) => a.benefitID - b.benefitID);
 
-        var data = benefitTypesData.map(item => item.Percentage); 
+        var data = benefitTypesData.map(item => item.Percentage);
 
         benefitTypesChartInstance = new Chart(ctx, {
             type: 'pie',
@@ -97,9 +100,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     data: data,
                     backgroundColor: [
                         '#D3D3D3', // Bright Grey
-                        '#00FFFF', 
-                        '#00b3e0', 
-                        '#0a6aa9', 
+                        '#00FFFF',
+                        '#00b3e0',
+                        '#0a6aa9',
                         '#0a3d8c',
                         '#03184c'  // Darkest blue
                     ],
@@ -107,12 +110,12 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         align: 'start',
                         labels: {
-                            color: '#2a3d56', 
+                            color: '#2a3d56',
                             font: {
                                 size: 14,
                             },
@@ -162,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -185,13 +188,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-}); 
+});
 
 
 document.addEventListener("DOMContentLoaded", function () {
     if (window.location.pathname.includes("PlansPage.aspx") && typeof subscriptionsData !== 'undefined') {
         let ctx = document.getElementById('subscriptionPieChart')?.getContext('2d');
-
 
         // Destroy existing chart if it exists
         if (subscriptionChartInstance != null) {
@@ -217,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -270,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         align: 'start',
@@ -308,8 +310,8 @@ document.addEventListener("DOMContentLoaded", function () {
             topCustomersChartInstance.destroy();
         }
 
-        var labels = topCustomersData.map(item => `${item.first_name} ${item.last_name}`); 
-        var data = topCustomersData.map(item => item['Total Cashback Earned']); 
+        var labels = topCustomersData.map(item => `${item.first_name} ${item.last_name}`);
+        var data = topCustomersData.map(item => item['Total Cashback Earned']);
 
         topCustomersChartInstance = new Chart(ctx, {
             type: 'bar',
@@ -317,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 labels: labels,
                 datasets: [{
                     label: 'Total Cashback Earned',
-                    data: data, 
+                    data: data,
                     backgroundColor: [
                         '#00FFFF',
                         '#00b3e0',
@@ -337,10 +339,10 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
-                        display: false 
+                        display: false
                     },
                     title: {
                         display: true,
@@ -383,7 +385,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (window.location.pathname.includes("PointsPage.aspx") && typeof pointsPlanData !== 'undefined') {
         let ctx = document.getElementById('points-plan-chart')?.getContext('2d');
 
-
         // Destroy existing chart if it exists
         if (pointsChartInstance != null) {
             pointsChartInstance.destroy();
@@ -408,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -469,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -511,8 +512,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-
-
 document.addEventListener("DOMContentLoaded", function () {
     if (window.location.pathname.includes("ExclusiveOffersPage.aspx") && typeof offersPlanData !== 'undefined') {
         let ctx = document.getElementById('offers-plan-chart')?.getContext('2d');
@@ -541,7 +540,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -602,7 +601,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -680,7 +679,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -758,7 +757,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false
@@ -800,17 +799,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-function togglePanel() {
-    const panel = document.getElementById('rightSidePanel');
-    panel.classList.toggle('open');
-}
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.pathname.includes("BenefitsPage.aspx") && typeof benefitsStatusData !== 'undefined') {
+        let ctx = document.getElementById('benefits-status-chart')?.getContext('2d');
+        if (benefitsStatusChartInstance != null) {
+            benefitsStatusChartInstance.destroy();
+        }
+        var labels = benefitsStatusData.map(item => item.status.charAt(0).toUpperCase() + item.status.slice(1));
+        var data = benefitsStatusData.map(item => item.Percentage);
+        benefitsStatusChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: ['#02194C', 'rgb(234, 37, 26)']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { position: 'bottom', display: true, text: 'Active vs Expired Benefits' },
+                    tooltip: { callbacks: { label: function (context) { let label = context.label || ''; let value = context.raw || 0; return `${label}: ${value}%`; } } }
+                }
+            }
+        });
+    }
+});
+
 
 function triggerPostback(planId) {
     __doPostBack('PlanClicked', planId);  // Triggers the postback with the correct event args
 }
 
 function triggerPostback2(benefitID) {
-    __doPostBack('BenefitClicked', benefitID);  
+    __doPostBack('BenefitClicked', benefitID);
 }
 
 function toggleBenefits(planID) {
@@ -835,6 +861,103 @@ document.addEventListener("DOMContentLoaded", function () {
         circle.innerHTML = `<span>${progress}%</span>`; // Display percentage
     });
 });
+
+
+var benefitTypesChartInstance = null;
+var benefitsStatusChartInstance = null;
+
+let currentChartIndex = 0;
+let charts;
+
+function updateChartDisplay() {
+    charts.forEach((chart, index) => {
+        const shouldBeVisible = index === currentChartIndex;
+        chart.style.display = shouldBeVisible ? 'block' : 'none';
+        chart.classList.toggle('active', shouldBeVisible);
+    });
+    const prevButton = document.getElementById('prevChart');
+    const nextButton = document.getElementById('nextChart');
+    if (prevButton) prevButton.disabled = currentChartIndex === 0;
+    if (nextButton) nextButton.disabled = currentChartIndex === charts.length - 1;
+}
+
+function prevChart(event) {
+    event.preventDefault();
+    if (currentChartIndex > 0) {
+        currentChartIndex--;
+        updateChartDisplay();
+    }
+}
+
+function nextChart(event) {
+    event.preventDefault();
+    if (currentChartIndex < charts.length - 1) {
+        currentChartIndex++;
+        updateChartDisplay();
+    }
+}
+
+function togglePanel() {
+    const panel = document.getElementById('rightSidePanel');
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open')) {
+        setTimeout(() => {
+            updateChartDisplay();
+            if (benefitTypesChartInstance) benefitTypesChartInstance.resize();
+            if (benefitsStatusChartInstance) benefitsStatusChartInstance.resize();
+        }, 300);
+    }
+}
+
+function initializeCharts() {
+    if (window.location.pathname.includes("BenefitsPage.aspx")) {
+        const benefitCtx = document.getElementById('benefit-types-chart');
+        if (benefitCtx && typeof benefitTypesData !== 'undefined') {
+            if (benefitTypesChartInstance) benefitTypesChartInstance.destroy();
+            benefitTypesData.sort((a, b) => a.benefitID - b.benefitID);
+            benefitTypesChartInstance = new Chart(benefitCtx.getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: [
+                        'Extra 1GB data per month',
+                        'Free 100 SMS per month',
+                        'Extra 100 minutes per month',
+                        '10% cashback on plan renewal',
+                        '20% cashback on plan renewal',
+                        'Earn 50 loyalty points per month'
+                    ],
+                    datasets: [{
+                        data: benefitTypesData.map(item => item.Percentage),
+                        backgroundColor: ['#D3D3D3', '#00FFFF', '#00b3e0', '#0a6aa9', '#0a3d8c', '#03184c']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { align: 'start', labels: { color: '#2a3d56', font: { size: 14 } } },
+                        title: { position: 'bottom', display: true, text: 'Customer Benefit Distribution' },
+                        tooltip: { callbacks: { label: context => `${context.label}: ${context.raw}%` } }
+                    }
+                }
+            });
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    charts = document.querySelectorAll('.chart-container');
+    initializeCharts();
+    updateChartDisplay();
+
+    const prevButton = document.getElementById('prevChart');
+    const nextButton = document.getElementById('nextChart');
+    if (prevButton) {
+        prevButton.addEventListener('click', prevChart);
+    }
+    if (nextButton) {
+        nextButton.addEventListener('click', nextChart);
+    }
 
 // Wallet page functionality
 function initializeWalletPage() {
@@ -1069,4 +1192,5 @@ function transferMoney(senderMobile, recipientMobile, amount) {
 // Initialize wallet page when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function () {
     initializeWalletPage();
+
 });
