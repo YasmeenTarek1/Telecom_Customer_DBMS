@@ -953,17 +953,6 @@ table tr:hover {
 }
 
 
-/* pie chart */
-.chart-container {
-    width: 100%; 
-    height: 100%; 
-}
-
-.chart-container:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease-in-out;
-}
-
 /* right side panel */
 .right-side-panel {
     position: fixed;
@@ -983,9 +972,9 @@ table tr:hover {
 }
 
 .toggle-panel-button {
-    position: fixed;
-    left: -64px;
-    top: 20px;
+    position: absolute;
+    left: -14%;
+    top: 3%;
     background-color: #03184c;
     color: white;
     border: none;
@@ -995,14 +984,6 @@ table tr:hover {
     border-radius: 8px 0 0 8px;
 }
 
-.panel-content {
-    padding: 20px;
-}
-
-.panel-content h3 {
-    margin-bottom: 20px;
-    text-align: center;
-}
 
 .mainContainer {
     width: 1200px;
@@ -1296,4 +1277,97 @@ table tr:hover {
 
 .ticket-detail-content strong {
     font-weight: bold;
+}
+
+
+.right-side-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 450px;
+    height: 100%;
+    background-color: #f4f4f4;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    transform: translateX(100%);
+    z-index: 1000;
+}
+
+    .right-side-panel.open {
+        transform: translateX(0);
+    }
+
+.panel-content {
+    width: 100%;
+    height: calc(100% - 60px);
+    padding: 20px;
+    position: relative;
+    margin-top: 45%;
+}
+
+.chart-navigation {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+}
+
+.chart-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+    .chart-container.active {
+        display: block !important;
+    }
+
+    .chart-container canvas {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 400px;
+        max-height: 400px;
+        margin: 0 auto;
+        display: block;
+    }
+
+.nav-arrow {
+    background: rgba(128, 128, 128, 0.3);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .nav-arrow:hover {
+        background: rgba(80, 80, 80, 0.8);
+    }
+
+    .nav-arrow:disabled {
+        display: none;
+    }
+
+.left-arrow {
+    left: 4%;
+}
+
+.right-arrow {
+    right: 4%;
 }
