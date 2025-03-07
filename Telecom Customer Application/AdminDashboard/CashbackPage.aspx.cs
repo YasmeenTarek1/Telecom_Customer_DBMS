@@ -34,27 +34,25 @@ namespace Telecom_Customer_Application.AdminDashboard
                         {
                             CashbackCount = Convert.ToInt32(cmd.ExecuteScalar());
                         }
-
-                        using (SqlCommand cmd = new SqlCommand("CashbackHistory", con))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            PageUtilities.LoadData(cmd, TableBody1);
-                        }
                     }
+
                     cashbackCount.InnerText = CashbackCount.ToString() + " $";
                     paymentCount.InnerText = PaymentCount.ToString() + " $";
 
-                    string query = "SELECT * FROM Num_of_cashback";
-                    PageUtilities.ExecuteQueryWithHandling(query, TableBody2, form1);
+                    string query1 = "CashbackHistory";
+                    PageUtilities.ExecuteQueryWithHandling(query1, TableBody1, form1);
+
+                    string query2 = "SELECT * FROM Num_of_cashback";
+                    PageUtilities.ExecuteQueryWithHandling(query2, TableBody2, form1);
 
                     // Fetch data for the pie chart
-                    DataTable cashbackPlanData = GetData("calculatePlanCashbackPercentage");
+                    DataTable cashbackPlanData = PageUtilities.GetData("calculatePlanCashbackPercentage");
                     string cashbackPlanJson = JsonConvert.SerializeObject(cashbackPlanData);
 
                     // Pass the JSON data to the front end
                     ScriptManager.RegisterStartupScript(this, GetType(), "cashbackPlanData", $"var cashbackPlanData = {cashbackPlanJson};", true);
 
-                    DataTable dataTable = GetData("TopCustomersByCashback");
+                    DataTable dataTable = PageUtilities.GetData("TopCustomersByCashback");
                     string jsonData = JsonConvert.SerializeObject(dataTable);
 
                     ScriptManager.RegisterStartupScript(this, GetType(), "topCustomersData", $"var topCustomersData = {jsonData};", true);
@@ -64,31 +62,6 @@ namespace Telecom_Customer_Application.AdminDashboard
                     PageUtilities.DisplayAlert(ex, form1);
                 }
             }
-        }
-
-        protected DataTable GetData(string query)
-        {
-            DataTable dataTable = new DataTable();
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-            {
-                try
-                {
-                    con.Open();
-
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                        {
-                            adapter.Fill(dataTable);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PageUtilities.DisplayAlert(ex, form1);
-                }
-            }
-            return dataTable;
         }
     }
 }

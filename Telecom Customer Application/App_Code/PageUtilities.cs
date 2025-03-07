@@ -6,6 +6,7 @@ using System.Web.Configuration;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.UI;
+using Microsoft.SqlServer.Server;
 
 public class PageUtilities
 {
@@ -192,34 +193,53 @@ public class PageUtilities
         }
     }
 
+    //public static void DisplayAlert(Exception ex, Control form, string alertType = "alert-danger")
+    //{
+
+    //    string script = $@"
+    //    <script type='text/javascript'>
+    //        function showAlert() {{
+    //            var alertBox = document.createElement('div');
+    //            alertBox.className = 'alert {alertType}';
+    //            alertBox.role = 'alert';
+    //            alertBox.innerHTML = '{ex.Message.Replace("'", @"\'").Replace("\r\n", " ")}';
+    //            document.body.insertBefore(alertBox, document.body.firstChild);
+                
+    //            alertBox.style.cssText = 'opacity: 1; transition: opacity 0.5s ease-out;';
+    //            setTimeout(function() {{
+    //                alertBox.style.opacity = '0';
+    //                setTimeout(function() {{
+    //                    alertBox.parentNode.removeChild(alertBox);
+    //                }}, 500);
+    //            }}, 2500);
+    //        }}
+    //        if (document.readyState !== 'loading') {{
+    //            showAlert();
+    //        }} else {{
+    //            document.addEventListener('DOMContentLoaded', showAlert);
+    //        }}
+    //    </script>";
+
+    //    ScriptManager.RegisterStartupScript(form, form.GetType(), "DisplayAlert", script, false);
+    //}
+
     public static void DisplayAlert(Exception ex, Control form, string alertType = "alert-danger")
     {
-
+        string message = ex != null ? ex.Message : "Operation completed successfully!";
         string script = $@"
-        <script type='text/javascript'>
-            function showAlert() {{
-                var alertBox = document.createElement('div');
-                alertBox.className = 'alert {alertType}';
-                alertBox.role = 'alert';
-                alertBox.innerHTML = '{ex.Message.Replace("'", @"\'").Replace("\r\n", " ")}';
-                document.body.insertBefore(alertBox, document.body.firstChild);
-                
-                alertBox.style.cssText = 'opacity: 1; transition: opacity 0.5s ease-out;';
-                setTimeout(function() {{
-                    alertBox.style.opacity = '0';
-                    setTimeout(function() {{
-                        alertBox.parentNode.removeChild(alertBox);
-                    }}, 500);
-                }}, 2500);
-            }}
-            if (document.readyState !== 'loading') {{
-                showAlert();
-            }} else {{
-                document.addEventListener('DOMContentLoaded', showAlert);
-            }}
-        </script>";
-
-        ScriptManager.RegisterStartupScript(form, form.GetType(), "DisplayAlert", script, false);
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert {alertType}';
+        alertDiv.innerHTML = '{message}';
+        alertDiv.style.position = 'fixed';
+        alertDiv.style.top = '20px';
+        alertDiv.style.left = '50%';
+        alertDiv.style.transform = 'translateX(-50%)';
+        alertDiv.style.padding = '15px';
+        alertDiv.style.zIndex = '9999';
+        document.body.appendChild(alertDiv);
+        setTimeout(() => alertDiv.remove(), 5000);
+    ";
+        ScriptManager.RegisterStartupScript(form, form.GetType(), "DisplayAlert", script, true);
     }
     public static void checkValidPlanID(string planID)
     {
@@ -285,5 +305,23 @@ public class PageUtilities
                     throw new Exception("Invalid Wallet ID number. Wallet does not exist.");
             }
         }
+    }
+
+    public static DataTable GetData(String query)
+    {
+        DataTable dataTable = new DataTable();
+        using (SqlConnection con = new SqlConnection(connectionString))
+        {
+            con.Open();
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    adapter.Fill(dataTable);
+                }
+            }
+        }
+        return dataTable;
     }
 }

@@ -47,26 +47,24 @@ namespace Telecom_Customer_Application.AdminDashboard
                         {
                             ExpiredPointsCount = Convert.ToInt32(cmd.ExecuteScalar());
                         }
-
-                        using (SqlCommand cmd = new SqlCommand("PointsHistory", con))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            PageUtilities.LoadData(cmd, TableBody);
-                        }
                     }
+
+                    string query = "PointsHistory";
+                    PageUtilities.ExecuteQueryWithHandling(query, TableBody, form1);
+
                     totalPointsCount.InnerText = TotalPointsCount.ToString();
                     usedPointsCount.InnerText = UsedPointsCount.ToString();
                     activePointsCount.InnerText = ActivePointsCount.ToString();
                     expiredPointsCount.InnerText = ExpiredPointsCount.ToString();
 
                     // Fetch data for the pie chart
-                    DataTable pointsPlanData = GetData("calculatePlanPointsPercentage");
+                    DataTable pointsPlanData = PageUtilities.GetData("calculatePlanPointsPercentage");
                     string pointsPlanJson = JsonConvert.SerializeObject(pointsPlanData);
 
                     // Pass the JSON data to the front end
                     ScriptManager.RegisterStartupScript(this, GetType(), "pointsPlanData", $"var pointsPlanData = {pointsPlanJson};", true);
 
-                    DataTable topCustomersPointsData = GetData("TopCustomersByUsedPoints");
+                    DataTable topCustomersPointsData = PageUtilities.GetData("TopCustomersByUsedPoints");
                     string jsonData = JsonConvert.SerializeObject(topCustomersPointsData);
 
                     ScriptManager.RegisterStartupScript(this, GetType(), "topCustomersPointsData", $"var topCustomersPointsData = {jsonData};", true);
@@ -77,30 +75,6 @@ namespace Telecom_Customer_Application.AdminDashboard
 
                 }
             }
-        }
-        protected DataTable GetData(String query)
-        {
-            DataTable dataTable = new DataTable();
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-            {
-                try
-                {
-                    con.Open();
-
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                        {
-                            adapter.Fill(dataTable);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PageUtilities.DisplayAlert(ex, form1);
-                }
-            }
-            return dataTable;
         }
     }
 }

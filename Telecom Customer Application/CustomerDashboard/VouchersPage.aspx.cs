@@ -111,7 +111,6 @@ namespace Telecom_Customer_Application.CustomerDashboard
 
             if (string.IsNullOrEmpty(voucherId))
             {
-                System.Diagnostics.Debug.WriteLine("Voucher ID is null or empty for button: " + clickedButton.ID);
                 PageUtilities.DisplayAlert(new Exception("No voucher ID provided."), this, "alert-danger");
                 return;
             }

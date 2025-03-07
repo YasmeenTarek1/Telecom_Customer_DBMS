@@ -26,7 +26,6 @@ BEGIN
     CREATE TABLE Customer_Account(
         mobileNo CHAR(11),
         pass VARCHAR(50),
-        balance DECIMAL(10,1),
         account_type VARCHAR(50) CHECK(account_type IN('Post Paid','Prepaid','Pay as you go')),
         start_date DATE NOT NULL,
         status VARCHAR(50) CHECK(status IN('active','onhold')),
@@ -87,7 +86,7 @@ BEGIN
         paymentID INT IDENTITY(1,1),
         amount DECIMAL(10,1) NOT NULL,
         date_of_payment DATE NOT NULL,
-        payment_method VARCHAR(50) CHECK(payment_method IN('cash','credit')) ,
+        payment_method VARCHAR(50) CHECK(payment_method IN('wallet','cash','credit')) ,
         status VARCHAR(50) CHECK(status IN('successful','pending','rejected')),
         mobileNo CHAR(11),
         CONSTRAINT PK_Payment PRIMARY KEY(paymentID),
@@ -200,6 +199,7 @@ BEGIN
     CREATE TABLE Customer_Cashback (
         CashbackID INT IDENTITY(1,1),      
         benefitID INT,       
+        cashback_percentage INT,
         amount_earned DECIMAL(10,2),
         CONSTRAINT PK_Customer_Cashback PRIMARY KEY (CashbackID, benefitID),
         CONSTRAINT FK_benefit_ID_Customer_Cashback FOREIGN KEY (benefitID) REFERENCES Customer_Benefits(benefitID),
@@ -510,12 +510,14 @@ BEGIN
         a.account_type,
         a.status AS 'Account_Status',
         CAST(a.start_date AS CHAR(10)) AS start_date,
-        a.balance,
+        w.current_balance AS 'Balance',
         a.points,
         dbo.Wallet_MobileNo(a.mobileNo) AS 'Has Wallet'
     FROM Customer_profile p
     INNER JOIN Customer_Account a 
     ON p.nationalID = a.nationalID
+    INNER JOIN Wallet w
+    ON w.mobileNo = a.mobileNo
     ORDER BY Account_Status;
 END;
 
@@ -1109,9 +1111,9 @@ END;
 GO
 -- Procedure to handle plan renewal or subscription for a customer
 CREATE PROCEDURE renew_or_subscribe_plan
-    @mobile_num CHAR(11),  -- Input: Customer's mobile number
-    @plan_id INT,          -- Input: Plan ID to subscribe/renew
-    @message NVARCHAR(100) OUTPUT  -- Output: Message indicating result
+    @mobile_num CHAR(11),  
+    @plan_id INT,          
+    @message NVARCHAR(100) OUTPUT  -- Message indicating result
 AS
 BEGIN
     BEGIN TRANSACTION;
@@ -1129,8 +1131,8 @@ BEGIN
         WHERE planID = @plan_id; 
 
         -- Retrieve the customer's current balance
-        SELECT @balance = balance
-        FROM Customer_Account
+        SELECT @balance = current_balance
+        FROM Wallet
         WHERE mobileNo = @mobile_num;
 
         -- Determine the amount to deduct
@@ -1141,13 +1143,13 @@ BEGIN
 
         -- Insert a new payment record
         INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
-        VALUES (@amount, CURRENT_TIMESTAMP, 'cash', 'successful', @mobile_num);
+        VALUES (@amount, CURRENT_TIMESTAMP, 'wallet', 'successful', @mobile_num);
 
         SET @payment_id = SCOPE_IDENTITY();
 
         -- Deduct the payment amount from the balance
-        UPDATE Customer_Account
-        SET balance = balance - @amount
+        UPDATE Wallet
+        SET current_balance = current_balance - @amount
         WHERE mobileNo = @mobile_num;
 
         -- Link the payment to the plan
@@ -1229,8 +1231,8 @@ BEGIN
             VALUES (@benefitID, @points_earned);
 
         IF @cashback_percentage > 0 AND @balance >= @price
-            INSERT INTO Customer_Cashback (benefitID, amount_earned) 
-            VALUES (@benefitID, @cashback_amount);
+            INSERT INTO Customer_Cashback (benefitID, amount_earned, cashback_percentage) 
+            VALUES (@benefitID, @cashback_amount, @cashback_percentage);
 
         IF @data_offered > 0 OR @minutes_offered > 0 OR @SMS_offered > 0
             INSERT INTO Customer_Exclusive_Offers (benefitID, data_offered, minutes_offered, SMS_offered) 
@@ -1302,10 +1304,10 @@ END;
 
 GO
 --Initiate an accepted payment for the input account for balance recharge.
-CREATE PROCEDURE Initiate_balance_payment
+CREATE PROCEDURE Recharge_Balance
 @mobile_num char(11),
 @amount decimal(10,1),
-@payment_method varchar(50)
+@payment_method varchar(50) -- cash / credit
 AS
 BEGIN;
     BEGIN TRANSACTION;
@@ -1314,8 +1316,8 @@ BEGIN;
         INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
         VALUES (@Amount, CURRENT_TIMESTAMP, @Payment_Method, 'successful', @mobile_num);
 
-        UPDATE Customer_Account
-        SET balance = balance + @amount
+        UPDATE Wallet
+        SET current_balance = current_balance + @amount
         WHERE mobileNo = @mobile_num
 
         COMMIT TRANSACTION;
@@ -1782,7 +1784,7 @@ BEGIN
             CA.account_type,
             CA.start_date,
             CA.status,
-            CA.balance,
+            W.current_balance,
             SP.planID,
             SP.name AS PlanName,
             S.subscription_date,
@@ -1791,6 +1793,7 @@ BEGIN
         INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
         INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
         INNER JOIN Service_Plan SP ON S.planID = SP.planID
+        INNER JOIN Wallet W ON W.mobileNo = CA.mobileNo
         WHERE S.subscription_date >= @FilterDate
           AND (SP.planID = @SelectedPlan);
     END
@@ -1807,7 +1810,7 @@ BEGIN
             CA.account_type,
             CA.start_date,
             CA.status,
-            CA.balance,
+            W.current_balance,
             SP.planID,
             SP.name AS PlanName,
             S.subscription_date,
@@ -1816,6 +1819,7 @@ BEGIN
         INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
         INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
         INNER JOIN Service_Plan SP ON S.planID = SP.planID
+        INNER JOIN Wallet W ON W.mobileNo = CA.mobileNo
         WHERE S.subscription_date >= @FilterDate
           AND S.status = @SubscriptionStatus
           AND (SP.planID = @SelectedPlan);
@@ -2080,6 +2084,124 @@ END;
 
 
 GO
+CREATE PROCEDURE GetCustomerWalletInfo
+    @mobileNo CHAR(11)
+AS
+BEGIN
+    SELECT cp.first_name, cp.last_name, ca.mobileNo
+    FROM Customer_profile cp
+    INNER JOIN Customer_Account ca ON cp.nationalID = ca.nationalID
+    WHERE ca.mobileNo = @mobileNo;
+END
+
+
+
+GO
+CREATE PROCEDURE LoadCustomerPayments
+@mobile_num CHAR(11)
+AS
+BEGIN
+SELECT 
+    p.paymentID,
+    p.amount,
+    p.date_of_payment,
+    p.payment_method,
+    p.status,
+    p.mobileNo
+FROM Payment p
+WHERE p.mobileNo = @mobile_num
+ORDER BY 
+    CASE 
+        WHEN p.status = 'successful' THEN 1
+        WHEN p.status = 'pending' THEN 2
+        ELSE 3
+    END;
+END;
+
+GO
+CREATE PROCEDURE LoadWalletTransfers
+@mobile_num CHAR(11)
+AS
+BEGIN
+-- Sent Transfers (user is walletID1)
+    SELECT 
+        'Sent' AS transfer_type,
+        cp.first_name,
+        cp.last_name,
+        w1.mobileNo AS mobile_Number,
+        CONCAT(tm.amount, ' egp') AS 'Amount',
+        tm.transfer_date
+    FROM Transfer_money tm
+    JOIN Wallet w1 ON tm.walletID1 = w1.walletID
+    JOIN Wallet w2 ON tm.walletID2 = w2.walletID
+    JOIN Customer_Account ca2 ON w2.mobileNo = ca2.mobileNo
+    JOIN Customer_Profile cp ON ca2.nationalID = cp.nationalID
+    WHERE w1.mobileNo = @mobile_num
+
+    UNION
+
+    -- Received Transfers (user is walletID2)
+    SELECT 
+        'Received' AS transfer_type,
+        cp.first_name,
+        cp.last_name,
+        w1.mobileNo AS mobile_Number,
+        CONCAT(tm.amount, ' egp') AS 'Amount',
+        tm.transfer_date
+    FROM Transfer_money tm
+    JOIN Wallet w1 ON tm.walletID1 = w1.walletID
+    JOIN Wallet w2 ON tm.walletID2 = w2.walletID
+    JOIN Customer_Account ca1 ON w1.mobileNo = ca1.mobileNo
+    JOIN Customer_Profile cp ON ca1.nationalID = cp.nationalID
+    WHERE w2.mobileNo = @mobile_num
+
+    ORDER BY transfer_date DESC;
+END;
+
+GO
+CREATE PROCEDURE LoadAccountCashbacks
+@mobile_num CHAR(11)
+AS
+BEGIN
+    
+    SELECT CONCAT(CH.amount_earned, ' egp') AS 'Cashback Amount', SP.name AS 'Plan Name', CONCAT(SP.price, ' egp') AS 'Plan Price', CONCAT(CH.cashback_percentage, '%') AS 'Cashback Percentage', CB.start_date AS 'Credit Date'
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB
+    ON CB.benefitID = CH.benefitID
+    INNER JOIN Process_Payment PP
+    ON PP.paymentID = CB.PaymentID
+    INNER JOIN Service_Plan SP
+    ON SP.planID = PP.planID
+    WHERE CB.mobileNo = @mobile_num;
+END;
+
+GO
+CREATE PROCEDURE LoadAccountPayments
+@mobile_num CHAR(11)
+AS
+BEGIN
+
+    -- Plan Renewals/ Subscribtions
+    SELECT  CONCAT(P.amount, ' egp') AS 'Paid Amount' , CONCAT(PP.remaining_balance, ' egp') AS 'Due Amount', SP.name AS 'Category', CONCAT(SP.price, ' egp') AS 'Amount To Pay', P.payment_method, P.date_of_payment, P.status
+    FROM Payment P
+    INNER JOIN Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    INNER JOIN Service_Plan SP
+    ON PP.planID = SP.planID
+    WHERE P.mobileNo = @mobile_num
+
+    UNION
+
+    -- Balance Recharging
+    SELECT  CONCAT(P.amount, ' egp') AS 'Paid Amount' , '--' AS 'Due Amount', 'Recharge Balance' AS 'Category', '--' AS 'Amount To Pay', P.payment_method, P.date_of_payment, P.status
+    FROM Payment P
+    WHERE P.mobileNo = @mobile_num AND (P.payment_method = 'credit' OR p.payment_method = 'cash')
+
+    ORDER BY date_of_payment DESC;
+
+END;
+
+GO
 CREATE PROCEDURE InitializeSystem
 AS
 BEGIN
@@ -2204,26 +2326,26 @@ VALUES
 (117, 'Paul', 'Lopez', 'paul.lopez@example.com', '1414 Elm St', '1991-11-01'),
 (118, 'Quincy', 'Young', 'quincy.young@example.com', '1515 Maple St', '1992-02-17');
 
-INSERT INTO Customer_Account (mobileNo, pass, balance, account_type, start_date, status, points, nationalID)
+INSERT INTO Customer_Account (mobileNo, pass, account_type, start_date, status, points, nationalID)
 VALUES
-('01010101010', 'pass123', 150.0, 'Post Paid', '2023-01-01', 'active', 10, 101),
-('01020202020', 'securepass', 75.5, 'Prepaid', '2023-06-01', 'active', 5, 102),
-('01030303030', 'mypassword', 0.0, 'Pay as you go', '2023-07-15', 'onhold', 0, 103),
-('01040404040', 'bobpass', 250.0, 'Post Paid', '2023-08-01', 'active', 20, 104),
-('01050505050', 'charliepass', 100.5, 'Prepaid', '2023-09-01', 'active', 15, 105),
-('01060606060', 'evepass', 500.0, 'Post Paid', '2023-10-01', 'onhold', 30, 106),
-('01070707070', 'frankpass', 200.0, 'Prepaid', '2023-11-01', 'active', 25, 107),
-('01080808080', 'gracepass', 50.0, 'Pay as you go', '2023-12-01', 'active', 8, 108),
-('01090909090', 'hankpass', 150.0, 'Post Paid', '2023-01-15', 'active', 12, 109),
-('01101010101', 'ivypass', 400.0, 'Prepaid', '2023-02-01', 'active', 18, 110),
-('01111111111', 'jackpass', 300.0, 'Post Paid', '2023-03-01', 'active', 22, 111),
-('01121212121', 'kathy123', 150.0, 'Pay as you go', '2023-04-01', 'active', 9, 112),
-('01131313131', 'liampass', 200.0, 'Post Paid', '2023-05-01', 'onhold', 10, 113),
-('01141414141', 'monapass', 100.0, 'Prepaid', '2023-06-01', 'active', 5, 114),
-('01151515151', 'ninapass', 0.0, 'Pay as you go', '2023-07-01', 'onhold', 0, 115),
-('01161616161', 'oscarpass', 600.0, 'Post Paid', '2023-08-01', 'active', 40, 116),
-('01171717171', 'paulpass', 350.0, 'Prepaid', '2023-09-01', 'active', 35, 117),
-('01181818181', 'quincy123', 120.0, 'Post Paid', '2023-10-01', 'active', 18, 118);
+('01010101010', 'pass123', 'Post Paid', '2023-01-01', 'active', 10, 101),
+('01020202020', 'securepass', 'Prepaid', '2023-06-01', 'active', 5, 102),
+('01030303030', 'mypassword', 'Pay as you go', '2023-07-15', 'onhold', 0, 103),
+('01040404040', 'bobpass', 'Post Paid', '2023-08-01', 'active', 20, 104),
+('01050505050', 'charliepass', 'Prepaid', '2023-09-01', 'active', 15, 105),
+('01060606060', 'evepass', 'Post Paid', '2023-10-01', 'onhold', 30, 106),
+('01070707070', 'frankpass', 'Prepaid', '2023-11-01', 'active', 25, 107),
+('01080808080', 'gracepass', 'Pay as you go', '2023-12-01', 'active', 8, 108),
+('01090909090', 'hankpass', 'Post Paid', '2023-01-15', 'active', 12, 109),
+('01101010101', 'ivypass', 'Prepaid', '2023-02-01', 'active', 18, 110),
+('01111111111', 'jackpass', 'Post Paid', '2023-03-01', 'active', 22, 111),
+('01121212121', 'kathy123', 'Pay as you go', '2023-04-01', 'active', 9, 112),
+('01131313131', 'liampass', 'Post Paid', '2023-05-01', 'onhold', 10, 113),
+('01141414141', 'monapass', 'Prepaid', '2023-06-01', 'active', 5, 114),
+('01151515151', 'ninapass', 'Pay as you go', '2023-07-01', 'onhold', 0, 115),
+('01161616161', 'oscarpass', 'Post Paid', '2023-08-01', 'active', 40, 116),
+('01171717171', 'paulpass', 'Prepaid', '2023-09-01', 'active', 35, 117),
+('01181818181', 'quincy123', 'Post Paid', '2023-10-01', 'active', 18, 118);
 
 INSERT INTO Wallet (current_balance, currency, last_modified_date, nationalID, mobileNo)
 VALUES
@@ -2263,13 +2385,13 @@ VALUES
 INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
 VALUES
 -- Customer 1 (Basic Plan)
-(50.0, '2023-10-01', 'credit', 'successful', '01010101010'),
+(50.0, '2023-10-01', 'wallet', 'successful', '01010101010'),
 -- Customer 2 (Standard Plan)
-(100.0, '2023-10-01', 'credit', 'successful', '01020202020'),
+(100.0, '2023-10-01', 'wallet', 'successful', '01020202020'),
 -- Customer 3 (Premium Plan)
-(200.0, '2023-10-01', 'credit', 'successful', '01030303030'),
+(200.0, '2023-10-01', 'wallet', 'successful', '01030303030'),
 -- Customer 4 (Unlimited Plan)
-(300.0, '2023-10-01', 'credit', 'successful', '01040404040');
+(300.0, '2023-10-01', 'wallet', 'successful', '01040404040');
 
 INSERT INTO Process_Payment (paymentID, planID)
 VALUES
@@ -2326,16 +2448,16 @@ VALUES
 -- Customer 4 (Unlimited Plan)
 (4, 50);
 
-INSERT INTO Customer_Cashback (benefitID, amount_earned)
+INSERT INTO Customer_Cashback (benefitID,cashback_percentage, amount_earned)
 VALUES
 -- Customer 1 (Basic Plan)
-(1, 5.0),
+(1, 5, 5.0),
 -- Customer 2 (Standard Plan)
-(2, 10.0),
+(2, 10, 10.0),
 -- Customer 3 (Premium Plan)
-(3, 40.0),
+(3, 20, 40.0),
 -- Customer 4 (Unlimited Plan)
-(4, 60.0);
+(4, 20, 60.0);
 
 INSERT INTO Customer_Exclusive_Offers (benefitID, data_offered, minutes_offered, SMS_offered)
 VALUES

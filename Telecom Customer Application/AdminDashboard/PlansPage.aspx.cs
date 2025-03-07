@@ -21,7 +21,6 @@ namespace Telecom_Customer_Application.AdminDashboard
             }
         }
 
-
         protected void Page_Load(object sender, EventArgs e)
         {
             string eventTarget = Request.Form["__EVENTTARGET"];
@@ -35,8 +34,7 @@ namespace Telecom_Customer_Application.AdminDashboard
                 Subscribers_for_plan(eventArgument);  // Fetch subscribers for the selected plan
             }
 
-            // Fetch data for the pie chart
-            DataTable subscriptionsStatus = GetSubscriptionStatistics();
+            DataTable subscriptionsStatus = PageUtilities.GetData("GetSubscriptionStatistics");
             string subscriptionsStatusJson = JsonConvert.SerializeObject(subscriptionsStatus);
 
             // Pass the JSON data to the front end
@@ -93,30 +91,6 @@ namespace Telecom_Customer_Application.AdminDashboard
                     PageUtilities.DisplayAlert(ex, form1);
                 }
             }
-        }
-        protected DataTable GetSubscriptionStatistics()
-        {
-            DataTable dataTable = new DataTable();
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-            {
-                try
-                {
-                    con.Open();
-
-                    using (SqlCommand cmd = new SqlCommand("GetSubscriptionStatistics", con))
-                    {
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                        {
-                            adapter.Fill(dataTable);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PageUtilities.DisplayAlert(ex, form1);
-                }
-            }
-            return dataTable;
         }
     }
 }

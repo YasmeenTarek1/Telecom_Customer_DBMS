@@ -80,13 +80,13 @@ namespace Telecom_Customer_Application.AdminDashboard
                     PageUtilities.ExecuteQueryWithHandling(query3, TableBody3, form1);
 
                     // Fetch data for the pie chart
-                    DataTable benefitTypesData = GetData("calculateBenefitsTypePercentages");
+                    DataTable benefitTypesData = PageUtilities.GetData("calculateBenefitsTypePercentages");
                     string benefitTypesJson = JsonConvert.SerializeObject(benefitTypesData);
 
                     // Pass the JSON data to the front end
                     ScriptManager.RegisterStartupScript(this, GetType(), "benefitTypesData", $"var benefitTypesData = {benefitTypesJson};", true);
 
-                    DataTable benefitsStatusData = GetData("calculateActiveExpiredBenefitsPercentage");
+                    DataTable benefitsStatusData = PageUtilities.GetData("calculateActiveExpiredBenefitsPercentage");
                     string benefitsStatusJson = JsonConvert.SerializeObject(benefitsStatusData);
 
                     ScriptManager.RegisterStartupScript(this, GetType(), "benefitsStatusData", $"var benefitsStatusData = {benefitsStatusJson};", true);
@@ -96,31 +96,6 @@ namespace Telecom_Customer_Application.AdminDashboard
                     PageUtilities.DisplayAlert(ex, form1);
                 }
             }
-        }
-
-        protected DataTable GetData(string query)
-        {
-            DataTable dataTable = new DataTable();
-            using (SqlConnection con = new SqlConnection(PageUtilities.connectionString))
-            {
-                try
-                {
-                    con.Open();
-
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                        {
-                            adapter.Fill(dataTable);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PageUtilities.DisplayAlert(ex, form1);
-                }
-            }
-            return dataTable;
         }
     }
 }
