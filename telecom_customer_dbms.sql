@@ -2176,30 +2176,35 @@ BEGIN
 END;
 
 GO
-CREATE PROCEDURE LoadAccountPayments
+CREATE PROCEDURE LoadAccountPlanPayments
 @mobile_num CHAR(11)
 AS
 BEGIN
 
-    -- Plan Renewals/ Subscribtions
-    SELECT  CONCAT(P.amount, ' egp') AS 'Paid Amount' , CONCAT(PP.remaining_balance, ' egp') AS 'Due Amount', SP.name AS 'Category', CONCAT(SP.price, ' egp') AS 'Amount To Pay', P.payment_method, P.date_of_payment, P.status
+    -- Plan Renewals/ Subscriptions
+    SELECT CONCAT(P.amount, ' egp') AS 'Paid Amount' , CONCAT(PP.remaining_balance, ' egp') AS 'Due Amount', SP.name AS 'Plan Name', CONCAT(SP.price, ' egp') AS 'Amount To Pay', P.payment_method, P.date_of_payment, P.status
     FROM Payment P
     INNER JOIN Process_Payment PP
     ON PP.paymentID = P.paymentID
     INNER JOIN Service_Plan SP
     ON PP.planID = SP.planID
     WHERE P.mobileNo = @mobile_num
+    ORDER BY date_of_payment DESC;
+END;
 
-    UNION
+GO
+CREATE PROCEDURE LoadAccountBalanceRechargingPayments
+@mobile_num CHAR(11)
+AS
+BEGIN
 
     -- Balance Recharging
-    SELECT  CONCAT(P.amount, ' egp') AS 'Paid Amount' , '--' AS 'Due Amount', 'Recharge Balance' AS 'Category', '--' AS 'Amount To Pay', P.payment_method, P.date_of_payment, P.status
+    SELECT CONCAT(P.amount, ' egp') AS 'Paid Amount' , P.payment_method, P.date_of_payment, P.status
     FROM Payment P
     WHERE P.mobileNo = @mobile_num AND (P.payment_method = 'credit' OR p.payment_method = 'cash')
-
     ORDER BY date_of_payment DESC;
-
 END;
+
 
 GO
 CREATE PROCEDURE InitializeSystem

@@ -17,7 +17,6 @@
                 <h3 id="TabHeading" class="tab-heading" style="margin: 40px auto 50px auto; font-size: 34px;">Wallet</h3>
                 <div class="container1" runat="server">
 
-
                     <!-- Credit Card -->
                     <div class="credit-card-box">
                         <div class="flip">
@@ -162,14 +161,20 @@
                  </div>
                 <div class="table-responsive">
                     <table>
-                        <caption>Payments</caption>
+                        <caption>Plan Renewals/Subscriptions Payments</caption>
                         <tbody id="TableBody2" runat="server"></tbody>
                     </table>
                 </div>
                 <div class="table-responsive">
                     <table>
-                        <caption>Cashbacks</caption>
+                        <caption>Recharge Balance Payments</caption>
                         <tbody id="TableBody3" runat="server"></tbody>
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <caption>Cashbacks</caption>
+                        <tbody id="TableBody4" runat="server"></tbody>
                     </table>
                 </div>
             </div>

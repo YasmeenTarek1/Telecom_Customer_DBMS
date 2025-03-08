@@ -34,15 +34,20 @@ namespace Telecom_Customer_Application.CustomerDashboard
                 cmd1.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = mobileNum });
                 PageUtilities.LoadData(cmd1, TableBody1);
 
-                SqlCommand cmd2 = new SqlCommand("LoadAccountPayments", con);
+                SqlCommand cmd2 = new SqlCommand("LoadAccountPlanPayments", con);
                 cmd2.CommandType = CommandType.StoredProcedure;
                 cmd2.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = mobileNum });
                 PageUtilities.LoadData(cmd2, TableBody2);
 
-                SqlCommand cmd3 = new SqlCommand("LoadAccountCashbacks", con);
+                SqlCommand cmd3 = new SqlCommand("LoadAccountBalanceRechargingPayments", con);
                 cmd3.CommandType = CommandType.StoredProcedure;
                 cmd3.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = mobileNum });
                 PageUtilities.LoadData(cmd3, TableBody3);
+
+                SqlCommand cmd4 = new SqlCommand("LoadAccountCashbacks", con);
+                cmd4.CommandType = CommandType.StoredProcedure;
+                cmd4.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = mobileNum });
+                PageUtilities.LoadData(cmd4, TableBody4);
             }
 
         }
