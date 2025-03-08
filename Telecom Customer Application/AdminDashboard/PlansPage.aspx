@@ -90,7 +90,7 @@
                     <i class="fas fa-chart-pie"></i>
                 </button>
                 <div id="panelContent" class="panel-content">
-                    <div class="chart-container">
+                    <div class="chart-container chart-container-plans">
                         <canvas id="subscriptionPieChart" width="400" height="400"></canvas>
                     </div>
                 </div>

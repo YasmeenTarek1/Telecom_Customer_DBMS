@@ -1306,6 +1306,7 @@ table tr:hover {
     margin-top: 20%;
 }
 
+
 .chart-navigation {
     position: relative;
     width: 100%;
@@ -1455,15 +1456,8 @@ table tr:hover {
     transform: translate(-50%, -50%);
     display: none;
 }
-
-.chart-container {
-    width: 350px;
-    height: 350px;
-    position: absolute;
-    top: 75%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
+.chart-container-plans {
+    top: 30%;
 }
 
 .chart-container.active {
