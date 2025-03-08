@@ -972,6 +972,8 @@ function initializeWalletPage() {
         updateStats(0, 0, 0, 0);
     }
 
+    checkForStoredAlerts();
+
     // Transfer arrows
     const transferCells = document.querySelectorAll('#TableBody1 tr td:first-child');
     transferCells.forEach(cell => {
@@ -1024,8 +1026,7 @@ function initializeWalletPage() {
         const mobileNo = document.getElementById('HiddenMobileNo').value;
 
         if (!amount || amount <= 0) {
-            // Using form as a placeholder - in actual implementation, this would be the form reference
-            PageUtilities.DisplayAlert(new Error("Please enter a valid amount"), document.forms[0], "alert-danger");
+            displayClientAlert("Please enter a valid amount", "alert-danger");
             return;
         }
 
@@ -1039,12 +1040,12 @@ function initializeWalletPage() {
         const mobileNo = document.getElementById('HiddenMobileNo').value;
 
         if (!recipientMobile || recipientMobile.length < 10) {
-            PageUtilities.DisplayAlert(new Error("Please enter a valid recipient mobile number"), document.forms[0], "alert-danger");
+            displayClientAlert("Please enter a valid recipient mobile number", "alert-danger");
             return;
         }
 
         if (!amount || amount <= 0) {
-            PageUtilities.DisplayAlert(new Error("Please enter a valid amount"), document.forms[0], "alert-danger");
+            displayClientAlert("Please enter a valid amount", "alert-danger");
             return;
         }
 
@@ -1087,10 +1088,10 @@ function fetchCustomerData(mobileNo) {
             }
         })
         .catch(error => {
-            console.error('Fetch error:', error);
             updateCreditCard('Unknown', 'User', mobileNo);
             updateStats(0, 0, 0, 0);
-            PageUtilities.DisplayAlert(error, document.forms[0], "alert-danger");
+            console.error('Fetch error:', error);
+            storeAlertMessage(error.message, "alert-danger");
         });
 }
 
@@ -1131,20 +1132,21 @@ function rechargeBalance(mobileNo, amount, paymentMethod) {
         })
         .then(data => {
             if (data.d && JSON.parse(data.d).success) {
-                PageUtilities.DisplayAlert(new Error("Balance recharged successfully"), document.forms[0], "alert-success");
                 document.getElementById('rechargeDialog').classList.remove('active');
+
+                // Store alert before refresh
+                storeAlertMessage("Balance recharged successfully", "alert-success");
+
                 // Update the balance in UI
                 const currentBalance = parseFloat(document.getElementById('balance').textContent.replace('$', '').replace(',', ''));
                 document.getElementById('balance').textContent = `$${(currentBalance + parseFloat(amount)).toLocaleString()}`;
-                // Reset form
-                document.getElementById('rechargeAmount').value = '';
             } else {
                 throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
             }
         })
         .catch(error => {
             console.error('Error recharging balance:', error);
-            PageUtilities.DisplayAlert(error, document.forms[0], "alert-danger");
+            storeAlertMessage(error.message, "alert-danger");
         });
 }
 
@@ -1169,25 +1171,66 @@ function transferMoney(senderMobile, recipientMobile, amount) {
             return response.json();
         })
         .then(data => {
-            if (data.d && JSON.parse(data.d).success) {                
-                PageUtilities.DisplayAlert(new Error("Money transferred successfully!"), document.forms[0], "alert-success");
+            if (data.d && JSON.parse(data.d).success) {
                 document.getElementById('transferDialog').classList.remove('active');
+
+                // Store alert before refresh
+                storeAlertMessage("Money transferred successfully!", "alert-success");
+
                 // Update the balance and sent transactions in UI
                 const currentBalance = parseFloat(document.getElementById('balance').textContent.replace('$', '').replace(',', ''));
                 const currentSent = parseFloat(document.getElementById('sent').textContent.replace('$', '').replace(',', ''));
                 document.getElementById('balance').textContent = `$${(currentBalance - parseFloat(amount)).toLocaleString()}`;
                 document.getElementById('sent').textContent = `$${(currentSent + parseFloat(amount)).toLocaleString()}`;
-                // Reset form
-                document.getElementById('recipientMobile').value = '';
-                document.getElementById('transferAmount').value = '';
             } else {
                 throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
             }
         })
         .catch(error => {
             console.error('Error transferring money:', error);
-            PageUtilities.DisplayAlert(error, document.forms[0], "alert-danger");
+            storeAlertMessage(error.message, "alert-danger");
         });
+}
+
+// Store alert message before refresh
+function storeAlertMessage(message, alertType) {
+    localStorage.setItem('walletAlertMessage', message);
+    localStorage.setItem('walletAlertType', alertType);
+}
+
+// Display client alert that persists through refresh
+function displayClientAlert(message, alertType, shouldStore = false) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert ${alertType}`;
+    alertDiv.innerHTML = message;
+    alertDiv.style.position = 'fixed';
+    alertDiv.style.top = '20px';
+    alertDiv.style.left = '50%';
+    alertDiv.style.transform = 'translateX(-50%)';
+    alertDiv.style.padding = '15px';
+    alertDiv.style.zIndex = '9999';
+    document.body.appendChild(alertDiv);
+    setTimeout(() => alertDiv.remove(), 5000);
+
+    // Store before page refresh
+    if (shouldStore) {
+        storeAlertMessage(message, alertType);
+    }
+}
+
+// Check for stored alert messages when page loads
+function checkForStoredAlerts() {
+    const message = localStorage.getItem('walletAlertMessage');
+    const alertType = localStorage.getItem('walletAlertType');
+
+    if (message && alertType) {
+        // Display the stored alert
+        displayClientAlert(message, alertType);
+
+        // Clear the stored alert
+        localStorage.removeItem('walletAlertMessage');
+        localStorage.removeItem('walletAlertType');
+    }
 }
 
 // Initialize wallet page when the DOM is fully loaded

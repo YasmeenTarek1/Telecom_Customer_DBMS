@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace Telecom_Customer_Application
 {
@@ -11,9 +12,26 @@ namespace Telecom_Customer_Application
             {
                 try
                 {
-                    string MobileNo = TextBox1.Text;
-                    string Password = txtPassword.Text;
+                    string MobileNo = TextBox1.Text.Trim();
+                    string Password = txtPassword.Text.Trim();
 
+                    // Validate MobileNo
+                    if (string.IsNullOrEmpty(MobileNo))
+                    {
+                        throw new Exception("Mobile number cannot be empty.");
+                    }
+                    if (MobileNo.Length < 11)
+                    {
+                        throw new Exception("Please enter a valid mobile number.");
+                    }
+
+                    // Validate Password
+                    if (string.IsNullOrEmpty(Password))
+                    {
+                        throw new Exception("Password cannot be empty.");
+                    }
+
+                    // Database call for login validation
                     SqlCommand cmd = new SqlCommand("SELECT dbo.AccountLoginValidation(@mobile_num, @pass)", con);
                     cmd.Parameters.Add(new SqlParameter("@mobile_num", MobileNo));
                     cmd.Parameters.Add(new SqlParameter("@pass", Password));
@@ -21,30 +39,42 @@ namespace Telecom_Customer_Application
                     con.Open();
                     object result = cmd.ExecuteScalar();
 
-                    if (result != null && Convert.ToBoolean(result) == true)
+                    // Check login result
+                    if (result == null || !Convert.ToBoolean(result))
                     {
-                        SqlCommand nationalIDCmd = new SqlCommand("SELECT nationalID  FROM customer_account WHERE mobileNo = @mobileNo", con);
-                        nationalIDCmd.Parameters.Add(new SqlParameter("@mobileNo", MobileNo));
-                        object nationalIDObj = nationalIDCmd.ExecuteScalar();
-                        int nationalID = Convert.ToInt32(nationalIDObj);
-
-                        Session["MobileNo"] = MobileNo;
-                        Session["NationalID"] = nationalID;
-
-                        Response.Redirect("CustomerDashboard/HomePage.aspx");
+                        throw new Exception("Invalid Mobile Number or Password.");
                     }
-                    else
+
+                    // Fetch National ID
+                    SqlCommand nationalIDCmd = new SqlCommand("SELECT nationalID FROM customer_account WHERE mobileNo = @mobileNo", con);
+                    nationalIDCmd.Parameters.Add(new SqlParameter("@mobileNo", MobileNo));
+                    object nationalIDObj = nationalIDCmd.ExecuteScalar();
+
+                    // Validate National ID result
+                    if (nationalIDObj == null)
                     {
-                        throw new Exception("Invalid Admin ID or Password.");
-
+                        throw new Exception("Account not found for the provided mobile number.");
                     }
+
+                    int nationalID;
+                    try
+                    {
+                        nationalID = Convert.ToInt32(nationalIDObj);
+                    }
+                    catch (FormatException)
+                    {
+                        throw new Exception("Invalid National ID format in the database.");
+                    }
+
+                    Session["MobileNo"] = MobileNo;
+                    Session["NationalID"] = nationalID;
+                    Response.Redirect("CustomerDashboard/HomePage.aspx");
                 }
                 catch (Exception ex)
                 {
                     PageUtilities.DisplayAlert(ex, form1);
                 }
             }
-
         }
     }
 }

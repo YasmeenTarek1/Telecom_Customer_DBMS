@@ -192,37 +192,6 @@ public class PageUtilities
             }
         }
     }
-
-    //public static void DisplayAlert(Exception ex, Control form, string alertType = "alert-danger")
-    //{
-
-    //    string script = $@"
-    //    <script type='text/javascript'>
-    //        function showAlert() {{
-    //            var alertBox = document.createElement('div');
-    //            alertBox.className = 'alert {alertType}';
-    //            alertBox.role = 'alert';
-    //            alertBox.innerHTML = '{ex.Message.Replace("'", @"\'").Replace("\r\n", " ")}';
-    //            document.body.insertBefore(alertBox, document.body.firstChild);
-                
-    //            alertBox.style.cssText = 'opacity: 1; transition: opacity 0.5s ease-out;';
-    //            setTimeout(function() {{
-    //                alertBox.style.opacity = '0';
-    //                setTimeout(function() {{
-    //                    alertBox.parentNode.removeChild(alertBox);
-    //                }}, 500);
-    //            }}, 2500);
-    //        }}
-    //        if (document.readyState !== 'loading') {{
-    //            showAlert();
-    //        }} else {{
-    //            document.addEventListener('DOMContentLoaded', showAlert);
-    //        }}
-    //    </script>";
-
-    //    ScriptManager.RegisterStartupScript(form, form.GetType(), "DisplayAlert", script, false);
-    //}
-
     public static void DisplayAlert(Exception ex, Control form, string alertType = "alert-danger")
     {
         string message = ex != null ? ex.Message : "Operation completed successfully!";

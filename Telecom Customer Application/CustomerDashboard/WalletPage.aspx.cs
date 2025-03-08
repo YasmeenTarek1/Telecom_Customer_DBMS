@@ -171,11 +171,6 @@ namespace Telecom_Customer_Application.CustomerDashboard
         {
             try
             {
-                if (string.IsNullOrEmpty(PageUtilities.connectionString))
-                {
-                    return JsonConvert.SerializeObject(new { success = false, error = "Database connection string is not configured" });
-                }
-
                 using (SqlConnection conn = new SqlConnection(PageUtilities.connectionString))
                 {
                     conn.Open();
@@ -208,11 +203,6 @@ namespace Telecom_Customer_Application.CustomerDashboard
         {
             try
             {
-                if (string.IsNullOrEmpty(PageUtilities.connectionString))
-                {
-                    return JsonConvert.SerializeObject(new { success = false, error = "Database connection string is not configured" });
-                }
-
                 // Validate sender has enough balance
                 using (SqlConnection conn = new SqlConnection(PageUtilities.connectionString))
                 {
