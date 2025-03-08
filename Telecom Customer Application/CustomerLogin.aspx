@@ -18,14 +18,14 @@
             <h2>TeleSphere</h2>
             <div class="nav">
                 <a href="WelcomePage.aspx" runat="server">Home</a>
-                <a href="#">About</a>
-                <a href="#">Services</a>
-                <a href="#">Contact</a>
+                <a href="#Footer">About</a>
+                <a href="#Footer">Services</a>
+                <a href="#Footer">Contact</a>
             </div>
         </div>
         <div class="container">
-            <div class="image-section">
-                <img src="customerLogin1.png" alt="customer Login picture" width=714 />
+            <div class="image-section1">
+                <img src="customerLogin1.png" alt="customer Login picture" width=712 />
             </div>
             <div class="form-section">
                 <h2>Customer Login</h2>
@@ -50,6 +50,55 @@
             </div>
         </div>
 
+        <footer id="Footer" class="footer">
+            <div class="footer-section">
+                <h2>About Us</h2>
+                <p>TeleSphere is a leading telecom provider, ensuring seamless connectivity for businesses and individuals worldwide.</p>
+                <br />
+                <h2>Our Services</h2>
+                <p>We offer ultra-fast internet and seamless digital communication to keep you connected anytime, anywhere.</p>
+                <br />
+                <h2>Contact Us</h2>
+                <p>Email: support@telesphere.com</p>
+                <p>Phone: +1 (123) 456-7890</p>
+                <p>Address: 123 Telecom Street, City, Country</p>
+            </div>
+        </footer>
     </form>
+
+        <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const footer = document.getElementById("Footer");
+            const contactLink = document.querySelector(".nav a[href='#Footer']");
+
+            // Function to check if the footer is in the viewport
+            function isFooterInViewport() {
+                const rect = footer.getBoundingClientRect();
+                return (
+                    rect.top <= window.innerHeight && rect.bottom >= 0
+                );
+            }
+
+            // Function to show the footer
+            function showFooter() {
+                footer.classList.add("visible");
+            }
+
+            // Show the footer when it comes into the viewport while scrolling
+            document.addEventListener("scroll", function () {
+                if (isFooterInViewport()) {
+                    showFooter();
+                }
+            });
+
+            // Scroll to the footer and show it when the "Contact" link is clicked
+            contactLink.addEventListener("click", function (e) {
+                e.preventDefault(); // Prevent default anchor behavior
+                footer.scrollIntoView({ behavior: "smooth" }); // Smooth scroll to footer
+                showFooter(); // Make the footer visible
+            });
+        });
+        </script>
 </body>
 </html>
