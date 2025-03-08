@@ -206,7 +206,7 @@ public class PageUtilities
         alertDiv.style.padding = '15px';
         alertDiv.style.zIndex = '9999';
         document.body.appendChild(alertDiv);
-        setTimeout(() => alertDiv.remove(), 5000);
+        setTimeout(() => alertDiv.remove(), 3500);
     ";
         ScriptManager.RegisterStartupScript(form, form.GetType(), "DisplayAlert", script, true);
     }
