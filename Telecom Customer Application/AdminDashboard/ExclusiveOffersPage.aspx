@@ -18,7 +18,12 @@
 
             <div id="sharedContent" class="tab-content">
 
-                <h3 id="TabHeading" class="tab-heading">Exclusive Offers</h3>
+                <div style="display: flex; align-items: center;">
+                    <h3 id="TabHeading" class="tab-heading">Exclusive Offers</h3>
+                    <a href="~/AdminDashboard/BenefitsPage.aspx" runat="server" class="backButton">
+                        <i class="fa-solid fa-right-from-bracket sidebar-icon"></i>
+                    </a>
+                </div>
 
                 <div class="cardBox" style="grid-template-columns: repeat(3, 0.3fr); grid-gap: 100px; margin: 30px 60px 20px 60px;">
                     <div class="card">
