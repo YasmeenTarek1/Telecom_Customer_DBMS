@@ -5,6 +5,8 @@
 <head runat="server">
     <meta charset="UTF-8">
     <title>Home Page</title>
+    <script src="../Scripts/Logins.js"></script> 
+    <link href="../Styles/Logins.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
    <style>
     body {
@@ -46,114 +48,7 @@
         background-blend-mode: screen, overlay, multiply;
     }
 
-    .header {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        background-color: #03184c; /* New Blue */
-        color: #f5f5f5;
-    }
-
-    .header img {
-        height: 50px;
-        margin-right: 10px;
-    }
-
-    .header h2 {
-        font-size: 24px;
-        color: #ffffff;
-        margin: 0;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .nav {
-        position: absolute;
-        right: 60px;
-        top: 50%;
-        transform: translateY(-50%);
-        display: flex;
-        gap: 20px;
-    }
-
-    .nav a {
-        text-decoration: none;
-        color: #ffffff;
-        font-size: 18px;
-        font-family: 'Arial', sans-serif;
-        transition: color 0.3s;
-    }
-
-    .nav a:hover {
-        color: rgba(255, 255, 0, 0.8);
-    }
-
-    .hero-section {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        width: 100%;
-        min-height: 100vh;
-        color: #03184c;
-        padding: 40px;
-        box-sizing: border-box;
-    }
-
-    .hero-section h1,
-    .hero-section p,
-    .hero-section h2 {
-        margin: 0;
-    }
-
-    .hero-section h1 {
-        font-size: 50px;
-        margin-bottom: 20px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: bold;
-        text-shadow: 2px 2px 6px rgba(7, 156, 255, 0.3);
-        color: #03184c;
-    }
-
-    .hero-section p {
-        font-size: 22px;
-        margin-bottom: 10px;
-        color: #03184c;
-    }
-
-    .hero-section h2 {
-        font-size: 24px;
-        margin-bottom: 40px;
-        color: rgba(7, 156, 255, 0.6);
-        font-family: 'Poppins', sans-serif;
-        color: #03184c;
-    }
-
-    .icon-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 160px;
-        margin-top: 20px;
-    }
-
-    .icon-item {
-        text-align: center;
-    }
-
-    .icon-item img {
-        width: 175px;
-        height: 175px;
-        margin-bottom: 10px;
-    }
-
-    .btn {
+    .button {
         display: inline-block;
         padding: 10px 20px;
         border-radius: 10px;
@@ -166,36 +61,6 @@
         text-decoration: none;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
-    .btn:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 15px rgba(7, 156, 255, 0.5);
-    }
-
-    footer {
-        position: relative;
-        width: 100%;
-        max-width: 100%;
-        background-color: #03184c; /* New Blue */
-        color: #f5f5f5;
-        padding: 40px 20px;
-        text-align: left;
-        z-index: 1000;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-
-    footer.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    form {
-        width: 100%;
-        overflow-x: hidden;
-        overflow-y: hidden;
-    }
 </style>
 
 </head>
@@ -207,7 +72,7 @@
             <div class="nav">
                 <a href="#Footer">About</a>
                 <a href="#Footer">Services</a>
-                <a href="#Footer">Contact</a> <!-- Scroll to footer -->
+                <a href="#Footer">Contact</a> 
             </div>
         </div>
         <div class="hero-section">
@@ -218,12 +83,12 @@
                 <div class="icon-item">
                     <img src="adminNew.png" alt="Admin Icon">
                     <p></p>
-                    <asp:Button ID="btnAdmin" runat="server" Text="Admin" CssClass="btn" OnClick="btnAdmin_Click" />
+                    <asp:Button ID="btnAdmin" runat="server" Text="Admin" CssClass="button" OnClick="btnAdmin_Click" />
                 </div>
                 <div class="icon-item">
                     <img src="customer.png" alt="Customer Icon">
                     <p></p>
-                    <asp:Button ID="btnCustomer" runat="server" Text="Customer" CssClass="btn" OnClick="btnCustomer_Click" />
+                    <asp:Button ID="btnCustomer" runat="server" Text="Customer" CssClass="button" OnClick="btnCustomer_Click" />
                 </div>
             </div>
         </div>
@@ -245,39 +110,5 @@
         </footer>
 
     </form>
-    <script>
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const footer = document.getElementById("Footer");
-            const contactLink = document.querySelector(".nav a[href='#Footer']");
-
-            // Function to check if the footer is in the viewport
-            function isFooterInViewport() {
-                const rect = footer.getBoundingClientRect();
-                return (
-                    rect.top <= window.innerHeight && rect.bottom >= 0
-                );
-            }
-
-            // Function to show the footer
-            function showFooter() {
-                footer.classList.add("visible");
-            }
-
-            // Show the footer when it comes into the viewport while scrolling
-            document.addEventListener("scroll", function () {
-                if (isFooterInViewport()) {
-                    showFooter();
-                }
-            });
-
-            // Scroll to the footer and show it when the "Contact" link is clicked
-            contactLink.addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default anchor behavior
-                footer.scrollIntoView({ behavior: "smooth" }); // Smooth scroll to footer
-                showFooter(); // Make the footer visible
-            });
-        });
-    </script>
 </body>
 </html>

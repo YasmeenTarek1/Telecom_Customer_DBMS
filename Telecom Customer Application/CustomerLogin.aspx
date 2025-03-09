@@ -4,7 +4,6 @@
 <html lang="en">
 <head runat="server">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-     <!-- Import Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <script src="../Scripts/Logins.js"></script> 
@@ -25,7 +24,7 @@
         </div>
         <div class="container">
             <div class="image-section1">
-                <img src="customerLogin1.png" alt="customer Login picture" width=712 />
+                <img src="customerLogin1.png" alt="customer Login picture" width="712" />
             </div>
             <div class="form-section">
                 <h2>Customer Login</h2>
@@ -65,40 +64,5 @@
             </div>
         </footer>
     </form>
-
-        <script>
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const footer = document.getElementById("Footer");
-            const contactLink = document.querySelector(".nav a[href='#Footer']");
-
-            // Function to check if the footer is in the viewport
-            function isFooterInViewport() {
-                const rect = footer.getBoundingClientRect();
-                return (
-                    rect.top <= window.innerHeight && rect.bottom >= 0
-                );
-            }
-
-            // Function to show the footer
-            function showFooter() {
-                footer.classList.add("visible");
-            }
-
-            // Show the footer when it comes into the viewport while scrolling
-            document.addEventListener("scroll", function () {
-                if (isFooterInViewport()) {
-                    showFooter();
-                }
-            });
-
-            // Scroll to the footer and show it when the "Contact" link is clicked
-            contactLink.addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default anchor behavior
-                footer.scrollIntoView({ behavior: "smooth" }); // Smooth scroll to footer
-                showFooter(); // Make the footer visible
-            });
-        });
-        </script>
 </body>
 </html>

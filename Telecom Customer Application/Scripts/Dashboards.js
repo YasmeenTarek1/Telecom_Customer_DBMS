@@ -1237,3 +1237,45 @@ function checkForStoredAlerts() {
 document.addEventListener('DOMContentLoaded', function () {
     initializeWalletPage();
 });
+
+// Toggle tooltip in Plans Page
+document.addEventListener('DOMContentLoaded', function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+
+// Toggle ticket detail on click in Tickets Page
+document.addEventListener('DOMContentLoaded', function () {
+    const tickets = document.querySelectorAll('.ticket-card');
+    const detail = document.querySelector('.ticket-detail');
+
+    tickets.forEach(ticket => {
+        ticket.addEventListener('click', function () {
+            const status = this.getAttribute('data-status');
+            const ticketId = this.querySelector('.ticket-id').textContent;
+            const description = this.getAttribute('data-description');
+            const priority = this.getAttribute('data-priority');
+            const dateSubmitted = this.getAttribute('data-date');
+
+            // Update detail content
+            document.querySelector('.ticket-detail-content h3').textContent = ticketId;
+            document.querySelector('.ticket-detail-content .description .desc-value').textContent = description;
+            document.querySelector('.ticket-detail-content .priority .priority-value').textContent = priority;
+            document.querySelector('.ticket-detail-content .date .date-value').textContent = dateSubmitted;
+            document.querySelector('.ticket-detail-content .status .status-value').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+            // Apply status class to detail
+            detail.className = `ticket-detail ${status}`;
+            detail.classList.add('active');
+        });
+    });
+
+    // Close on click outside 
+    document.addEventListener('click', function (e) {
+        if (!detail.contains(e.target) && !Array.from(tickets).some(t => t.contains(e.target))) {
+            detail.classList.remove('active');
+        }
+    });
+});

@@ -43,3 +43,32 @@ document.addEventListener("DOMContentLoaded", function () {
         showFooter(); // Make the footer visible
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const footer = document.getElementById("Footer");
+    const contactLink = document.querySelector(".nav a[href='#Footer']");
+    function isFooterInViewport() {
+        const rect = footer.getBoundingClientRect();
+        return (
+            rect.top <= window.innerHeight && rect.bottom >= 0
+        );
+    }
+
+    function showFooter() {
+        footer.classList.add("visible");
+    }
+
+    // Show the footer when it comes into the viewport while scrolling
+    document.addEventListener("scroll", function () {
+        if (isFooterInViewport()) {
+            showFooter();
+        }
+    });
+
+    // Scroll to the footer and show it when the "Contact" link is clicked
+    contactLink.addEventListener("click", function (e) {
+        e.preventDefault(); // Prevent default anchor behavior
+        footer.scrollIntoView({ behavior: "smooth" }); 
+        showFooter(); 
+    });
+});

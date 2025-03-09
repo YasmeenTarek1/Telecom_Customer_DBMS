@@ -22,12 +22,10 @@ namespace Telecom_Customer_Application
                 // Check if entered credentials match the hardcoded ones
                 if (enteredID == AdminID && enteredPassword == AdminPassword)
                 {
-                    // Go to the Dashboard
                     Response.Redirect("AdminDashboard/CustomersPage.aspx");
                 }
                 else
                 {
-                    // Display error message
                     throw new Exception("Invalid Admin ID or Password.");
                 }
             }
