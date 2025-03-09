@@ -1447,6 +1447,7 @@ BEGIN
     END CATCH;
 END;
 
+
 GO
 CREATE PROCEDURE Consume_Resources_With_Exclusive_Offers_And_Plans
     @mobile_num CHAR(11),
@@ -1458,39 +1459,44 @@ BEGIN
     BEGIN TRANSACTION;
 
     BEGIN TRY
-        DECLARE @ExclusiveOfferID INT;
+        DECLARE @ExclusiveOfferID INT;      -- limit
         DECLARE @DataOffered INT;
         DECLARE @MinutesOffered INT;
         DECLARE @SMSOffered INT;
-        DECLARE @RemainingData INT = @data_consumed;
+
+        DECLARE @DataUsed INT;
+        DECLARE @MinutesUsed INT;
+        DECLARE @SMSUsed INT;
+
+        DECLARE @RemainingData INT = @data_consumed;    -- usage
         DECLARE @RemainingMinutes INT = @minutes_used;
         DECLARE @RemainingSMS INT = @SMS_sent;
 
 
         -- Retrieve all active exclusive offers for the customer, ordered by expiry_date (earliest first)
         DECLARE exclusive_offer_cursor CURSOR FOR
-        SELECT EO.offerID, EO.data_offered, EO.minutes_offered, EO.SMS_offered
+        SELECT EO.offerID, EO.data_offered, EO.minutes_offered, EO.SMS_offered, BU.data_used, BU.minutes_used, BU.SMS_used
         FROM Customer_Exclusive_Offers EO
         INNER JOIN Customer_Benefits CB ON EO.benefitID = CB.benefitID
+        INNER JOIN Benefit_Usage BU ON CB.benefitID = BU.benefitID
         WHERE CB.mobileNo = @mobile_num AND CB.expiry_date >= CURRENT_TIMESTAMP -- Ensure the benefit is active
         ORDER BY CB.expiry_date;
 
         OPEN exclusive_offer_cursor;
-        FETCH NEXT FROM exclusive_offer_cursor INTO @ExclusiveOfferID, @DataOffered, @MinutesOffered, @SMSOffered;
+        FETCH NEXT FROM exclusive_offer_cursor INTO @ExclusiveOfferID, @DataOffered, @MinutesOffered, @SMSOffered, @DataUsed, @MinutesUsed, @SMSUsed;
 
             -- Loop through the exclusive offers and consume resources
             WHILE @@FETCH_STATUS = 0 AND (@RemainingData > 0 OR @RemainingMinutes > 0 OR @RemainingSMS > 0)
             BEGIN
                 -- Consume data from the exclusive offer
-                IF @RemainingData > 0 AND @DataOffered > 0
+                IF @RemainingData > 0 AND @DataUsed < @DataOffered
                 BEGIN
                     DECLARE @DataToConsume INT = CASE 
-                                                    WHEN @DataOffered >= @RemainingData THEN @RemainingData
-                                                    ELSE @DataOffered
+                                                    WHEN @DataOffered - @DataUsed >= @RemainingData THEN @RemainingData
+                                                    ELSE @DataOffered - @DataUsed 
                                                  END;
 
                     SET @RemainingData = @RemainingData - @DataToConsume;
-                    SET @DataOffered = @DataOffered - @DataToConsume;
 
                     UPDATE Benefit_Usage
                     SET data_used = data_used + @DataToConsume, usage_date = CURRENT_TIMESTAMP
@@ -1498,15 +1504,14 @@ BEGIN
                 END
 
                 -- Consume minutes from the exclusive offer
-                IF @RemainingMinutes > 0 AND @MinutesOffered > 0
+                IF @RemainingMinutes > 0 AND @MinutesUsed < @MinutesOffered
                 BEGIN
                     DECLARE @MinutesToConsume INT = CASE 
-                                                    WHEN @MinutesOffered >= @RemainingMinutes THEN @RemainingMinutes
-                                                    ELSE @MinutesOffered
+                                                    WHEN @MinutesOffered - @MinutesUsed >= @RemainingMinutes THEN @RemainingMinutes
+                                                    ELSE @MinutesOffered - @MinutesUsed
                                                  END;
 
                     SET @RemainingMinutes = @RemainingMinutes - @MinutesToConsume;
-                    SET @MinutesOffered = @MinutesOffered - @MinutesToConsume;
 
                     UPDATE Benefit_Usage
                     SET minutes_used = minutes_used + @MinutesToConsume
@@ -1514,15 +1519,14 @@ BEGIN
                 END
 
                 -- Consume SMS from the exclusive offer
-                IF @RemainingSMS > 0 AND @SMSOffered > 0
+                IF @RemainingSMS > 0 AND @SMSUsed < @SMSOffered
                 BEGIN
                     DECLARE @SMSToConsume INT = CASE 
-                                                    WHEN @SMSOffered >= @RemainingSMS THEN @RemainingSMS
-                                                    ELSE @SMSOffered
+                                                    WHEN @SMSOffered - @SMSUsed >= @RemainingSMS THEN @RemainingSMS
+                                                    ELSE @SMSOffered - @SMSUsed
                                                  END;
 
                     SET @RemainingSMS = @RemainingSMS - @SMSToConsume;
-                    SET @SMSOffered = @SMSOffered - @SMSToConsume;
 
                     UPDATE Benefit_Usage
                     SET SMS_used = SMS_used + @SMSToConsume
@@ -1530,7 +1534,7 @@ BEGIN
                 END
 
                 -- Move to the next exclusive offer
-                FETCH NEXT FROM exclusive_offer_cursor INTO @ExclusiveOfferID, @DataOffered, @MinutesOffered, @SMSOffered;
+                FETCH NEXT FROM exclusive_offer_cursor INTO @ExclusiveOfferID, @DataOffered, @MinutesOffered, @SMSOffered, @DataUsed, @MinutesUsed, @SMSUsed;
             END
 
         CLOSE exclusive_offer_cursor;
@@ -1547,28 +1551,28 @@ BEGIN
             -- Retrieve all active service plans for the customer, ordered by subscription_date (earliest first)
             DECLARE service_plan_cursor CURSOR FOR
 
-            SELECT S.planID, SP.data_offered, SP.minutes_offered, SP.SMS_offered
+            SELECT S.planID, SP.data_offered, SP.minutes_offered, SP.SMS_offered, PU.data_consumption, PU.minutes_used, PU.SMS_sent
             FROM Subscription S
             INNER JOIN Service_Plan SP ON S.planID = SP.planID
+            INNER JOIN Plan_Usage PU ON S.planID = PU.planID AND S.mobileNo = PU.mobileNo
             WHERE S.mobileNo = @mobile_num AND S.status = 'active' -- Ensure the plan is active
             ORDER BY S.subscription_date;
 
             OPEN service_plan_cursor;
-            FETCH NEXT FROM service_plan_cursor INTO @PlanID, @DataAvailable, @MinutesAvailable, @SMSAvailable;
+            FETCH NEXT FROM service_plan_cursor INTO @PlanID, @DataAvailable, @MinutesAvailable, @SMSAvailable, @DataUsed, @MinutesUsed, @SMSUsed;
 
                 -- Loop through the service plans and consume resources
                 WHILE @@FETCH_STATUS = 0 AND (@RemainingData > 0 OR @RemainingMinutes > 0 OR @RemainingSMS > 0)
                 BEGIN
                     -- Consume data from the service plan
-                    IF @RemainingData > 0 AND @DataAvailable > 0
+                    IF @RemainingData > 0 AND @DataAvailable - @DataUsed > 0
                     BEGIN
                         DECLARE @PlanDataToConsume INT = CASE 
-                                                            WHEN @DataAvailable >= @RemainingData THEN @RemainingData
-                                                            ELSE @DataAvailable
+                                                            WHEN @DataAvailable - @DataUsed >= @RemainingData THEN @RemainingData
+                                                            ELSE @DataAvailable - @DataUsed
                                                          END;
 
                         SET @RemainingData = @RemainingData - @PlanDataToConsume;
-                        SET @DataAvailable = @DataAvailable - @PlanDataToConsume;
 
                         UPDATE Plan_Usage
                         SET data_consumption = data_consumption + @PlanDataToConsume
@@ -1576,15 +1580,14 @@ BEGIN
                     END
 
                     -- Consume minutes from the service plan
-                    IF @RemainingMinutes > 0 AND @MinutesAvailable > 0
+                    IF @RemainingMinutes > 0 AND @MinutesAvailable - @MinutesUsed > 0
                     BEGIN
                         DECLARE @PlanMinutesToConsume INT = CASE 
-                                                            WHEN @MinutesAvailable >= @RemainingMinutes THEN @RemainingMinutes
-                                                            ELSE @MinutesAvailable
+                                                            WHEN @MinutesAvailable - @MinutesUsed >= @RemainingMinutes THEN @RemainingMinutes
+                                                            ELSE @MinutesAvailable - @MinutesUsed
                                                          END;
 
                         SET @RemainingMinutes = @RemainingMinutes - @PlanMinutesToConsume;
-                        SET @MinutesAvailable = @MinutesAvailable - @PlanMinutesToConsume;
 
                         UPDATE Plan_Usage
                         SET minutes_used = minutes_used + @PlanMinutesToConsume
@@ -1592,15 +1595,14 @@ BEGIN
                     END
 
                     -- Consume SMS from the service plan
-                    IF @RemainingSMS > 0 AND @SMSAvailable > 0
+                    IF @RemainingSMS > 0 AND @SMSAvailable - @SMSUsed > 0
                     BEGIN
                         DECLARE @PlanSMSToConsume INT = CASE 
-                                                            WHEN @SMSAvailable >= @RemainingSMS THEN @RemainingSMS
-                                                            ELSE @SMSAvailable
+                                                            WHEN @SMSAvailable - @SMSUsed >= @RemainingSMS THEN @RemainingSMS
+                                                            ELSE @SMSAvailable  - @SMSUsed
                                                          END;
 
                         SET @RemainingSMS = @RemainingSMS - @PlanSMSToConsume;
-                        SET @SMSAvailable = @SMSAvailable - @PlanSMSToConsume;
 
                         UPDATE Plan_Usage
                         SET SMS_sent = SMS_sent + @PlanSMSToConsume
@@ -1608,7 +1610,7 @@ BEGIN
                     END
 
                     -- Move to the next service plan
-                    FETCH NEXT FROM service_plan_cursor INTO @PlanID, @DataAvailable, @MinutesAvailable, @SMSAvailable;
+                    FETCH NEXT FROM service_plan_cursor INTO @PlanID, @DataAvailable, @MinutesAvailable, @SMSAvailable, @DataUsed, @MinutesUsed, @SMSUsed;
                 END
 
             CLOSE service_plan_cursor;

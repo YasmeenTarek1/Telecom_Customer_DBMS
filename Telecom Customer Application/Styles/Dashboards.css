@@ -2017,3 +2017,75 @@ label {
 .cancel-btn:hover {
     background-color: #e0e0e0;
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 900px;
+    width: 100%;
+    margin: 10% 16% 6% 16%;
+}
+
+.grid-item {
+    background-color: #fff;
+    padding: 55px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    min-width: 200px;
+}
+
+.grid-item i {
+    font-size: 3.8em;
+    color: #007bff;
+    margin-bottom: 30px;
+}
+
+.grid-item p {
+    font-size: 1.5em;
+    margin: 0 0 30px 0;
+}
+
+.counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+
+.counter button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 9px 16ypx;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.3em;
+}
+
+.counter button:hover {
+    background-color: #0056b3;
+}
+
+.counter span {
+    font-size: 1.5em;
+    min-width: 40px;
+    text-align: center;
+}
+
+.submit-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.3em;
+    display: block;
+    margin: 0 34.5% 0 34.5%;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}

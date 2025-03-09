@@ -13,7 +13,6 @@ namespace Controls
                 string currentPage = Request.Path;
                 string activeTabId = GetActiveTabId(currentPage);
 
-                // Set the active tab
                 SetActiveTab(activeTabId);
             }
         }
@@ -23,7 +22,7 @@ namespace Controls
             if (currentPage.Contains("TicketsPage.aspx")) return "ticketsTab";
             if (currentPage.Contains("PlansPage.aspx")) return "plansTab";
             if (currentPage.Contains("WalletPage.aspx")) return "walletTab";
-            if (currentPage.Contains("PaymentsPage.aspx")) return "paymentsTab";
+            if (currentPage.Contains("ConsumePage.aspx")) return "consumeTab";
             if (currentPage.Contains("VouchersPage.aspx")) return "vouchersTab";
             return ""; // no active tab
         }
@@ -31,7 +30,7 @@ namespace Controls
         private void SetActiveTab(string activeTabId)
         {
             string[] allTabs = {
-                "homeTab", "ticketsTab", "plansTab", "walletTab", "paymentsTab", "vouchersTab"
+                "homeTab", "ticketsTab", "plansTab", "walletTab", "consumeTab", "vouchersTab"
             };
 
             // Loop through each tab and toggle the "active" class

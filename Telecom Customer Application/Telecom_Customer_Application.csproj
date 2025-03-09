@@ -83,6 +83,7 @@
     <Content Include="AdminDashboard\WalletsPage.aspx" />
     <Content Include="Controls\AdminSidebar.ascx" />
     <Content Include="Controls\CustomerSidebar.ascx" />
+    <Content Include="CustomerDashboard\ConsumePage.aspx" />
     <Content Include="CustomerDashboard\HomePage.aspx" />
     <Content Include="CustomerDashboard\PlansPage.aspx" />
     <Content Include="CustomerDashboard\TicketsPage.aspx" />
@@ -196,6 +197,13 @@
     </Compile>
     <Compile Include="Controls\CustomerSidebar.ascx.designer.cs">
       <DependentUpon>CustomerSidebar.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerDashboard\ConsumePage.aspx.cs">
+      <DependentUpon>ConsumePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerDashboard\ConsumePage.aspx.designer.cs">
+      <DependentUpon>ConsumePage.aspx</DependentUpon>
     </Compile>
     <Compile Include="CustomerDashboard\HomePage.aspx.cs">
       <DependentUpon>HomePage.aspx</DependentUpon>

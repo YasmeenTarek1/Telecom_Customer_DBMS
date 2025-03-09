@@ -17,11 +17,6 @@
     <a href="~/CustomerDashboard/PlansPage.aspx" id="plansTab" runat="server">
        <i class="fa-solid fa-globe sidebar-icon"></i>Plans
     </a>
-
-    <a href="~/CustomerDashboard/PaymentsPage.aspx" id="paymentsTab" runat="server">
-        <i class="fa-solid fa-coins sidebar-icon"></i>Payments
-    </a>
-
     <a href="~/CustomerDashboard/WalletPage.aspx" id="walletTab" runat="server">
         <i class="fa-solid fa-wallet sidebar-icon"></i>Wallet
     </a>
@@ -34,7 +29,12 @@
         <i class="fa-solid fa-ticket-simple sidebar-icon"></i>Vouchers
     </a>
 
+    <a href="~/CustomerDashboard/ConsumePage.aspx" id="consumeTab" runat="server">
+        <i class="fas fa-tachometer-alt"></i>&nbsp;&nbsp;Consume
+    </a>
+
     <a href="~/CustomerLogin.aspx" runat="server" Class="logout-link2">
        <i class="fa-solid fa-right-from-bracket sidebar-icon"></i>Logout
    </a>
+
 </div>
