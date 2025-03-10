@@ -1280,45 +1280,83 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-function initializeTicketsPage() {
-    // Open dialog when rechargeBox (Issue a Ticket) is clicked
-    document.getElementById('rechargeBox').addEventListener('click', function () {
-        document.getElementById('rechargeDialog').classList.add('active');
-    });
+function submitTicket(mobileNo, description, priority) {
+    // Basic validation
+    if (!description) {
+        storeAlertMessage('Please enter a ticket description', "alert-danger");
+        return;
+    }
 
-    // Close dialog buttons
+    // Prepare ticket data
+    const ticketData = {
+        mobileNo: mobileNo,
+        description: description,
+        priority: parseInt(priority) // Convert to integer
+        // submissionDate will be set server-side
+    };
+
+    fetch('TicketsPage.aspx/SubmitTicket', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache' // Match rechargeBalance
+        },
+        body: JSON.stringify(ticketData)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.d && JSON.parse(data.d).success) { // Match rechargeBalance parsing
+                document.getElementById('rechargeDialog').classList.remove('active');
+
+                // Store alert before any potential refresh (similar to rechargeBalance)
+                storeAlertMessage("Ticket submitted successfully!", "alert-success");
+
+       
+            } else {
+                throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting ticket:', error);
+            storeAlertMessage(error.message, "alert-danger");
+        });
+}
+
+// Updated initializeTicketsPage to use submitTicket
+function initializeTicketsPage() {
+    const rechargeBox = document.getElementById('rechargeBox');
+    if (rechargeBox) {
+        rechargeBox.addEventListener('click', function () {
+            document.getElementById('rechargeDialog').classList.add('active');
+        });
+    } else {
+        console.error('rechargeBox not found');
+    }
+
     document.querySelectorAll('.close-dialog, .cancel-btn').forEach(function (element) {
         element.addEventListener('click', function () {
             document.getElementById('rechargeDialog').classList.remove('active');
         });
     });
 
-    // Submit ticket when confirmTicket button is clicked
-    document.getElementById('confirmTicket').addEventListener('click', function () {
-        const description = document.getElementById('ticketDescription').value;
-        const priority = document.getElementById('ticketPriority').value;
-        const date = document.getElementById('ticketDate').value;
+    const confirmTicket = document.getElementById('confirmTicket');
+    if (confirmTicket) {
+        confirmTicket.addEventListener('click', function () {
+            const description = document.getElementById('ticketDescription').value;
+            const priority = document.getElementById('ticketPriority').value;
+            const mobileNo = document.getElementById('HiddenMobileNo')?.value;
 
-        // Basic validation
-        if (!description) {
-            alert('Please enter a ticket description');
-            return;
-        }
-        if (!date) {
-            alert('Please select a date');
-            return;
-        }
-
-        // Log or process the ticket data (replace with your actual submission logic)
-        console.log('Ticket Submitted:', {
-            description: description,
-            priority: priority,
-            date: date
+            // Call the new function
+            submitTicket(mobileNo, description, priority);
         });
-
-        // Close the dialog after submission
-        document.getElementById('rechargeDialog').classList.remove('active');
-    });
+    } else {
+        console.error('confirmTicket not found');
+    }
 }
 
 // Call the function when the page loads

@@ -1853,11 +1853,12 @@ label {
     background: linear-gradient(135deg, #4CAF50, #2E7D32);
     color: white;
 }
-.action-box.recharge-box {
+.action-box.recharge-box1 {
     background: linear-gradient(135deg, #2196F3, #1565C0);
     transform: translateX(35px);
     width: 500px;
     display: inline-flex;
+    color: white;
 }
 
 .transfer-box {

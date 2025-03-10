@@ -18,7 +18,7 @@
 
                 <!-- Issue a ticket Box -->
                 <div class="action-container">
-                    <div class="action-box recharge-box" id="rechargeBox">
+                    <div class="action-box recharge-box1" id="rechargeBox">
                         <div class="action-icon">
                             <i class="fas fa-ticket-alt"></i>
                         </div>
@@ -43,14 +43,10 @@
                             <div class="form-group">
                                 <label for="ticketPriority">Priority</label>
                                 <select id="ticketPriority">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
+                                    <option value="1">L1</option>
+                                    <option value="2">L2</option>
+                                    <option value="3">L3</option>
                                 </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="ticketDate">Date</label>
-                                <input type="date" id="ticketDate">
                             </div>
                         </div>
                         <div class="dialog-footer">
@@ -75,6 +71,7 @@
                 </div>
             </div>
         </div>
+  <asp:HiddenField ID="HiddenMobileNo" runat="server" />
     </form>
 </body>
 </html>
