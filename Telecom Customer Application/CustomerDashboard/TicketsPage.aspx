@@ -16,6 +16,49 @@
 
                 <h3 id="TabHeading" class="tab-heading" style="margin: 30px auto 30px auto; font-size: 34px;">Tickets</h3>
 
+                <!-- Issue a ticket Box -->
+                <div class="action-container">
+                    <div class="action-box recharge-box" id="rechargeBox">
+                        <div class="action-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="action-text">
+                            <h3>Issue a Ticket</h3>
+                            <p>Submit a new support request</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dialog-overlay" id="rechargeDialog">
+                    <div class="dialog-content">
+                        <div class="dialog-header">
+                            <h3>Issue a New Ticket</h3>
+                            <button class="close-dialog"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="dialog-body">
+                            <div class="form-group">
+                                <label for="ticketDescription">Description</label>
+                                <input type="text" id="ticketDescription" placeholder="Enter ticket description">
+                            </div>
+                            <div class="form-group">
+                                <label for="ticketPriority">Priority</label>
+                                <select id="ticketPriority">
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ticketDate">Date</label>
+                                <input type="date" id="ticketDate">
+                            </div>
+                        </div>
+                        <div class="dialog-footer">
+                            <button class="cancel-btn">Cancel</button>
+                            <button class="action-btn" id="confirmTicket">Submit Ticket</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="tickets-container">
                     <div class="ticket-list" id="TicketList" runat="server">
                         <!-- Tickets will be dynamically bound here -->

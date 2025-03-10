@@ -1279,3 +1279,47 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+function initializeTicketsPage() {
+    // Open dialog when rechargeBox (Issue a Ticket) is clicked
+    document.getElementById('rechargeBox').addEventListener('click', function () {
+        document.getElementById('rechargeDialog').classList.add('active');
+    });
+
+    // Close dialog buttons
+    document.querySelectorAll('.close-dialog, .cancel-btn').forEach(function (element) {
+        element.addEventListener('click', function () {
+            document.getElementById('rechargeDialog').classList.remove('active');
+        });
+    });
+
+    // Submit ticket when confirmTicket button is clicked
+    document.getElementById('confirmTicket').addEventListener('click', function () {
+        const description = document.getElementById('ticketDescription').value;
+        const priority = document.getElementById('ticketPriority').value;
+        const date = document.getElementById('ticketDate').value;
+
+        // Basic validation
+        if (!description) {
+            alert('Please enter a ticket description');
+            return;
+        }
+        if (!date) {
+            alert('Please select a date');
+            return;
+        }
+
+        // Log or process the ticket data (replace with your actual submission logic)
+        console.log('Ticket Submitted:', {
+            description: description,
+            priority: priority,
+            date: date
+        });
+
+        // Close the dialog after submission
+        document.getElementById('rechargeDialog').classList.remove('active');
+    });
+}
+
+// Call the function when the page loads
+document.addEventListener('DOMContentLoaded', initializeTicketsPage);

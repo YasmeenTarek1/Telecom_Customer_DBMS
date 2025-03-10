@@ -1123,6 +1123,7 @@ table tr:hover {
 
 /* Tickets Styling */
 .tickets-container {
+    margin-top:60px;
     display: flex;
     width: 100%;
     flex-direction: row;
@@ -1851,6 +1852,12 @@ label {
 .recharge-box {
     background: linear-gradient(135deg, #4CAF50, #2E7D32);
     color: white;
+}
+.action-box.recharge-box {
+    background: linear-gradient(135deg, #2196F3, #1565C0);
+    transform: translateX(35px);
+    width: 500px;
+    display: inline-flex;
 }
 
 .transfer-box {
