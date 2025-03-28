@@ -86,18 +86,22 @@ namespace Telecom_Customer_Application.CustomerDashboard
                     <h3 class='tab-heading' style='margin: 0px auto 40px auto; font-size: 26px;'>Benefits Usage</h3>
                     <div class='UsagesContainer'>";
 
+                string benefits = "";
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        benefitsHTML += GenerateUsageElement(planID, "SMS", reader.IsDBNull(4) ? 0 : reader.GetInt32(4), reader.IsDBNull(0) ? 0 : reader.GetInt32(0));
-                        benefitsHTML += GenerateUsageElement(planID, "Minutes", reader.IsDBNull(6) ? 0 : reader.GetInt32(6), reader.IsDBNull(2) ? 0 : reader.GetInt32(2));
-                        benefitsHTML += GenerateUsageElement(planID, "Data", reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.IsDBNull(1) ? 0 : reader.GetInt32(1));
-                        benefitsHTML += GenerateUsageElement(planID, "Points", reader.IsDBNull(7) ? 0 : reader.GetInt32(7), reader.IsDBNull(3) ? 0 : reader.GetInt32(3));
+                        benefits += GenerateUsageElement(planID, "SMS", reader.IsDBNull(4) ? 0 : reader.GetInt32(4), reader.IsDBNull(0) ? 0 : reader.GetInt32(0));
+                        benefits += GenerateUsageElement(planID, "Minutes", reader.IsDBNull(6) ? 0 : reader.GetInt32(6), reader.IsDBNull(2) ? 0 : reader.GetInt32(2));
+                        benefits += GenerateUsageElement(planID, "Data", reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.IsDBNull(1) ? 0 : reader.GetInt32(1));
+                        benefits += GenerateUsageElement(planID, "Points", reader.IsDBNull(7) ? 0 : reader.GetInt32(7), reader.IsDBNull(3) ? 0 : reader.GetInt32(3));
                     }
                 }
 
-                benefitsHTML += "</div></div>";
+                if (benefits.Length == 0)
+                    return "";
+                benefitsHTML += benefits + "</div></div>";
                 return benefitsHTML;
             }
         }

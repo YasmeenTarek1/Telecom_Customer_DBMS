@@ -369,7 +369,8 @@ BEGIN
     DROP PROCEDURE IF EXISTS calculateBenefitsTypePercentages;
     DROP PROCEDURE IF EXISTS GetBenefitsExpiringSoon;
     DROP PROCEDURE IF EXISTS GetCustomersWithNoActiveBenefits;
-    DROP PROCEDURE IF EXISTS GetCustomersWithBenefits;
+    DROP PROCEDURE IF EXISTS GetActiveBenefits;
+    DROP PROCEDURE IF EXISTS Delete_Benefits_Account_Plan;
     DROP PROCEDURE IF EXISTS CashbackHistory;
     DROP PROCEDURE IF EXISTS TopCustomersByCashback;
     DROP PROCEDURE IF EXISTS calculatePlanCashbackPercentage;
@@ -719,11 +720,11 @@ END;
 
 -- BenefitsPage 
 GO
-CREATE PROCEDURE GetCustomersWithBenefits
+CREATE PROCEDURE GetActiveBenefits
 AS
 BEGIN
 SELECT 
-    cp.nationalID,
+    cb.benefitID,
     cp.first_name,
     cp.last_name,
     ca.mobileNo,
@@ -753,9 +754,70 @@ FROM
     INNER JOIN Service_Plan sp
     ON pp.planID = sp.planID
     WHERE cb.status = 'active'
-    GROUP BY cp.nationalID, cp.first_name, cp.last_name, ca.mobileNo, cb.PaymentID, sp.name;
+    GROUP BY cb.benefitID, cp.first_name, cp.last_name, ca.mobileNo, cb.PaymentID, sp.name;
 END;
 
+
+-- BenefitsPage 
+GO
+--Delete all benefits offered to the input account for a certain plan
+CREATE PROCEDURE Delete_Benefits_Account_Plan
+    @mobile_num char(11),
+    @plan_id int
+AS
+BEGIN
+    BEGIN TRANSACTION;
+
+    DELETE BU
+    FROM Benefit_Usage BU
+    Inner Join Customer_Benefits CB
+    ON CB.benefitID = BU.benefitID
+    Inner Join Payment P
+    On P.paymentID = CB.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num;
+
+    DELETE CP
+    From Customer_Points CP
+    Inner Join Customer_Benefits CB
+    ON CB.benefitID = CP.benefitID
+    Inner Join Payment P
+    On P.paymentID = CB.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
+
+    DELETE CH
+    From Customer_Cashback CH
+    Inner Join Customer_Benefits CB
+    ON CB.benefitID = CH.benefitID
+    Inner Join Payment P
+    On P.paymentID = CB.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
+
+    DELETE CE
+    From Customer_Exclusive_Offers CE
+    Inner Join Customer_Benefits CB
+    ON CB.benefitID = CE.benefitID
+    Inner Join Payment P
+    On P.paymentID = CB.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
+
+    DELETE CB
+    From Customer_Benefits CB
+    Inner Join Payment P
+    On P.paymentID = CB.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
+
+    COMMIT TRANSACTION;
+END;
 
 -- CashbackPage
 GO

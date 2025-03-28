@@ -690,6 +690,28 @@ table tr:hover {
     background-color: #c0392b;
 }
 
+.delete-btn {
+    background-color: #d12e3f;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.delete-btn:hover {
+    background-color: #c82333; 
+    transform: scale(1.05); 
+}
+
+.delete-btn:active {
+    background-color: #a71d2a; 
+    transform: scale(0.98); 
+}
+
 /* Output Label */
 .output-container {
     margin-top: 10px;

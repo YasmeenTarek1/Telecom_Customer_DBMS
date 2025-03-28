@@ -54,10 +54,10 @@
                     </div>
                 </div>
 
-                <!-- Table 1: Customers With Active Benefits -->
+                <!-- Table 1: Active Benefits -->
                 <div class="table-responsive">
                     <table>
-                        <caption>Customers With Active Benefits</caption>
+                        <caption>Active Benefits</caption>
                         <tbody id="TableBody1" runat="server"></tbody>
                     </table>
                 </div>

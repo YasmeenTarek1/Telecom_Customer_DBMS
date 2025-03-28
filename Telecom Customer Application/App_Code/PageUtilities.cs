@@ -7,11 +7,12 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.UI;
 using Microsoft.SqlServer.Server;
+using System.IdentityModel.Protocols.WSTrust;
 
 public class PageUtilities
 {
     public static string connectionString = WebConfigurationManager.ConnectionStrings["TelecomDatabaseConnection"].ToString();
-    public static void ExecuteQueryWithHandling(string query, HtmlGenericControl TableBody, Control form1)
+    public static void ExecuteQueryWithHandling(string query, HtmlGenericControl TableBody, Control form1, bool showDeleteButton = false)
     {
         using (SqlConnection con = new SqlConnection(connectionString))
         {
@@ -20,7 +21,7 @@ public class PageUtilities
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     con.Open();
-                    LoadData(cmd, TableBody);
+                    LoadData(cmd, TableBody, showDeleteButton);
                 }
             }
             catch (Exception ex)
@@ -29,7 +30,7 @@ public class PageUtilities
             }
         }
     }
-    public static void LoadData(SqlCommand cmd, HtmlGenericControl tableBody)
+    public static void LoadData(SqlCommand cmd, HtmlGenericControl tableBody, bool showDeleteButton = false)
     {
         using (SqlDataReader reader = cmd.ExecuteReader())
         {
@@ -38,147 +39,138 @@ public class PageUtilities
 
             if (reader.HasRows)
             {
-                HtmlTableRow row = new HtmlTableRow();
+                HtmlTableRow headerRow = new HtmlTableRow();
 
                 // Generate headers dynamically
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    string columnName = reader.GetName(i); // Get column name
+                    string columnName = reader.GetName(i);
                     HtmlTableCell headerCell = new HtmlTableCell("th");
 
-                    // Replace "first_name" columns with "Name" in the header
                     if (columnName.Equals("first_name", StringComparison.OrdinalIgnoreCase))
                     {
                         headerCell.InnerText = "Name";
-                        row.Cells.Add(headerCell);
                     }
-                    else if (!columnName.Equals("last_name", StringComparison.OrdinalIgnoreCase)) // Skip last_name column header
+                    else if (!columnName.Equals("last_name", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Split column name by both underscore and space
                         var words = columnName.Split(new[] { '_', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                        // Capitalize first character of each word
                         columnName = string.Join(" ", words.Select(word => char.ToUpper(word[0]) + word.Substring(1)));
 
                         headerCell.InnerText = columnName;
-                        row.Cells.Add(headerCell);
                     }
+                    else
+                    {
+                        continue; // Skip last_name column
+                    }
+
+                    headerRow.Cells.Add(headerCell);
                 }
-                tableBody.Controls.Add(row);
+
+                // Add Delete Button column header
+                if (showDeleteButton)
+                {
+                    HtmlTableCell deleteHeaderCell = new HtmlTableCell("th") { InnerText = "Delete Benefit" };
+                    headerRow.Cells.Add(deleteHeaderCell);
+                }
+
+                tableBody.Controls.Add(headerRow);
 
                 // Generate rows dynamically
                 while (reader.Read())
                 {
-                    row = new HtmlTableRow();
+                    HtmlTableRow row = new HtmlTableRow();
+
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
                         HtmlTableCell cell = new HtmlTableCell();
 
-                        // Status Column
+                        // Status Column with Styling
                         if (reader.GetName(i).IndexOf("status", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             string statusValue = reader[i]?.ToString();
                             string statusClass = "";
+                            switch(statusValue.ToLower()){
+                                case "active":
+                                case "successful":
+                                case "resolved": statusClass = "status-active"; break;
+                                case "onhold":
+                                case "rejected":
+                                case "open":
+                                case "expired": statusClass = "status-onhold"; break;
+                                case "pending":
+                                case "in progress": statusClass = "status -pending"; break;
+                            };
 
-                            if (statusValue.Equals("active", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("successful", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("Resolved", StringComparison.OrdinalIgnoreCase))
-                            {
-                                statusClass = "status-active"; // green
-                            }
-                            else if (statusValue.Equals("onhold", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("rejected", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("Open", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("expired", StringComparison.OrdinalIgnoreCase))
-                            {
-                                statusClass = "status-onhold"; // red
-                            }
-                            else if (statusValue.Equals("pending", StringComparison.OrdinalIgnoreCase) || statusValue.Equals("In progress", StringComparison.OrdinalIgnoreCase))
-                            {
-                                statusClass = "status-pending"; // yellow
-                            }
+                            string formattedStatus = statusValue.Equals("onhold", StringComparison.OrdinalIgnoreCase)
+                                ? "On-Hold"
+                                : char.ToUpper(statusValue[0]) + statusValue.Substring(1);
 
-                            // Build a <span> element for the status label
-                            if (reader[i].ToString().Equals("onhold"))
-                                cell.InnerHtml = $"<span class='{statusClass}'>{"On-Hold"}</span>";
-                            else
-                                cell.InnerHtml = $"<span class='{statusClass}'>{char.ToUpper(statusValue[0]) + statusValue.Substring(1)}</span>";
+                            cell.InnerHtml = $"<span class='{statusClass}'>{formattedStatus}</span>";
                             row.Cells.Add(cell);
                         }
-                        // URL Column 
+                        // URL Column
                         else if (reader.GetName(i).Equals("URL", StringComparison.OrdinalIgnoreCase))
                         {
                             string url = reader[i]?.ToString();
-
-                            // If URL is not empty, create a clickable link
-                            if (!string.IsNullOrEmpty(url))
-                            {
-                                // Apply the clickable-link class to make it blue and clickable
-                                cell.InnerHtml = $"<a href='{url}' class='clickable-link'>{url}</a>";
-                            }
-                            else
-                            {
-                                cell.InnerText = "No URL"; // Display a placeholder if URL is empty
-                            }
+                            cell.InnerHtml = !string.IsNullOrEmpty(url)
+                                ? $"<a href='{url}' class='clickable-link'>{url}</a>"
+                                : "No URL";
                             row.Cells.Add(cell);
                         }
                         // Email Column
                         else if (reader.GetName(i).Equals("Email", StringComparison.OrdinalIgnoreCase))
                         {
                             string mail = reader[i]?.ToString();
-
-                            if (!string.IsNullOrEmpty(mail))
-                            {
-                                // Apply the clickable-link class to make it blue and clickable
-                                cell.InnerHtml = $"<a href='mailto:{mail}' class='clickable-link'>{mail}</a>";
-                            }
-                            else
-                            {
-                                cell.InnerText = "No URL"; // Display a placeholder if Mail is empty
-                            }
+                            cell.InnerHtml = !string.IsNullOrEmpty(mail)
+                                ? $"<a href='mailto:{mail}' class='clickable-link'>{mail}</a>"
+                                : "No Email";
                             row.Cells.Add(cell);
                         }
-                        // first_name Column 
+                        // first_name and last_name Combination
                         else if (reader.GetName(i).Equals("first_name", StringComparison.OrdinalIgnoreCase))
                         {
                             string firstName = reader[i]?.ToString();
-                            string lastName = string.Empty;
+                            string lastName = (i + 1 < reader.FieldCount && reader.GetName(i + 1).Equals("last_name", StringComparison.OrdinalIgnoreCase))
+                                ? reader[++i]?.ToString()
+                                : "";
 
-                            // Check if the next column is "last_name" and retrieve its value
-                            if (i + 1 < reader.FieldCount && reader.GetName(i + 1).Equals("last_name", StringComparison.OrdinalIgnoreCase))
-                            {
-                                lastName = reader[i + 1]?.ToString(); // Get the last name
-                                i++; // Skip the last name column since we've already handled it
-                            }
+                            string initials = (!string.IsNullOrEmpty(firstName) ? firstName[0].ToString() : "") +
+                                              (!string.IsNullOrEmpty(lastName) ? lastName[0].ToString() : "");
 
-                            HtmlTableCell nameCell = new HtmlTableCell();
-
-                            // Generate initials and combine with full name
-                            string initials = string.Empty;
-
-                            if (!string.IsNullOrEmpty(firstName)) initials += firstName[0];
-                            if (!string.IsNullOrEmpty(lastName)) initials += lastName[0];
-
-                            // Add initials and full name in a single cell
-                            nameCell.InnerHtml = $@"
-                                <div class='name-container'>
-                                    <div class='initials-circle'>{initials}</div>
-                                    <span class='full-name'>{firstName} {lastName}</span>
-                                </div>";
-
-                            row.Cells.Add(nameCell);
+                            cell.InnerHtml = $@"
+                            <div class='name-container'>
+                                <div class='initials-circle'>{initials}</div>
+                                <span class='full-name'>{firstName} {lastName}</span>
+                            </div>";
+                            row.Cells.Add(cell);
                         }
-                        else if (!reader.GetName(i).Equals("last_name", StringComparison.OrdinalIgnoreCase)) // Skip last_name column
+                        else if (!reader.GetName(i).Equals("last_name", StringComparison.OrdinalIgnoreCase)) // Skip last_name
                         {
                             cell.InnerText = reader[i]?.ToString();
                             row.Cells.Add(cell);
                         }
                     }
+
+                    // Add Delete Button if enabled
+                    if (showDeleteButton)
+                    {
+                        HtmlTableCell deleteCell = new HtmlTableCell();
+                        deleteCell.InnerHtml = $"<button class='delete-btn' onclick='deleteBenefit(this)'>Delete</button>";
+                        row.Cells.Add(deleteCell);
+                    }
+
                     tableBody.Controls.Add(row);
                 }
             }
-            // Displaying no data available label instead of an empty table
             else
             {
                 HtmlTableRow row = new HtmlTableRow();
-                HtmlTableCell cell = new HtmlTableCell();
-                cell.ColSpan = reader.FieldCount > 0 ? reader.FieldCount : 1;
-                cell.InnerText = "No data available";
+                HtmlTableCell cell = new HtmlTableCell
+                {
+                    ColSpan = reader.FieldCount > 0 ? reader.FieldCount : 1,
+                    InnerText = "No data available"
+                };
+
                 cell.Style.Add("text-align", "center");
                 cell.Style.Add("font-size", "16px");
                 cell.Style.Add("font-weight", "bold");
@@ -187,11 +179,13 @@ public class PageUtilities
                 cell.Style.Add("padding", "15px");
                 cell.Style.Add("border", "1px solid #f5c6cb");
                 cell.Style.Add("border-radius", "5px");
+
                 row.Cells.Add(cell);
                 tableBody.Controls.Add(row);
             }
         }
     }
+
     public static void DisplayAlert(Exception ex, Control form, string alertType = "alert-danger")
     {
         string message = ex != null ? ex.Message : "Operation completed successfully!";

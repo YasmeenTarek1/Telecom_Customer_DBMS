@@ -1354,3 +1354,40 @@ function submitTicket(mobileNo, description, priority) {
         storeAlertMessage(error.message, "alert-danger");
     });
 }
+
+function deleteBenefit(button) {
+    try {
+        if (confirm('Are you sure you want to delete this benefit?')) {
+            var row = button.closest('tr');
+
+            console.log('Delete button clicked');
+
+            var mobileNumberCell = row.querySelector('td:nth-child(3)'); 
+            var planCell = row.querySelector('td:nth-child(5)'); 
+
+            var mobileNumber = mobileNumberCell.innerText.trim();
+            var planName = planCell.innerText.trim();
+
+            var planId = 0;
+            switch (planName.toLowerCase()) {
+                case "basic plan": planId = 1; break;
+                case "standard plan": planId = 2; break;
+                case "premium plan": planId = 3; break;
+                case "unlimited plan": planId = 4; break;
+                default:
+                    console.error('Unknown plan name:', planName);
+                    alert('Error: Unknown plan type');
+                    return;
+            }
+
+            var argument = mobileNumber + "|" + planId;
+
+            console.log('Argument:', argument);
+
+            __doPostBack('DeleteBenefit', argument);
+        }
+    } catch (error) {
+        console.error('Error in deleteBenefit function:', error);
+        alert('An error occurred while trying to delete the benefit');
+    }
+}
