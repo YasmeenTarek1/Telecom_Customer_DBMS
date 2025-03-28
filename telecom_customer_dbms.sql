@@ -299,76 +299,113 @@ BEGIN
 END;
 
 GO 
-CREATE PROCEDURE dropAllTables AS -- Order must be reversed because sql will not allow you to drop a table that is refrenced by another one
+CREATE PROCEDURE dropAllTables AS -- Order must be reversed because sql will not allow to drop a table that is refrenced by another one
 BEGIN
-DROP TABLE  Customer_Cashback;
-DROP TABLE  Customer_Points;
-DROP TABLE  Customer_Exclusive_Offers;
-DROP TABLE  Benefit_Usage;
-DROP TABLE  Customer_Benefits;
-DROP TABLE  Points_Group;
-DROP TABLE  Exclusive_Offer;
-DROP TABLE  Cashback;
-DROP TABLE  Plan_Provides_Benefits;
-DROP TABLE  Voucher;
-DROP TABLE  Technical_Support_Ticket;
-DROP TABLE  Transfer_money;
-DROP TABLE  Process_Payment;
-DROP TABLE  Plan_Usage;
-DROP TABLE  Benefits;
-DROP TABLE  Subscription;
-DROP TABLE  Payment;
-DROP TABLE  Wallet;
-DROP TABLE  Service_Plan;
-DROP TABLE  Customer_Account;
-DROP TABLE  E_shop;
-DROP TABLE  Physical_Shop;
-DROP TABLE  Shop;
-DROP TABLE  Customer_profile;
+    DROP TABLE  Customer_Cashback;
+    DROP TABLE  Customer_Points;
+    DROP TABLE  Customer_Exclusive_Offers;
+    DROP TABLE  Benefit_Usage;
+    DROP TABLE  Customer_Benefits;
+    DROP TABLE  Points_Group;
+    DROP TABLE  Exclusive_Offer;
+    DROP TABLE  Cashback;
+    DROP TABLE  Plan_Provides_Benefits;
+    DROP TABLE  Voucher;
+    DROP TABLE  Technical_Support_Ticket;
+    DROP TABLE  Transfer_money;
+    DROP TABLE  Process_Payment;
+    DROP TABLE  Plan_Usage;
+    DROP TABLE  Benefits;
+    DROP TABLE  Subscription;
+    DROP TABLE  Payment;
+    DROP TABLE  Wallet;
+    DROP TABLE  Service_Plan;
+    DROP TABLE  Customer_Account;
+    DROP TABLE  E_shop;
+    DROP TABLE  Physical_Shop;
+    DROP TABLE  Shop;
+    DROP TABLE  Customer_profile;
 END;
 
 GO
 CREATE PROCEDURE dropAllProceduresFunctionsViews AS
-BEGIN 
-    DROP VIEW IF EXISTS allCustomerAccounts;
-    DROP VIEW IF EXISTS allServicePlans;
-    DROP VIEW IF EXISTS allBenefits;
+BEGIN
+    -- Drop Views
+    DROP VIEW IF EXISTS TotalCashback;
+    DROP VIEW IF EXISTS TotalPayments;
+    DROP VIEW IF EXISTS TotalPoints;
+    DROP VIEW IF EXISTS UsedPoints;
+    DROP VIEW IF EXISTS ExpiredPoints;
+    DROP VIEW IF EXISTS TotalExclusiveOffers;
+    DROP VIEW IF EXISTS ActiveExclusiveOffers;
+    DROP VIEW IF EXISTS ExpiredExclusiveOffers;
     DROP VIEW IF EXISTS AccountPayments;
-    DROP VIEW IF EXISTS allShops;
-    DROP VIEW IF EXISTS allResolvedTickets;
     DROP VIEW IF EXISTS CustomerWallet;
+    DROP VIEW IF EXISTS TransactionsHistory;
     DROP VIEW IF EXISTS E_shopVouchers;
     DROP VIEW IF EXISTS PhysicalStoreVouchers;
-    DROP VIEW IF EXISTS Num_of_cashback;
+    DROP VIEW IF EXISTS allTickets;
+
+    -- Drop Functions
+    DROP FUNCTION IF EXISTS Remaining_amount;
+    DROP FUNCTION IF EXISTS Extra_amount;
+    DROP FUNCTION IF EXISTS Wallet_MobileNo;
+    DROP FUNCTION IF EXISTS Wallet_Average_Sent;
+    DROP FUNCTION IF EXISTS Wallet_Average_Received;
+    DROP FUNCTION IF EXISTS Account_Usage_Plan;
+    DROP FUNCTION IF EXISTS AccountLoginValidation;
+    DROP FUNCTION IF EXISTS subscribe_or_renew_plan;
+
+    -- Drop Procedures
     DROP PROCEDURE IF EXISTS createAllTables;
     DROP PROCEDURE IF EXISTS dropAllTables;
-    DROP PROCEDURE IF EXISTS Account_Plan;
-    DROP PROCEDURE IF EXISTS Unsubscribed_Plans;
-    DROP PROCEDURE IF EXISTS Ticket_Account_Customer;
-    DROP PROCEDURE IF EXISTS Account_Highest_Voucher;
-    DROP PROCEDURE IF EXISTS Top_Successful_Payments;
-    DROP PROCEDURE IF EXISTS Initiate_plan_payment;
-    DROP PROCEDURE IF EXISTS Payment_wallet_cashback;
-    DROP PROCEDURE IF EXISTS Initiate_balance_payment;
-    DROP PROCEDURE IF EXISTS Redeem_voucher_points;
-    DROP PROCEDURE IF EXISTS Benefits_Account;
-    DROP PROCEDURE IF EXISTS Account_Payment_Points;
-    DROP PROCEDURE IF EXISTS Get_AllCustomerAccounts;
+    DROP PROCEDURE IF EXISTS clearAllTables;
+    DROP PROCEDURE IF EXISTS Handle_Expired_Points;
+    DROP PROCEDURE IF EXISTS allCustomerAccounts;
+    DROP PROCEDURE IF EXISTS GetSubscriptionStatistics;
     DROP PROCEDURE IF EXISTS GetSubscribersForPlan;
-    DROP FUNCTION IF EXISTS Account_Plan_date;
-    DROP FUNCTION IF EXISTS Account_Usage_Plan;
-    DROP FUNCTION IF EXISTS Account_SMS_Offers;
-    DROP FUNCTION IF EXISTS Wallet_Cashback_Amount;
-    DROP FUNCTION IF EXISTS Wallet_Transfer_Amount;
-    DROP FUNCTION IF EXISTS Wallet_MobileNo;
-    DROP FUNCTION IF EXISTS AccountLoginValidation;
-    DROP FUNCTION IF EXISTS Consumption;
-    DROP FUNCTION IF EXISTS Usage_Plan_CurrentMonth;
-    DROP FUNCTION IF EXISTS Cashback_Wallet_Customer;
-    DROP FUNCTION IF EXISTS Remaining_plan_amount;
-    DROP FUNCTION IF EXISTS Extra_plan_amount;
-    DROP FUNCTION IF EXISTS Subscribed_plans_5_Months;
-END;
+    DROP PROCEDURE IF EXISTS GetSubscriptions;
+    DROP PROCEDURE IF EXISTS calculateActiveExpiredBenefitsPercentage;
+    DROP PROCEDURE IF EXISTS calculateBenefitsTypePercentages;
+    DROP PROCEDURE IF EXISTS GetBenefitsExpiringSoon;
+    DROP PROCEDURE IF EXISTS GetCustomersWithNoActiveBenefits;
+    DROP PROCEDURE IF EXISTS GetCustomersWithBenefits;
+    DROP PROCEDURE IF EXISTS CashbackHistory;
+    DROP PROCEDURE IF EXISTS TopCustomersByCashback;
+    DROP PROCEDURE IF EXISTS calculatePlanCashbackPercentage;
+    DROP PROCEDURE IF EXISTS ActivePoints;
+    DROP PROCEDURE IF EXISTS PointsHistory;
+    DROP PROCEDURE IF EXISTS calculatePlanPointsPercentage;
+    DROP PROCEDURE IF EXISTS TopCustomersByUsedPoints;
+    DROP PROCEDURE IF EXISTS ExclusiveOffersHistory;
+    DROP PROCEDURE IF EXISTS CustomersOfferNotUsed;
+    DROP PROCEDURE IF EXISTS calculatePlanOffersPercentage;
+    DROP PROCEDURE IF EXISTS TopCustomersByOfferedSMS;
+    DROP PROCEDURE IF EXISTS TopCustomersByOfferedMinutes;
+    DROP PROCEDURE IF EXISTS TopCustomersByOfferedInternet;
+    DROP PROCEDURE IF EXISTS Wallet_Transaction_History;
+    DROP PROCEDURE IF EXISTS LoadSubscribedPlans;
+    DROP PROCEDURE IF EXISTS LoadPlanBenefits;
+    DROP PROCEDURE IF EXISTS Benefits_Plan;
+    DROP PROCEDURE IF EXISTS renew_or_subscribe_plan;
+    DROP PROCEDURE IF EXISTS Wallet_transfer;
+    DROP PROCEDURE IF EXISTS Recharge_Balance;
+    DROP PROCEDURE IF EXISTS GetCustomerWalletInfo;
+    DROP PROCEDURE IF EXISTS LoadCustomerPayments;
+    DROP PROCEDURE IF EXISTS LoadWalletTransfers;
+    DROP PROCEDURE IF EXISTS LoadAccountCashbacks;
+    DROP PROCEDURE IF EXISTS LoadAccountPlanPayments;
+    DROP PROCEDURE IF EXISTS LoadAccountBalanceRechargingPayments;
+    DROP PROCEDURE IF EXISTS Tickets_Account;
+    DROP PROCEDURE IF EXISTS Account_Active_Physical_Voucher;
+    DROP PROCEDURE IF EXISTS Account_Active_Eshop_Voucher;
+    DROP PROCEDURE IF EXISTS Account_Redeemed_Voucher;
+    DROP PROCEDURE IF EXISTS Account_Expired_Voucher;
+    DROP PROCEDURE IF EXISTS Redeem_voucher_points;
+    DROP PROCEDURE IF EXISTS Consume_Resources_With_Exclusive_Offers_And_Plans;
+    DROP PROCEDURE IF EXISTS InitializeSystem;
+END 
+
 
 GO 
 CREATE PROCEDURE clearAllTables AS
@@ -432,19 +469,6 @@ END;
 GO
 Exec createAllTables;
 
-
-GO
-CREATE VIEW allServicePlans AS  -- General Info
-SELECT *
-FROM Service_Plan;
-
-Go 
---Fetch details for all shops.
-CREATE VIEW allShops As
-Select *
-From Shop;
-
-
 GO
 CREATE PROCEDURE Handle_Expired_Points
 AS
@@ -494,6 +518,13 @@ BEGIN
     END CATCH;
 END;
 
+
+
+---------------------------- Admin Dashboard ------------------------------------
+
+
+
+-- CustomersPage 
 GO
 CREATE PROCEDURE allCustomerAccounts
 AS
@@ -522,273 +553,7 @@ BEGIN
 END;
 
 
-
--------------- Yellow part ------------------
-
-
-Go
----Fetch details for all payments along with their corresponding Accounts.
-CREATE VIEW AccountPayments AS
-SELECT paymentID, mobileNo, amount, payment_method, date_of_payment, status AS 'Payment_Status'
-FROM Payment;
-
-Go
---Fetch details for all tickets.
-CREATE VIEW allTickets As
-Select ticketID, mobileNo, Issue_description, priority_level, status AS 'Ticket_Status' 
-From Technical_Support_Ticket;
-
-Go
---Fetch details of all wallets along with their customer names.
-CREATE VIEW CustomerWallet As
-Select W.walletID, C.first_name, C.last_name, W.mobileNo, W.current_balance, W.currency, W.last_modified_date
-From  Wallet W,Customer_profile C 
-where W.nationalID = C.nationalID;
-
-Go
--- Fetch the list of all E-shops along with their redeemed vouchers's ids and values.
-CREATE VIEW E_shopVouchers As
-Select E.shopID, S.name, E.URL, E.rating ,V.voucherID AS 'Redeemed Voucher ID', V.value AS 'Redeemed Voucher Value'
-From  E_SHOP E 
-Inner join Voucher V 
-ON E.shopID = V.shopID
-Inner Join Shop S
-ON S.shopID = E.shopID;
-
-Go
---Fetch the list of all physical stores along with their redeemed vouchers's ids and values.
-CREATE VIEW PhysicalStoreVouchers As
-Select P.shopID, S.name, P.address, P.working_hours, V.voucherID AS 'Redeemed Voucher ID', V.value AS 'Redeemed Voucher Value'
-From Physical_Shop P 
-Inner join Voucher V 
-ON P.shopID = V.shopID
-Inner Join Shop S
-ON S.shopID = P.shopID;
-
-Go
---Fetch number of cashback transactions per each wallet.
-CREATE VIEW Num_of_cashback As
-Select CB.walletID, CP.first_name, CP.last_name, count(*) AS 'count of transactions', SUM(CH.amount_earned) AS 'Amount of cashback'
-From Customer_Cashback CH
-INNER JOIN Customer_Benefits CB
-ON CH.benefitID = CB.benefitID
-INNER JOIN Customer_Account CA
-ON CA.mobileNo = CB.mobileNo
-INNER JOIN Customer_profile CP
-ON CP.nationalID = CA.nationalID
-Group by CB.walletID, CP.first_name, CP.last_name;
-
-
--------------- Green part ------------------
-
-
-Go
---Retrieve the list of accounts subscribed to the input plan starting from a certain date
-CREATE FUNCTION Account_Plan_date(@sub_date date,@plan_id int)
-RETURNS TABLE
-AS
-    RETURN(
-        Select S.mobileNo AS Account_Mobile_Number, SP.planID AS Service_Plan_ID, SP.name AS Service_Plan_Name
-        From Subscription S 
-        inner join Service_Plan SP 
-        ON S.planID = SP.planID
-        Where S.subscription_date >= @sub_date AND S.planID = @Plan_id
-    );
-
-
-Go
---Retrieve the total usage of the input account on each subscribed plan from a given input date.
-CREATE FUNCTION Account_Usage_Plan(@mobile_num char(11), @start_date date)
-RETURNS TABLE
-AS
-    RETURN( 
-        Select U.planID, SUM(U.data_consumption) AS 'total data', SUM(U.minutes_used) AS 'total mins', SUM(U.SMS_sent) AS 'total SMS'
-        From Plan_Usage U 
-        Where U.mobileNo = @mobile_num AND U.start_date >= @start_date
-        Group By U.planID
-    );
-
-Go
-
-
---Delete all benefits offered to the input account for a certain plan
-CREATE PROCEDURE Benefits_Account
-    @mobile_num char(11),
-    @plan_id int
-AS
-BEGIN
-    BEGIN TRANSACTION;
-
-    DELETE CP
-    From Customer_Points CP
-    Inner Join Customer_Benefits CB
-    ON CB.benefitID = CP.benefitID
-    Inner Join Payment P
-    On P.paymentID = CB.PaymentID
-    Inner Join Process_Payment PP
-    ON PP.paymentID = P.paymentID
-    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
-
-    DELETE CH
-    From Customer_Cashback CH
-    Inner Join Customer_Benefits CB
-    ON CB.benefitID = CH.benefitID
-    Inner Join Payment P
-    On P.paymentID = CB.PaymentID
-    Inner Join Process_Payment PP
-    ON PP.paymentID = P.paymentID
-    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
-
-    DELETE CE
-    From Customer_Exclusive_Offers CE
-    Inner Join Customer_Benefits CB
-    ON CB.benefitID = CE.benefitID
-    Inner Join Payment P
-    On P.paymentID = CB.PaymentID
-    Inner Join Process_Payment PP
-    ON PP.paymentID = P.paymentID
-    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
-
-    DELETE CB
-    From Customer_Benefits CB
-    Inner Join Payment P
-    On P.paymentID = CB.PaymentID
-    Inner Join Process_Payment PP
-    ON PP.paymentID = P.paymentID
-    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
-
-    COMMIT TRANSACTION;
-END;
-
-GO
---Display all benefits offered to the input account for a certain plan
-CREATE PROCEDURE Benefits_Account_Plan
-    @mobile_num CHAR(11),
-    @plan_id INT,
-    @points_earned INT OUTPUT,
-    @cashback_earned DECIMAL(10, 2) OUTPUT,
-    @data_offered INT OUTPUT,
-    @minutes_offered INT OUTPUT,
-    @SMS_offered INT OUTPUT
-AS
-BEGIN
-    SELECT 
-        @points_earned = ISNULL(CP.points_offered, 0),
-        @cashback_earned = ISNULL(CH.amount_earned, 0),
-        @data_offered = ISNULL(CE.data_offered, 0),
-        @minutes_offered = ISNULL(CE.minutes_offered, 0),
-        @SMS_offered = ISNULL(CE.SMS_offered, 0)
-    FROM Customer_Benefits CB
-    INNER JOIN Payment P ON P.paymentID = CB.PaymentID
-    INNER JOIN Process_Payment PP ON PP.paymentID = P.paymentID
-    INNER JOIN Customer_Points CP ON CB.benefitID = CP.benefitID
-    INNER JOIN Customer_Cashback CH ON CB.benefitID = CH.benefitID
-    INNER JOIN Customer_Exclusive_Offers CE ON CB.benefitID = CE.benefitID
-    WHERE PP.planID = @plan_id AND CB.mobileNo = @mobile_num;
-END;
-
-
-GO
---Retrieve the list of gained offers of type SMS for the input account
-CREATE FUNCTION Account_SMS_Offers(@mobile_num char(11))
-RETURNS TABLE
-AS
-    RETURN( Select CE.*
-            From Customer_Exclusive_Offers CE
-            Inner Join Customer_Benefits CB
-            On CB.benefitID = CE.benefitID
-            Where CB.mobileNo = @mobile_num AND CE.SMS_offered > 0 
-          );
-
-
-Go
---Retrieve the number of accepted payments initiated by the input account during 
---the last year along with the total amount of earned points.
-CREATE PROCEDURE Account_Payment_Points
-@mobile_num char(11)
-AS
-    Select Count(P.paymentID) AS 'Total Number of Accepted Payments' , ISNULL(SUM(CP.points_offered), 0) AS 'Total Amount of Points'
-    From Payment P 
-    inner join Customer_Benefits CB
-    ON P.paymentID = CB.PaymentID
-    Inner Join Customer_Points CP
-    On CB.benefitID = CP.benefitID
-    Where P.mobileNo = @mobile_num AND P.status = 'successful' 
-    AND DATEDIFF(YEAR, P.date_of_payment, CURRENT_TIMESTAMP) <= 1;
-
-
-Go
---Retrieve the amount of cashback returned on the input wallet based on a certain plan. (all subscriptions not the latest one)
-CREATE FUNCTION Wallet_Cashback_Amount
-(@walletID int, @planID int)
-returns INT
-As
-BEGIN
-    Declare @Amount_of_cashback INT
-
-    Select @Amount_of_cashback = ISNULL(SUM(CH.amount_earned), 0)
-    From Customer_Cashback CH
-    Inner Join Customer_Benefits CB
-    ON CB.benefitID = CH.benefitID
-    Inner Join Payment P
-    On P.paymentID = CB.PaymentID
-    Inner Join Process_Payment PP
-    ON PP.paymentID = P.paymentID
-    Where PP.planID = @planID AND CB.walletID = @walletID
-
-Return @Amount_of_cashback
-END
-
-GO
-CREATE VIEW TransactionsHistory AS
-    Select t.transfer_id AS 'Transfer ID', t.walletID1 , t.walletID2, t.amount, t.transfer_date
-    FROM Transfer_money t
-
-Go
---Retrieve the average of the sent wallet transaction amounts from the input wallet within a certain duration
-CREATE FUNCTION Wallet_Average_Sent(@walletID int,@start_date date, @end_date date)
-returns Float
-AS
-BEGIN
-
-    Declare @Transaction_amount_average Float
-
-    Select @Transaction_amount_average = ISNULL(COALESCE(AVG(t.amount),0),0) from transfer_money t
-    where t.walletID1 = @walletID 
-    AND t.transfer_date BETWEEN @start_date AND @end_date
-
-    Return @Transaction_amount_average
-END;
-
-Go
---Retrieve the average of the received wallet transaction amounts by the input wallet within a certain duration
-CREATE FUNCTION Wallet_Average_Received(@walletID int,@start_date date, @end_date date)
-returns Float
-AS
-BEGIN
-
-    Declare @Transaction_amount_average Float
-
-    Select @Transaction_amount_average = ISNULL(COALESCE(AVG(t.amount), 0), 0) from transfer_money t
-    where t.walletID2 = @walletID 
-    AND t.transfer_date BETWEEN @start_date AND @end_date
-
-    Return @Transaction_amount_average
-END;
-
-GO
-CREATE PROCEDURE Wallet_Transaction_History
-@walletID int,
-@start_date date, 
-@end_date date
-AS
-    Select *
-    From Transfer_money
-    Where (walletID1 = @walletID OR walletID2 = @walletID)
-    AND transfer_date BETWEEN @start_date AND @end_date
-    Order by transfer_date DESC;
-
-
+-- CustomersPage 
 GO
 --Take mobileNo as an input, return true if this number is linked to a wallet, otherwise return false.
 CREATE FUNCTION Wallet_MobileNo
@@ -811,9 +576,579 @@ return @result
 END;
 
 
--------------- blue part ------------------
+-- PlansPage 
+GO
+CREATE PROCEDURE GetSubscriptionStatistics
+AS
+BEGIN
+    SELECT 
+        SP.name AS PlanName, 
+        CAST(COUNT(S.planID) * 100.0 / SUM(COUNT(S.planID)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM 
+        Service_Plan SP
+    LEFT JOIN 
+        Subscription S ON SP.planID = S.planID
+    GROUP BY 
+        SP.name;
+END
 
 
+-- PlansPage 
+Go
+CREATE PROCEDURE GetSubscribersForPlan
+    @PlanID INT
+AS
+BEGIN
+    SELECT 
+        c.nationalID, 
+        c.first_name,
+        c.last_name, 
+        s.mobileNo,
+        ca.account_type,
+        s.subscription_date,
+        s.status AS 'Subscription Status'
+    FROM 
+        Subscription s
+    INNER JOIN 
+        Customer_Account ca ON s.mobileNo = ca.mobileNo
+    INNER JOIN 
+        Customer_profile c ON ca.nationalID = c.nationalID
+    WHERE 
+        s.planID = @PlanID
+    ORDER BY 
+        s.subscription_date DESC;
+END
+
+
+-- PlansPage 
+GO
+CREATE PROCEDURE GetSubscriptions(
+    @FilterDate DATE,
+    @SubscriptionStatus VARCHAR(50),
+    @SelectedPlan INT
+)
+AS
+BEGIN
+    SELECT 
+        C.nationalID, 
+        C.first_name,
+        C.last_name, 
+        S.mobileNo,
+        CA.account_type,
+        S.subscription_date,
+        S.status AS 'Subscription Status'
+    FROM Customer_Profile C
+    INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
+    INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
+    INNER JOIN Service_Plan SP ON S.planID = SP.planID
+    INNER JOIN Wallet W ON W.mobileNo = CA.mobileNo
+    WHERE S.subscription_date >= @FilterDate
+        AND (SP.planID = @SelectedPlan) 
+        AND @SubscriptionStatus = 'All' OR S.status = @SubscriptionStatus;
+END;
+
+
+-- BenefitsPage 
+GO
+CREATE PROCEDURE calculateActiveExpiredBenefitsPercentage
+AS
+BEGIN
+    SELECT status, CAST(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM Customer_Benefits
+    GROUP BY status;
+END;
+
+
+-- BenefitsPage 
+Go
+CREATE PROCEDURE calculateBenefitsTypePercentages
+AS
+BEGIN
+    SELECT 
+        b.benefitID,
+        CAST(COUNT(s.mobileNo) * 100.0 / SUM(COUNT(s.mobileNo)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM Subscription s
+    INNER JOIN Plan_Provides_Benefits ppb ON s.planID = ppb.planID
+    INNER JOIN Benefits b ON ppb.benefitID = b.benefitID
+    GROUP BY b.benefitID;
+END;
+
+
+-- BenefitsPage 
+GO
+CREATE PROCEDURE GetBenefitsExpiringSoon
+AS
+BEGIN
+    SELECT cb.benefitID, P.first_name, P.last_name, cb.mobileNo, 
+        SUM(COALESCE(cpnt.points_offered, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
+        SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_used, 0)) AS remaining_SMS,
+        SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_used, 0)) AS remaining_data,
+        SUM(COALESCE(ceo.minutes_offered, 0)) - SUM(COALESCE(bu.minutes_used, 0)) AS remaining_minutes, cb.expiry_date
+    FROM Customer_Benefits cb
+    INNER JOIN Customer_Account A
+    ON A.mobileNo = cb.mobileNo
+    INNER JOIN Customer_profile P
+    ON P.nationalID = A.nationalID
+    INNER JOIN Customer_Points cpnt 
+    ON cb.benefitID = cpnt.benefitID
+    INNER JOIN Customer_Exclusive_Offers ceo 
+    ON cb.benefitID = ceo.benefitID
+    INNER JOIN Benefit_Usage bu 
+    ON cb.benefitID = bu.benefitID
+    WHERE cb.status = 'active'
+    AND cb.expiry_date BETWEEN GETDATE() AND DATEADD(DAY, 7, GETDATE())
+    GROUP BY cb.benefitID, P.first_name, P.last_name, cb.mobileNo, cb.expiry_date;
+END;
+
+
+-- BenefitsPage 
+GO
+CREATE PROCEDURE GetCustomersWithNoActiveBenefits
+AS
+BEGIN
+    SELECT A.nationalID, P.first_name, P.last_name, A.mobileNo, A.account_type, A.status
+    FROM Customer_Account A
+    INNER JOIN Customer_profile P
+    ON P.nationalID = A.nationalID
+    WHERE NOT EXISTS(
+                        SELECT 1
+                        FROM Customer_Benefits B
+                        WHERE B.status = 'active' AND A.mobileNo = B.mobileNo
+                    )
+END;
+
+
+-- BenefitsPage 
+GO
+CREATE PROCEDURE GetCustomersWithBenefits
+AS
+BEGIN
+SELECT 
+    cp.nationalID,
+    cp.first_name,
+    cp.last_name,
+    ca.mobileNo,
+    cb.PaymentID ,
+    sp.name AS 'Plan' , 
+    SUM(COALESCE(cc.amount_earned, 0)) AS awarded_cashback,
+    SUM(COALESCE(cpnt.points_offered, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
+    SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_used, 0)) AS remaining_SMS,
+    SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_used, 0)) AS remaining_data,
+    SUM(COALESCE(ceo.minutes_offered, 0)) - SUM(COALESCE(bu.minutes_used, 0)) AS remaining_minutes
+FROM 
+    Customer_profile cp
+    INNER JOIN Customer_Account ca 
+    ON cp.nationalID = ca.nationalID
+    INNER JOIN Customer_Benefits cb 
+    ON ca.mobileNo = cb.mobileNo
+    INNER JOIN Customer_Cashback cc 
+    ON cb.benefitID = cc.benefitID
+    INNER JOIN Customer_Points cpnt 
+    ON cb.benefitID = cpnt.benefitID
+    INNER JOIN Customer_Exclusive_Offers ceo 
+    ON cb.benefitID = ceo.benefitID
+    INNER JOIN Benefit_Usage bu 
+    ON cb.benefitID = bu.benefitID
+    INNER JOIN Process_Payment pp
+    ON pp.paymentID = cb.PaymentID
+    INNER JOIN Service_Plan sp
+    ON pp.planID = sp.planID
+    WHERE cb.status = 'active'
+    GROUP BY cp.nationalID, cp.first_name, cp.last_name, ca.mobileNo, cb.PaymentID, sp.name;
+END;
+
+
+-- CashbackPage
+GO
+CREATE VIEW TotalCashback As
+    SELECT SUM(CH.amount_earned) AS TotalCashbackDistributed
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB 
+    ON CH.benefitID = CB.benefitID;
+
+
+-- CashbackPage 
+GO 
+CREATE VIEW TotalPayments As
+    SELECT
+    SUM(p.amount) AS TotalPayments
+    FROM Payment p;
+
+
+-- CashbackPage 
+GO
+CREATE PROCEDURE CashbackHistory
+AS
+BEGIN
+    SELECT CH.CashbackID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Cashback Received Date',  CH.amount_earned
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    ORDER BY CB.start_date DESC; 
+END;
+
+
+-- CashbackPage 
+GO
+CREATE PROCEDURE TopCustomersByCashback
+AS
+BEGIN
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CH.amount_earned) AS 'Total Cashback Earned'
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
+    ORDER BY SUM(CH.amount_earned) DESC;
+END;
+
+
+-- CashbackPage 
+GO
+CREATE PROCEDURE calculatePlanCashbackPercentage
+AS
+BEGIN
+    SELECT sp.name AS PlanName, CAST(SUM(CH.amount_earned) * 100.0 / SUM(SUM(CH.amount_earned)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
+    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
+    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
+    GROUP BY sp.name;
+END;
+
+
+-- PointsPage 
+GO 
+CREATE VIEW TotalPoints As
+    SELECT SUM(COALESCE(pg.amount, 0)) AS 'Total Points'
+    FROM Customer_Benefits cb
+    INNER JOIN Process_Payment pp
+    ON pp.paymentID = cb.PaymentID
+    INNER JOIN Plan_Provides_Benefits pb
+    ON pp.planID = pb.planID
+    INNER JOIN Benefits b
+    ON b.benefitID = pb.benefitID
+    INNER JOIN Points_Group pg
+    ON pg.benefitID = b.benefitID;
+   
+   
+-- PointsPage 
+GO
+CREATE PROCEDURE ActivePoints
+AS
+BEGIN
+    EXEC Handle_Expired_Points;
+
+    SELECT SUM(COALESCE(points, 0)) AS 'Active Points'
+    FROM Customer_Account;
+END;
+
+
+-- PointsPage 
+GO 
+CREATE VIEW UsedPoints As   
+    SELECT SUM(COALESCE(points_used, 0)) AS 'Used Points'
+    FROM Benefit_Usage;
+
+
+-- PointsPage 
+GO
+CREATE VIEW ExpiredPoints AS
+SELECT 
+    (TP.[Total Points] - (UP.[Used Points] + AP.[Active Points])) AS 'Expired Points'
+FROM 
+    TotalPoints TP,
+    UsedPoints UP,
+    (SELECT SUM(COALESCE(points, 0)) AS 'Active Points' FROM Customer_Account) AP;
+
+
+-- PointsPage 
+GO
+CREATE PROCEDURE PointsHistory
+AS
+BEGIN
+    SELECT P.pointID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Credit Date',  P.points_offered
+    FROM Customer_Points P
+    INNER JOIN Customer_Benefits CB ON P.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    ORDER BY CB.start_date DESC; 
+END;
+
+
+-- PointsPage 
+GO
+CREATE PROCEDURE calculatePlanPointsPercentage
+AS
+BEGIN
+    SELECT sp.name AS PlanName, CAST(SUM(CP.points_offered) * 100.0 / SUM(SUM(CP.points_offered)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM Customer_Points CP
+    INNER JOIN Customer_Benefits CB ON CP.benefitID = CB.benefitID
+    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
+    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
+    GROUP BY sp.name;
+END;
+
+
+-- PointsPage 
+GO
+CREATE PROCEDURE TopCustomersByUsedPoints
+AS
+BEGIN
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(P.points_offered) AS 'Total Points Earned'
+    FROM Customer_Points P
+    INNER JOIN Customer_Benefits CB ON P.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
+    ORDER BY SUM(P.points_offered) DESC;
+END;
+
+
+-- ExclusiveOffersPage 
+GO 
+CREATE VIEW TotalExclusiveOffers As
+    SELECT COUNT(*) AS 'Total Offers'
+    FROM Customer_Exclusive_Offers CE;
+
+
+-- ExclusiveOffersPage 
+GO 
+CREATE VIEW ActiveExclusiveOffers As
+    SELECT COUNT(*) AS 'Active Offers'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB
+    ON CB.benefitID = CE.benefitID
+    WHERE CB.status = 'active';
+
+
+-- ExclusiveOffersPage 
+GO 
+CREATE VIEW ExpiredExclusiveOffers As
+    SELECT COUNT(*) AS 'Expired Offers'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB
+    ON CB.benefitID = CE.benefitID
+    WHERE CB.status = 'expired';
+
+
+-- ExclusiveOffersPage 
+GO
+CREATE PROCEDURE ExclusiveOffersHistory
+AS
+BEGIN
+    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date', CE.SMS_offered, CE.minutes_offered, CE.data_offered, CB.status
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    ORDER BY CB.start_date DESC; 
+END;
+
+
+-- ExclusiveOffersPage 
+GO
+CREATE PROCEDURE CustomersOfferNotUsed
+AS
+BEGIN
+    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date',  CE.SMS_offered, CE.minutes_offered, CE.data_offered, CB.status
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    INNER JOIN Benefit_Usage bu ON bu.benefitID = CE.benefitID
+    WHERE bu.SMS_used = 0 and bu.minutes_used = 0 and bu.data_used = 0
+    ORDER BY CB.start_date DESC; 
+END;
+
+
+-- ExclusiveOffersPage 
+GO
+CREATE PROCEDURE calculatePlanOffersPercentage
+AS
+BEGIN
+    SELECT sp.name AS PlanName, CAST(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS DECIMAL(5, 2)) AS Percentage
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
+    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
+    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
+    GROUP BY sp.name;
+END;
+
+
+-- ExclusiveOffersPage 
+GO
+CREATE PROCEDURE TopCustomersByOfferedSMS
+AS
+BEGIN
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.SMS_offered) AS 'Total SMS Earned'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
+    ORDER BY SUM(CE.SMS_offered) DESC;
+END;
+
+
+-- ExclusiveOffersPage 
+GO
+CREATE PROCEDURE TopCustomersByOfferedMinutes
+AS
+BEGIN
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.minutes_offered) AS 'Total Minutes Earned'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
+    ORDER BY SUM(CE.minutes_offered) DESC;
+END;
+
+
+-- ExclusiveOffersPage 
+GO
+CREATE PROCEDURE TopCustomersByOfferedInternet
+AS
+BEGIN
+    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.data_offered) AS 'Total Internet Earned'
+    FROM Customer_Exclusive_Offers CE
+    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
+    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
+    ORDER BY SUM(CE.data_offered) DESC;
+END;
+
+
+-- PaymentsPage 
+Go
+---Fetch details for all payments along with their corresponding Accounts.
+CREATE VIEW AccountPayments AS
+SELECT paymentID, mobileNo, amount, payment_method, date_of_payment, status AS 'Payment_Status'
+FROM Payment;
+
+
+-- WalletPage 
+Go
+--Fetch details of all wallets along with their customer names.
+CREATE VIEW CustomerWallet As
+Select W.walletID, C.first_name, C.last_name, W.mobileNo, W.current_balance, W.currency, W.last_modified_date
+From  Wallet W,Customer_profile C 
+where W.nationalID = C.nationalID;
+
+
+-- TransactionsPage 
+GO
+CREATE VIEW TransactionsHistory AS
+    Select t.transfer_id AS 'Transfer ID', t.walletID1 , t.walletID2, t.amount, t.transfer_date
+    FROM Transfer_money t
+
+
+-- TransactionsPage 
+Go
+--Retrieve the average of the sent wallet transaction amounts from the input wallet within a certain duration
+CREATE FUNCTION Wallet_Average_Sent(@walletID int,@start_date date, @end_date date)
+returns Float
+AS
+BEGIN
+
+    Declare @Transaction_amount_average Float
+
+    Select @Transaction_amount_average = ISNULL(COALESCE(AVG(t.amount),0),0) from transfer_money t
+    where t.walletID1 = @walletID 
+    AND t.transfer_date BETWEEN @start_date AND @end_date
+
+    Return @Transaction_amount_average
+END;
+
+
+-- TransactionsPage 
+Go
+--Retrieve the average of the received wallet transaction amounts by the input wallet within a certain duration
+CREATE FUNCTION Wallet_Average_Received(@walletID int,@start_date date, @end_date date)
+returns Float
+AS
+BEGIN
+
+    Declare @Transaction_amount_average Float
+
+    Select @Transaction_amount_average = ISNULL(COALESCE(AVG(t.amount), 0), 0) from transfer_money t
+    where t.walletID2 = @walletID 
+    AND t.transfer_date BETWEEN @start_date AND @end_date
+
+    Return @Transaction_amount_average
+END;
+
+
+-- TransactionsPage 
+GO
+CREATE PROCEDURE Wallet_Transaction_History
+@walletID int,
+@start_date date, 
+@end_date date
+AS
+    Select *
+    From Transfer_money
+    Where (walletID1 = @walletID OR walletID2 = @walletID)
+    AND transfer_date BETWEEN @start_date AND @end_date
+    Order by transfer_date DESC;
+
+
+-- AccountUsagePage
+Go
+--Retrieve the total usage of the input account on each subscribed plan from a given input date.
+CREATE FUNCTION Account_Usage_Plan(@mobile_num char(11), @start_date date)
+RETURNS TABLE
+AS
+    RETURN( 
+        Select U.planID, SUM(U.data_consumption) AS 'total data', SUM(U.minutes_used) AS 'total mins', SUM(U.SMS_sent) AS 'total SMS'
+        From Plan_Usage U 
+        Where U.mobileNo = @mobile_num AND U.start_date >= @start_date
+        Group By U.planID
+    );
+
+
+-- ShopsPage
+Go
+-- Fetch the list of all E-shops along with their redeemed vouchers's ids and values.
+CREATE VIEW E_shopVouchers As
+Select E.shopID, S.name, E.URL, E.rating ,V.voucherID AS 'Redeemed Voucher ID', V.value AS 'Redeemed Voucher Value'
+From  E_SHOP E 
+Inner join Voucher V 
+ON E.shopID = V.shopID
+Inner Join Shop S
+ON S.shopID = E.shopID;
+
+
+-- ShopsPage
+Go
+--Fetch the list of all physical stores along with their redeemed vouchers's ids and values.
+CREATE VIEW PhysicalStoreVouchers As
+Select P.shopID, S.name, P.address, P.working_hours, V.voucherID AS 'Redeemed Voucher ID', V.value AS 'Redeemed Voucher Value'
+From Physical_Shop P 
+Inner join Voucher V 
+ON P.shopID = V.shopID
+Inner Join Shop S
+ON S.shopID = P.shopID;
+
+
+-- TicketsPage
+Go
+--Fetch details for all tickets.
+CREATE VIEW allTickets As
+Select ticketID, mobileNo, Issue_description, priority_level, status AS 'Ticket_Status' 
+From Technical_Support_Ticket;
+
+
+
+
+----------------------------- Customer Dashboard --------------------------------------
+
+
+
+--  CustomerLogin
 GO
 --As a customer I should be able to login using my mobileNo and password.
 CREATE FUNCTION AccountLoginValidation(@mobile_num CHAR(11), @pass VARCHAR(50))
@@ -833,235 +1168,38 @@ DECLARE @Out int
 END;
 
 
+-- HomePage 
 GO
---retrieve the total SMS, Mins and Internet consumption for an input plan within a certain duration.
-CREATE FUNCTION Consumption(
-    @Plan_name VARCHAR(50),
-    @start_date DATE,
-    @end_date DATE
-)
-RETURNS TABLE
+CREATE PROCEDURE LoadSubscribedPlans
+@mobileNo CHAR(11)
 AS
-RETURN
-(
-    SELECT PU.data_consumption, PU.minutes_used, PU.SMS_sent
-    FROM Plan_Usage PU
-    INNER JOIN Service_Plan SP ON PU.planID = SP.planID
-    WHERE SP.name = @Plan_name AND 
-          PU.start_date >= @start_date AND 
-          PU.expiry_date <= @end_date
-);
+BEGIN
+SELECT sp.planID, sp.name, sp.SMS_offered, sp.minutes_offered, sp.data_offered, pu.SMS_sent, pu.minutes_used, pu.data_consumption
+                    FROM Subscription s
+                    JOIN Service_Plan sp ON s.planID = sp.planID
+                    LEFT JOIN Plan_Usage pu ON s.planID = pu.planID AND s.mobileNo = pu.mobileNo
+                    WHERE s.mobileNo = @mobileNo AND s.status <> 'expired';
+END;
 
 
+-- HomePage 
 GO
---Retrieve all offered plans that the input customer is not subscribed to.
-CREATE PROCEDURE Unsubscribed_Plans
+CREATE PROCEDURE LoadPlanBenefits
+@planID INT,
 @mobile_num CHAR(11)
 AS
-    SELECT * 
-    FROM Service_Plan  
-    EXCEPT (    SELECT s1.* 
-                FROM Service_Plan s1
-                INNER JOIN Subscription s2       
-                on s1.planId = s2.planID AND s2.mobileNo = @mobile_num
-           );
-
-
-GO
--- Retrieve the usage of all active plans for the input account in the current month.
-CREATE FUNCTION Usage_Plan_CurrentMonth(@mobile_num CHAR(11))
-RETURNS TABLE 
-AS
-RETURN
-(
-    SELECT P.data_consumption, P.minutes_used, P.SMS_sent
-    FROM Subscription S      
-    INNER JOIN Plan_Usage P 
-    ON S.mobileNo = P.mobileNo AND S.planID = P.planID
-    WHERE YEAR(P.start_date) = YEAR(CURRENT_TIMESTAMP) OR YEAR(P.expiry_date) = YEAR(CURRENT_TIMESTAMP)
-          AND MONTH(P.start_date) = MONTH(CURRENT_TIMESTAMP) OR MONTH(P.expiry_date) = MONTH(CURRENT_TIMESTAMP)
-          AND S.mobileNo = @mobile_num 
-          AND S.status = 'active'
-);
-
-
-GO
---Retrieve all cashback transactions related to the wallet of the input customer.
-CREATE FUNCTION Cashback_Wallet_Customer(@NID int)
-RETURNS TABLE 
-AS 
-RETURN (
-    SELECT CH.* 
-    FROM Customer_Cashback CH
-    Inner Join Customer_Benefits CB
-    ON CB.benefitID = CH.benefitID
-    INNER JOIN Wallet W
-    ON CB.walletID = W.walletID 
-    WHERE W.nationalID = @NID
-);
-
-
-
-GO
---Retrieve the number of technical support tickets that are NOT Resolved for each account of the input customer.
-CREATE PROCEDURE Ticket_Account_Customer
-@NID int
-AS
-    SELECT COUNT(t.ticketID) as UnresolvedTickets 
-    FROM Customer_Account c                        
-    Inner JOIN Technical_Support_Ticket t
-    ON t.mobileNo = c.mobileNo
-    where c.nationalID = @NID AND t.status <> 'Resolved'
-    Group by c.mobileNo;
-
-GO
---Retrieve technical support tickets for the input customer.
-CREATE PROCEDURE Tickets_Account
-@mobile_num char(11)
-AS
-    SELECT t.ticketID, t.Issue_description, t.priority_level, t.status, t.submissionDate
-    FROM Technical_Support_Ticket t
-    WHERE t.mobileNo = @mobile_num
-    ORDER BY CASE t.status WHEN 'Open' THEN 1 WHEN 'In Progress' THEN 2 ELSE 3 END, t.priority_level DESC;
-
-
---------- Vouchers ---------
-
-GO
---Return the non-redeemed vouchers from physical stores for the input account.
-CREATE PROCEDURE Account_Active_Physical_Voucher
-@mobile_num char(11)
-AS
-    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.expiry_date, sh.name, sh.category, s.address, s.working_hours
-    FROM Voucher v
-    INNER JOIN Shop sh
-    ON sh.shopID = v.shopID
-    INNER JOIN Physical_Shop s
-    ON s.shopID = v.shopID
-    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date >= CURRENT_TIMESTAMP
-    ORDER BY v.value DESC;
-
-GO
---Return the non-redeemed vouchers from online stores for the input account.
-CREATE PROCEDURE Account_Active_Eshop_Voucher
-@mobile_num char(11)
-AS
-    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.expiry_date, sh.name, sh.category, s.rating, s.URL
-    FROM Voucher v
-    INNER JOIN Shop sh
-    ON sh.shopID = v.shopID
-    INNER JOIN E_SHOP s
-    ON s.shopID = v.shopID
-    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date >= CURRENT_TIMESTAMP
-    ORDER BY v.value DESC;
-
-
-GO
---Return the redeemed vouchers for the input account.
-CREATE PROCEDURE Account_Redeemed_Voucher
-@mobile_num char(11)
-AS
-    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.redeem_date, s.name
-    FROM Voucher v
-    INNER JOIN Shop s
-    ON s.shopID = v.shopID
-    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NOT NULL
-    ORDER BY v.value DESC;
-                    
-GO
---Return the expired non-redeemed vouchers for the input account.
-CREATE PROCEDURE Account_Expired_Voucher
-@mobile_num char(11)
-AS
-    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.redeem_date, v.expiry_date, s.name
-    FROM Voucher v
-    INNER JOIN Shop s
-    ON s.shopID = v.shopID
-    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date < CURRENT_TIMESTAMP
-    ORDER BY v.value DESC;
-
-
--------------- purple part ------------------
-
-
-GO
---Get the remaining amount for a certain plan based on the payment initiated by the input account.
-CREATE FUNCTION Remaining_plan_amount(@mobile_num char(11), @plan_name varchar(50))
-RETURNS INT
-AS
 BEGIN
-    DECLARE @Remaining INT
-    DECLARE @plan_id INT
-    DECLARE @payment_id INT
-
-    SELECT TOP 1 @plan_id = s.planID, @payment_id = p.paymentID 
-    FROM Payment p
-    Inner Join Process_Payment process
-    ON process.paymentID = p.paymentID
-    Inner Join Service_Plan s
-    ON process.planID = s.planID
-    WHERE p.mobileNo = @mobile_num AND s.name = @plan_name
-    ORDER BY p.date_of_payment DESC; -- Ensure we are working with the latest payment
-
-
-    SET @Remaining = dbo.Remaining_amount(@payment_id,@plan_id)
-    RETURN @Remaining
+SELECT ce.SMS_offered, ce.data_offered, ce.minutes_offered,cp.points_offered, bu.SMS_used, bu.data_used, bu.minutes_used, bu.points_used
+                    FROM Customer_Benefits cb
+                    INNER JOIN Customer_Points cp ON cp.benefitID = cb.benefitID
+                    INNER JOIN Customer_Exclusive_Offers ce ON ce.benefitID = cb.benefitID
+                    INNER JOIN Benefit_Usage bu ON bu.benefitID = cb.benefitID
+                    INNER JOIN Process_Payment p ON p.paymentID = cb.PaymentID
+                    WHERE cb.mobileNo = @mobile_num AND p.planID = @planID;
 END;
 
 
-GO
---Get the extra amount from a payment initiated by the input account for a certain plan.
-CREATE FUNCTION Extra_plan_amount(@mobile_num char(11), @plan_name varchar(50))
-RETURNS INT
-AS
-BEGIN
-    DECLARE @Extra INT
-    DECLARE @plan_id INT
-    DECLARE @payment_id INT
-
-    SELECT TOP 1 @plan_id = s.planID, @payment_id = p.paymentID 
-    FROM Payment p
-    Inner Join Process_Payment process
-    on process.paymentID = p.paymentID
-    Inner Join Service_Plan s
-    on  process.planID = s.planID
-    WHERE p.mobileNo = @mobile_num AND s.name = @plan_name
-    ORDER BY p.date_of_payment DESC; -- Ensure we are working with the latest payment
-
-    SET @Extra = dbo.Extra_amount(@payment_id,@plan_id)
-    RETURN @Extra
-END;
-
-
-GO
---Retrieve the top 10 successful payments with highest value for the input account.
-CREATE PROCEDURE Top_Successful_Payments
-@mobile_num char(11)
-AS
-    SELECT TOP 10 *
-    FROM Payment 
-    WHERE mobileNo = @mobile_num AND status = 'successful'
-    ORDER BY amount DESC;
-
-
-GO
---Retrieve all service plans the input account subscribed to in the past 5 months
-CREATE FUNCTION Subscribed_plans_5_Months(@mobile_num char(11))
-RETURNS TABLE 
-AS 
-RETURN (
-        SELECT * 
-        FROM Service_Plan
-        WHERE EXISTS (
-                        SELECT s.planID
-                        FROM Subscription s 
-                        WHERE s.mobileNo = @mobile_num 
-                        AND DATEDIFF(MONTH, s.subscription_date, CURRENT_TIMESTAMP) <= 5 
-                        AND Service_Plan.planID = s.planID
-                    )
-       );
-
-
+-- PlansPage 
 GO
 --check whether the customer will subscribe for the first time or renew a certain plan
 CREATE FUNCTION subscribe_or_renew_plan(@mobile_num char(11), @plan_id INT)
@@ -1076,6 +1214,7 @@ BEGIN
 END;    
 
 
+-- PlansPage 
 GO
 --Retrieve the benefits given by this plan
 CREATE PROCEDURE Benefits_Plan
@@ -1107,7 +1246,7 @@ BEGIN
 END;
 
 
-
+-- PlansPage 
 GO
 -- Procedure to handle plan renewal or subscription for a customer
 CREATE PROCEDURE renew_or_subscribe_plan
@@ -1260,6 +1399,8 @@ BEGIN
     END CATCH
 END;
 
+
+-- WalletPage 
 GO
 --Execute a transfer from wallet to wallet
 CREATE PROCEDURE Wallet_transfer
@@ -1302,6 +1443,7 @@ BEGIN
 END;
 
 
+-- WalletPage 
 GO
 --Initiate an accepted payment for the input account for balance recharge.
 CREATE PROCEDURE Recharge_Balance
@@ -1328,6 +1470,212 @@ BEGIN;
     END CATCH;
 END;
 
+
+-- WalletPage 
+GO
+CREATE PROCEDURE GetCustomerWalletInfo
+    @mobileNo CHAR(11)
+AS
+BEGIN
+    SELECT cp.first_name, cp.last_name, ca.mobileNo
+    FROM Customer_profile cp
+    INNER JOIN Customer_Account ca ON cp.nationalID = ca.nationalID
+    WHERE ca.mobileNo = @mobileNo;
+END
+
+
+-- WalletPage 
+GO
+CREATE PROCEDURE LoadCustomerPayments
+@mobile_num CHAR(11)
+AS
+BEGIN
+SELECT 
+    p.paymentID,
+    p.amount,
+    p.date_of_payment,
+    p.payment_method,
+    p.status,
+    p.mobileNo
+FROM Payment p
+WHERE p.mobileNo = @mobile_num
+ORDER BY 
+    CASE 
+        WHEN p.status = 'successful' THEN 1
+        WHEN p.status = 'pending' THEN 2
+        ELSE 3
+    END;
+END;
+
+
+-- WalletPage 
+GO
+CREATE PROCEDURE LoadWalletTransfers
+@mobile_num CHAR(11)
+AS
+BEGIN
+-- Sent Transfers (user is walletID1)
+    SELECT 
+        'Sent' AS transfer_type,
+        cp.first_name,
+        cp.last_name,
+        w1.mobileNo AS mobile_Number,
+        CONCAT(tm.amount, ' egp') AS 'Amount',
+        tm.transfer_date
+    FROM Transfer_money tm
+    JOIN Wallet w1 ON tm.walletID1 = w1.walletID
+    JOIN Wallet w2 ON tm.walletID2 = w2.walletID
+    JOIN Customer_Account ca2 ON w2.mobileNo = ca2.mobileNo
+    JOIN Customer_Profile cp ON ca2.nationalID = cp.nationalID
+    WHERE w1.mobileNo = @mobile_num
+
+    UNION
+
+    -- Received Transfers (user is walletID2)
+    SELECT 
+        'Received' AS transfer_type,
+        cp.first_name,
+        cp.last_name,
+        w1.mobileNo AS mobile_Number,
+        CONCAT(tm.amount, ' egp') AS 'Amount',
+        tm.transfer_date
+    FROM Transfer_money tm
+    JOIN Wallet w1 ON tm.walletID1 = w1.walletID
+    JOIN Wallet w2 ON tm.walletID2 = w2.walletID
+    JOIN Customer_Account ca1 ON w1.mobileNo = ca1.mobileNo
+    JOIN Customer_Profile cp ON ca1.nationalID = cp.nationalID
+    WHERE w2.mobileNo = @mobile_num
+
+    ORDER BY transfer_date DESC;
+END;
+
+
+-- WalletPage 
+GO
+CREATE PROCEDURE LoadAccountCashbacks
+@mobile_num CHAR(11)
+AS
+BEGIN
+    
+    SELECT CONCAT(CH.amount_earned, ' egp') AS 'Cashback Amount', SP.name AS 'Plan Name', CONCAT(SP.price, ' egp') AS 'Plan Price', CONCAT(CH.cashback_percentage, '%') AS 'Cashback Percentage', CB.start_date AS 'Credit Date'
+    FROM Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB
+    ON CB.benefitID = CH.benefitID
+    INNER JOIN Process_Payment PP
+    ON PP.paymentID = CB.PaymentID
+    INNER JOIN Service_Plan SP
+    ON SP.planID = PP.planID
+    WHERE CB.mobileNo = @mobile_num;
+END;
+
+
+-- WalletPage 
+GO
+CREATE PROCEDURE LoadAccountPlanPayments
+@mobile_num CHAR(11)
+AS
+BEGIN
+
+    -- Plan Renewals/ Subscriptions
+    SELECT CONCAT(P.amount, ' egp') AS 'Paid Amount' , CONCAT(PP.remaining_balance, ' egp') AS 'Due Amount', SP.name AS 'Plan Name', CONCAT(SP.price, ' egp') AS 'Amount To Pay', P.payment_method, P.date_of_payment, P.status
+    FROM Payment P
+    INNER JOIN Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    INNER JOIN Service_Plan SP
+    ON PP.planID = SP.planID
+    WHERE P.mobileNo = @mobile_num
+    ORDER BY date_of_payment DESC;
+END;
+
+
+-- WalletPage 
+GO
+CREATE PROCEDURE LoadAccountBalanceRechargingPayments
+@mobile_num CHAR(11)
+AS
+BEGIN
+
+    -- Balance Recharging
+    SELECT CONCAT(P.amount, ' egp') AS 'Paid Amount' , P.payment_method, P.date_of_payment, P.status
+    FROM Payment P
+    WHERE P.mobileNo = @mobile_num AND (P.payment_method = 'credit' OR p.payment_method = 'cash')
+    ORDER BY date_of_payment DESC;
+END;
+
+
+-- TicketsPage 
+GO
+--Retrieve technical support tickets for the input customer.
+CREATE PROCEDURE Tickets_Account
+@mobile_num char(11)
+AS
+    SELECT t.ticketID, t.Issue_description, t.priority_level, t.status, t.submissionDate
+    FROM Technical_Support_Ticket t
+    WHERE t.mobileNo = @mobile_num
+    ORDER BY CASE t.status WHEN 'Open' THEN 1 WHEN 'In Progress' THEN 2 ELSE 3 END, t.priority_level DESC;
+
+
+-- VouchersPage 
+GO
+--Return the non-redeemed vouchers from physical stores for the input account.
+CREATE PROCEDURE Account_Active_Physical_Voucher
+@mobile_num char(11)
+AS
+    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.expiry_date, sh.name, sh.category, s.address, s.working_hours
+    FROM Voucher v
+    INNER JOIN Shop sh
+    ON sh.shopID = v.shopID
+    INNER JOIN Physical_Shop s
+    ON s.shopID = v.shopID
+    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date >= CURRENT_TIMESTAMP
+    ORDER BY v.value DESC;
+
+
+-- VouchersPage 
+GO
+--Return the non-redeemed vouchers from online stores for the input account.
+CREATE PROCEDURE Account_Active_Eshop_Voucher
+@mobile_num char(11)
+AS
+    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.expiry_date, sh.name, sh.category, s.rating, s.URL
+    FROM Voucher v
+    INNER JOIN Shop sh
+    ON sh.shopID = v.shopID
+    INNER JOIN E_SHOP s
+    ON s.shopID = v.shopID
+    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date >= CURRENT_TIMESTAMP
+    ORDER BY v.value DESC;
+
+
+-- VouchersPage
+GO
+--Return the redeemed vouchers for the input account.
+CREATE PROCEDURE Account_Redeemed_Voucher
+@mobile_num char(11)
+AS
+    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.redeem_date, s.name
+    FROM Voucher v
+    INNER JOIN Shop s
+    ON s.shopID = v.shopID
+    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NOT NULL
+    ORDER BY v.value DESC;
+    
+    
+-- VouchersPage                 
+GO
+--Return the expired non-redeemed vouchers for the input account.
+CREATE PROCEDURE Account_Expired_Voucher
+@mobile_num char(11)
+AS
+    SELECT v.voucherID, v.points AS 'Required Points', v.value AS 'Cash', v.redeem_date, v.expiry_date, s.name
+    FROM Voucher v
+    INNER JOIN Shop s
+    ON s.shopID = v.shopID
+    WHERE v.mobileNo = @mobile_num AND v.redeem_date IS NULL AND v.expiry_date < CURRENT_TIMESTAMP
+    ORDER BY v.value DESC;
+
+
+-- VouchersPage
 GO
 CREATE PROCEDURE Redeem_voucher_points
     @mobile_num CHAR(11),
@@ -1448,6 +1796,7 @@ BEGIN
 END;
 
 
+-- ConsumePage 
 GO
 CREATE PROCEDURE Consume_Resources_With_Exclusive_Offers_And_Plans
     @mobile_num CHAR(11),
@@ -1625,588 +1974,6 @@ BEGIN
     END CATCH;
 END;
 
-Go
-CREATE PROCEDURE GetSubscribersForPlan
-    @PlanID INT
-AS
-BEGIN
-    SELECT 
-        c.nationalID, 
-        c.first_name,
-        c.last_name, 
-        s.mobileNo,
-        ca.account_type,
-        s.subscription_date,
-        s.status AS 'Subscription Status'
-    FROM 
-        Subscription s
-    INNER JOIN 
-        Customer_Account ca ON s.mobileNo = ca.mobileNo
-    INNER JOIN 
-        Customer_profile c ON ca.nationalID = c.nationalID
-    WHERE 
-        s.planID = @PlanID
-    ORDER BY 
-        s.subscription_date DESC;
-END
-
-GO
-CREATE PROCEDURE calculateActiveExpiredBenefitsPercentage
-AS
-BEGIN
-    SELECT status, CAST(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS DECIMAL(5, 2)) AS Percentage
-    FROM Customer_Benefits
-    GROUP BY status;
-END;
-
-Go
-CREATE PROCEDURE calculateBenefitsTypePercentages
-AS
-BEGIN
-    SELECT 
-        b.benefitID,
-        CAST(COUNT(s.mobileNo) * 100.0 / SUM(COUNT(s.mobileNo)) OVER () AS DECIMAL(5, 2)) AS Percentage
-    FROM Subscription s
-    INNER JOIN Plan_Provides_Benefits ppb ON s.planID = ppb.planID
-    INNER JOIN Benefits b ON ppb.benefitID = b.benefitID
-    GROUP BY b.benefitID;
-END;
-
-GO
-CREATE PROCEDURE GetBenefitsExpiringSoon
-AS
-BEGIN
-    SELECT cb.benefitID, P.first_name, P.last_name, cb.mobileNo, 
-        SUM(COALESCE(cpnt.points_offered, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
-        SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_used, 0)) AS remaining_SMS,
-        SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_used, 0)) AS remaining_data,
-        SUM(COALESCE(ceo.minutes_offered, 0)) - SUM(COALESCE(bu.minutes_used, 0)) AS remaining_minutes, cb.expiry_date
-    FROM Customer_Benefits cb
-    INNER JOIN Customer_Account A
-    ON A.mobileNo = cb.mobileNo
-    INNER JOIN Customer_profile P
-    ON P.nationalID = A.nationalID
-    INNER JOIN Customer_Points cpnt 
-    ON cb.benefitID = cpnt.benefitID
-    INNER JOIN Customer_Exclusive_Offers ceo 
-    ON cb.benefitID = ceo.benefitID
-    INNER JOIN Benefit_Usage bu 
-    ON cb.benefitID = bu.benefitID
-    WHERE cb.status = 'active'
-    AND cb.expiry_date BETWEEN GETDATE() AND DATEADD(DAY, 7, GETDATE())
-    GROUP BY cb.benefitID, P.first_name, P.last_name, cb.mobileNo, cb.expiry_date;
-END;
-
-GO
-CREATE PROCEDURE GetCustomersWithNoActiveBenefits
-AS
-BEGIN
-    SELECT A.nationalID, P.first_name, P.last_name, A.mobileNo, A.account_type, A.status
-    FROM Customer_Account A
-    INNER JOIN Customer_profile P
-    ON P.nationalID = A.nationalID
-    WHERE NOT EXISTS(
-                        SELECT 1
-                        FROM Customer_Benefits B
-                        WHERE B.status = 'active' AND A.mobileNo = B.mobileNo
-                    )
-END;
-
-GO
-CREATE PROCEDURE GetCustomersWithBenefits
-AS
-BEGIN
-SELECT 
-    cp.nationalID,
-    cp.first_name,
-    cp.last_name,
-    ca.mobileNo,
-    cb.PaymentID ,
-    sp.name AS 'Plan' , 
-    SUM(COALESCE(cc.amount_earned, 0)) AS awarded_cashback,
-    SUM(COALESCE(cpnt.points_offered, 0)) - SUM(COALESCE(bu.points_used, 0)) AS remaining_points,
-    SUM(COALESCE(ceo.SMS_offered, 0)) - SUM(COALESCE(bu.SMS_used, 0)) AS remaining_SMS,
-    SUM(COALESCE(ceo.data_offered, 0)) - SUM(COALESCE(bu.data_used, 0)) AS remaining_data,
-    SUM(COALESCE(ceo.minutes_offered, 0)) - SUM(COALESCE(bu.minutes_used, 0)) AS remaining_minutes
-FROM 
-    Customer_profile cp
-    INNER JOIN Customer_Account ca 
-    ON cp.nationalID = ca.nationalID
-    INNER JOIN Customer_Benefits cb 
-    ON ca.mobileNo = cb.mobileNo
-    INNER JOIN Customer_Cashback cc 
-    ON cb.benefitID = cc.benefitID
-    INNER JOIN Customer_Points cpnt 
-    ON cb.benefitID = cpnt.benefitID
-    INNER JOIN Customer_Exclusive_Offers ceo 
-    ON cb.benefitID = ceo.benefitID
-    INNER JOIN Benefit_Usage bu 
-    ON cb.benefitID = bu.benefitID
-    INNER JOIN Process_Payment pp
-    ON pp.paymentID = cb.PaymentID
-    INNER JOIN Service_Plan sp
-    ON pp.planID = sp.planID
-    WHERE cb.status = 'active'
-    GROUP BY cp.nationalID, cp.first_name, cp.last_name, ca.mobileNo, cb.PaymentID, sp.name;
-END;
-
-GO
-CREATE PROCEDURE GetSubscriptionStatistics
-AS
-BEGIN
-    SELECT 
-        SP.name AS PlanName, 
-        CAST(COUNT(S.planID) * 100.0 / SUM(COUNT(S.planID)) OVER () AS DECIMAL(5, 2)) AS Percentage
-    FROM 
-        Service_Plan SP
-    LEFT JOIN 
-        Subscription S ON SP.planID = S.planID
-    GROUP BY 
-        SP.name;
-END
-
-GO
-CREATE PROCEDURE GetSubscriptions(
-    @FilterDate DATE,
-    @SubscriptionStatus VARCHAR(50),
-    @SelectedPlan INT
-)
-AS
-BEGIN
-   IF @SubscriptionStatus = 'All'
-    BEGIN
-        SELECT 
-            C.nationalID,
-            C.first_name,
-            C.last_name,
-            C.email,
-            C.address,
-            C.date_of_birth,
-            CA.mobileNo,
-            CA.account_type,
-            CA.start_date,
-            CA.status,
-            W.current_balance,
-            SP.planID,
-            SP.name AS PlanName,
-            S.subscription_date,
-            S.status AS SubscriptionStatus
-        FROM Customer_Profile C
-        INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
-        INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
-        INNER JOIN Service_Plan SP ON S.planID = SP.planID
-        INNER JOIN Wallet W ON W.mobileNo = CA.mobileNo
-        WHERE S.subscription_date >= @FilterDate
-          AND (SP.planID = @SelectedPlan);
-    END
-    ELSE
-    BEGIN
-        SELECT 
-            C.nationalID,
-            C.first_name,
-            C.last_name,
-            C.email,
-            C.address,
-            C.date_of_birth,
-            CA.mobileNo,
-            CA.account_type,
-            CA.start_date,
-            CA.status,
-            W.current_balance,
-            SP.planID,
-            SP.name AS PlanName,
-            S.subscription_date,
-            S.status AS SubscriptionStatus
-        FROM Customer_Profile C
-        INNER JOIN Customer_Account CA ON C.nationalID = CA.nationalID
-        INNER JOIN Subscription S ON CA.mobileNo = S.mobileNo
-        INNER JOIN Service_Plan SP ON S.planID = SP.planID
-        INNER JOIN Wallet W ON W.mobileNo = CA.mobileNo
-        WHERE S.subscription_date >= @FilterDate
-          AND S.status = @SubscriptionStatus
-          AND (SP.planID = @SelectedPlan);
-    END
-END;
-
-
-GO
-CREATE VIEW TotalCashback As
-    SELECT SUM(CH.amount_earned) AS TotalCashbackDistributed
-    FROM Customer_Cashback CH
-    INNER JOIN Customer_Benefits CB 
-    ON CH.benefitID = CB.benefitID;
-
-GO 
-CREATE VIEW TotalPayments As
-    SELECT
-    SUM(p.amount) AS TotalPayments
-    FROM Payment p;
-
-GO
-CREATE PROCEDURE CashbackHistory
-AS
-BEGIN
-    SELECT CH.CashbackID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Cashback Received Date',  CH.amount_earned
-    FROM Customer_Cashback CH
-    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    ORDER BY CB.start_date DESC; 
-END;
-
-GO
-CREATE PROCEDURE TopCustomersByCashback
-AS
-BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CH.amount_earned) AS 'Total Cashback Earned'
-    FROM Customer_Cashback CH
-    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(CH.amount_earned) DESC;
-END;
-
-GO
-CREATE PROCEDURE calculatePlanCashbackPercentage
-AS
-BEGIN
-    SELECT sp.name AS PlanName, CAST(SUM(CH.amount_earned) * 100.0 / SUM(SUM(CH.amount_earned)) OVER () AS DECIMAL(5, 2)) AS Percentage
-    FROM Customer_Cashback CH
-    INNER JOIN Customer_Benefits CB ON CH.benefitID = CB.benefitID
-    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
-    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
-    GROUP BY sp.name;
-END;
-
-
-
-GO 
-CREATE VIEW TotalPoints As
-    SELECT SUM(COALESCE(pg.amount, 0)) AS 'Total Points'
-    FROM Customer_Benefits cb
-    INNER JOIN Process_Payment pp
-    ON pp.paymentID = cb.PaymentID
-    INNER JOIN Plan_Provides_Benefits pb
-    ON pp.planID = pb.planID
-    INNER JOIN Benefits b
-    ON b.benefitID = pb.benefitID
-    INNER JOIN Points_Group pg
-    ON pg.benefitID = b.benefitID;
-    
-GO
-CREATE PROCEDURE ActivePoints
-AS
-BEGIN
-    EXEC Handle_Expired_Points;
-
-    SELECT SUM(COALESCE(points, 0)) AS 'Active Points'
-    FROM Customer_Account;
-END;
-
-GO 
-CREATE VIEW UsedPoints As   
-    SELECT SUM(COALESCE(points_used, 0)) AS 'Used Points'
-    FROM Benefit_Usage;
-
-GO
-CREATE VIEW ExpiredPoints AS
-SELECT 
-    (TP.[Total Points] - (UP.[Used Points] + AP.[Active Points])) AS 'Expired Points'
-FROM 
-    TotalPoints TP,
-    UsedPoints UP,
-    (SELECT SUM(COALESCE(points, 0)) AS 'Active Points' FROM Customer_Account) AP;
-
-GO
-CREATE PROCEDURE PointsHistory
-AS
-BEGIN
-    SELECT P.pointID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Credit Date',  P.points_offered
-    FROM Customer_Points P
-    INNER JOIN Customer_Benefits CB ON P.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    ORDER BY CB.start_date DESC; 
-END;
-
-GO
-CREATE PROCEDURE calculatePlanPointsPercentage
-AS
-BEGIN
-    SELECT sp.name AS PlanName, CAST(SUM(CP.points_offered) * 100.0 / SUM(SUM(CP.points_offered)) OVER () AS DECIMAL(5, 2)) AS Percentage
-    FROM Customer_Points CP
-    INNER JOIN Customer_Benefits CB ON CP.benefitID = CB.benefitID
-    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
-    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
-    GROUP BY sp.name;
-END;
-
-GO
-CREATE PROCEDURE TopCustomersByUsedPoints
-AS
-BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, SUM(P.points_offered) AS 'Total Points Earned'
-    FROM Customer_Points P
-    INNER JOIN Customer_Benefits CB ON P.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(P.points_offered) DESC;
-END;
-
-
-
-
-GO 
-CREATE VIEW TotalExclusiveOffers As
-    SELECT COUNT(*) AS 'Total Offers'
-    FROM Customer_Exclusive_Offers CE;
-
-GO 
-CREATE VIEW ActiveExclusiveOffers As
-    SELECT COUNT(*) AS 'Active Offers'
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB
-    ON CB.benefitID = CE.benefitID
-    WHERE CB.status = 'active';
-
-GO 
-CREATE VIEW ExpiredExclusiveOffers As
-    SELECT COUNT(*) AS 'Expired Offers'
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB
-    ON CB.benefitID = CE.benefitID
-    WHERE CB.status = 'expired';
-
-GO
-CREATE PROCEDURE ExclusiveOffersHistory
-AS
-BEGIN
-    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date', CE.SMS_offered, CE.minutes_offered, CE.data_offered, CB.status
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    ORDER BY CB.start_date DESC; 
-END;
-
-GO
-CREATE PROCEDURE CustomersOfferNotUsed
-AS
-BEGIN
-    SELECT CE.offerID, CP.first_name, CP.last_name, CB.mobileNo, CB.start_date AS 'Start Date',  CE.SMS_offered, CE.minutes_offered, CE.data_offered, CB.status
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    INNER JOIN Benefit_Usage bu ON bu.benefitID = CE.benefitID
-    WHERE bu.SMS_used = 0 and bu.minutes_used = 0 and bu.data_used = 0
-    ORDER BY CB.start_date DESC; 
-END;
-
-GO
-CREATE PROCEDURE calculatePlanOffersPercentage
-AS
-BEGIN
-    SELECT sp.name AS PlanName, CAST(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS DECIMAL(5, 2)) AS Percentage
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
-    INNER JOIN Process_Payment pp ON CB.PaymentID = pp.paymentID
-    INNER JOIN Service_Plan sp ON sp.planID = pp.planID
-    GROUP BY sp.name;
-END;
-
-GO
-CREATE PROCEDURE TopCustomersByOfferedSMS
-AS
-BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.SMS_offered) AS 'Total SMS Earned'
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(CE.SMS_offered) DESC;
-END;
-
-GO
-CREATE PROCEDURE TopCustomersByOfferedMinutes
-AS
-BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.minutes_offered) AS 'Total Minutes Earned'
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(CE.minutes_offered) DESC;
-END;
-
-GO
-CREATE PROCEDURE TopCustomersByOfferedInternet
-AS
-BEGIN
-    SELECT TOP 5 CP.first_name, CP.last_name, SUM(CE.data_offered) AS 'Total Internet Earned'
-    FROM Customer_Exclusive_Offers CE
-    INNER JOIN Customer_Benefits CB ON CE.benefitID = CB.benefitID
-    INNER JOIN Customer_Account CA ON CA.mobileNo = CB.mobileNo
-    INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
-    GROUP BY CP.first_name, CP.last_name, CB.mobileNo
-    ORDER BY SUM(CE.data_offered) DESC;
-END;
-
-GO
-CREATE PROCEDURE LoadSubscribedPlans
-@mobileNo CHAR(11)
-AS
-BEGIN
-SELECT sp.planID, sp.name, sp.SMS_offered, sp.minutes_offered, sp.data_offered, pu.SMS_sent, pu.minutes_used, pu.data_consumption
-                    FROM Subscription s
-                    JOIN Service_Plan sp ON s.planID = sp.planID
-                    LEFT JOIN Plan_Usage pu ON s.planID = pu.planID AND s.mobileNo = pu.mobileNo
-                    WHERE s.mobileNo = @mobileNo AND s.status <> 'expired';
-END;
-
-
-GO
-CREATE PROCEDURE LoadPlanBenefits
-@planID INT,
-@mobile_num CHAR(11)
-AS
-BEGIN
-SELECT ce.SMS_offered, ce.data_offered, ce.minutes_offered,cp.points_offered, bu.SMS_used, bu.data_used, bu.minutes_used, bu.points_used
-                    FROM Customer_Benefits cb
-                    INNER JOIN Customer_Points cp ON cp.benefitID = cb.benefitID
-                    INNER JOIN Customer_Exclusive_Offers ce ON ce.benefitID = cb.benefitID
-                    INNER JOIN Benefit_Usage bu ON bu.benefitID = cb.benefitID
-                    INNER JOIN Process_Payment p ON p.paymentID = cb.PaymentID
-                    WHERE cb.mobileNo = @mobile_num AND p.planID = @planID;
-END;
-
-
-GO
-CREATE PROCEDURE GetCustomerWalletInfo
-    @mobileNo CHAR(11)
-AS
-BEGIN
-    SELECT cp.first_name, cp.last_name, ca.mobileNo
-    FROM Customer_profile cp
-    INNER JOIN Customer_Account ca ON cp.nationalID = ca.nationalID
-    WHERE ca.mobileNo = @mobileNo;
-END
-
-
-
-GO
-CREATE PROCEDURE LoadCustomerPayments
-@mobile_num CHAR(11)
-AS
-BEGIN
-SELECT 
-    p.paymentID,
-    p.amount,
-    p.date_of_payment,
-    p.payment_method,
-    p.status,
-    p.mobileNo
-FROM Payment p
-WHERE p.mobileNo = @mobile_num
-ORDER BY 
-    CASE 
-        WHEN p.status = 'successful' THEN 1
-        WHEN p.status = 'pending' THEN 2
-        ELSE 3
-    END;
-END;
-
-GO
-CREATE PROCEDURE LoadWalletTransfers
-@mobile_num CHAR(11)
-AS
-BEGIN
--- Sent Transfers (user is walletID1)
-    SELECT 
-        'Sent' AS transfer_type,
-        cp.first_name,
-        cp.last_name,
-        w1.mobileNo AS mobile_Number,
-        CONCAT(tm.amount, ' egp') AS 'Amount',
-        tm.transfer_date
-    FROM Transfer_money tm
-    JOIN Wallet w1 ON tm.walletID1 = w1.walletID
-    JOIN Wallet w2 ON tm.walletID2 = w2.walletID
-    JOIN Customer_Account ca2 ON w2.mobileNo = ca2.mobileNo
-    JOIN Customer_Profile cp ON ca2.nationalID = cp.nationalID
-    WHERE w1.mobileNo = @mobile_num
-
-    UNION
-
-    -- Received Transfers (user is walletID2)
-    SELECT 
-        'Received' AS transfer_type,
-        cp.first_name,
-        cp.last_name,
-        w1.mobileNo AS mobile_Number,
-        CONCAT(tm.amount, ' egp') AS 'Amount',
-        tm.transfer_date
-    FROM Transfer_money tm
-    JOIN Wallet w1 ON tm.walletID1 = w1.walletID
-    JOIN Wallet w2 ON tm.walletID2 = w2.walletID
-    JOIN Customer_Account ca1 ON w1.mobileNo = ca1.mobileNo
-    JOIN Customer_Profile cp ON ca1.nationalID = cp.nationalID
-    WHERE w2.mobileNo = @mobile_num
-
-    ORDER BY transfer_date DESC;
-END;
-
-GO
-CREATE PROCEDURE LoadAccountCashbacks
-@mobile_num CHAR(11)
-AS
-BEGIN
-    
-    SELECT CONCAT(CH.amount_earned, ' egp') AS 'Cashback Amount', SP.name AS 'Plan Name', CONCAT(SP.price, ' egp') AS 'Plan Price', CONCAT(CH.cashback_percentage, '%') AS 'Cashback Percentage', CB.start_date AS 'Credit Date'
-    FROM Customer_Cashback CH
-    INNER JOIN Customer_Benefits CB
-    ON CB.benefitID = CH.benefitID
-    INNER JOIN Process_Payment PP
-    ON PP.paymentID = CB.PaymentID
-    INNER JOIN Service_Plan SP
-    ON SP.planID = PP.planID
-    WHERE CB.mobileNo = @mobile_num;
-END;
-
-GO
-CREATE PROCEDURE LoadAccountPlanPayments
-@mobile_num CHAR(11)
-AS
-BEGIN
-
-    -- Plan Renewals/ Subscriptions
-    SELECT CONCAT(P.amount, ' egp') AS 'Paid Amount' , CONCAT(PP.remaining_balance, ' egp') AS 'Due Amount', SP.name AS 'Plan Name', CONCAT(SP.price, ' egp') AS 'Amount To Pay', P.payment_method, P.date_of_payment, P.status
-    FROM Payment P
-    INNER JOIN Process_Payment PP
-    ON PP.paymentID = P.paymentID
-    INNER JOIN Service_Plan SP
-    ON PP.planID = SP.planID
-    WHERE P.mobileNo = @mobile_num
-    ORDER BY date_of_payment DESC;
-END;
-
-GO
-CREATE PROCEDURE LoadAccountBalanceRechargingPayments
-@mobile_num CHAR(11)
-AS
-BEGIN
-
-    -- Balance Recharging
-    SELECT CONCAT(P.amount, ' egp') AS 'Paid Amount' , P.payment_method, P.date_of_payment, P.status
-    FROM Payment P
-    WHERE P.mobileNo = @mobile_num AND (P.payment_method = 'credit' OR p.payment_method = 'cash')
-    ORDER BY date_of_payment DESC;
-END;
-
 
 GO
 CREATE PROCEDURE InitializeSystem
@@ -2372,123 +2139,7 @@ VALUES
 (320.00, 'egp', '2024-03-01', 114, '01141414141'),
 (280.00, 'usd', '2024-04-01', 115, '01151515151');
 
-INSERT INTO Transfer_money (walletID1, walletID2, amount, transfer_date)
-VALUES
-(1, 2, 100.00, '2023-02-10'),
-(2, 3, 150.50, '2023-03-15'),
-(3, 4, 200.00, '2023-04-20'),
-(4, 5, 50.00, '2023-05-25'),
-(5, 6, 75.00, '2023-06-30'),
-(6, 7, 120.00, '2023-07-10'),
-(7, 8, 300.00, '2023-08-05'),
-(8, 9, 85.00, '2023-09-12'),
-(9, 10, 100.00, '2023-10-18'),
-(10, 11, 250.00, '2023-11-23'),
-(11, 12, 120.00, '2023-12-30'),
-(12, 13, 180.00, '2024-01-05'),
-(13, 14, 250.00, '2024-02-01'),
-(14, 15, 130.00, '2024-03-08');
-
-INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
-VALUES
--- Customer 1 (Basic Plan)
-(50.0, '2023-10-01', 'wallet', 'successful', '01010101010'),
--- Customer 2 (Standard Plan)
-(100.0, '2023-10-01', 'wallet', 'successful', '01020202020'),
--- Customer 3 (Premium Plan)
-(200.0, '2023-10-01', 'wallet', 'successful', '01030303030'),
--- Customer 4 (Unlimited Plan)
-(300.0, '2023-10-01', 'wallet', 'successful', '01040404040');
-
-INSERT INTO Process_Payment (paymentID, planID)
-VALUES
--- Customer 1 (Basic Plan)
-(1, 1),
--- Customer 2 (Standard Plan)
-(2, 2),
--- Customer 3 (Premium Plan)
-(3, 3),
--- Customer 4 (Unlimited Plan)
-(4, 4);
-
-INSERT INTO Subscription (mobileNo, planID, subscription_date, status)
-VALUES
--- Customer 1 (Basic Plan)
-('01010101010', 1, '2023-10-01', 'active'),
--- Customer 2 (Standard Plan)
-('01020202020', 2, '2023-10-01', 'active'),
--- Customer 3 (Premium Plan)
-('01030303030', 3, '2023-10-01', 'active'),
--- Customer 4 (Unlimited Plan)
-('01040404040', 4, '2023-10-01', 'active');
-
-INSERT INTO Plan_Usage (start_date, expiry_date, data_consumption, minutes_used, SMS_sent, mobileNo, planID)
-VALUES
--- Customer 1 (Basic Plan)
-('2023-10-01', '2023-11-01', 500, 100, 50, '01010101010', 1),
--- Customer 2 (Standard Plan)
-('2023-10-01', '2023-11-01', 2000, 500, 200, '01020202020', 2),
--- Customer 3 (Premium Plan)
-('2023-10-01', '2023-11-01', 5000, 1000, 500, '01030303030', 3),
--- Customer 4 (Unlimited Plan)
-('2023-10-01', '2023-11-01', 10000, 2000, 1000, '01040404040', 4);
-
-INSERT INTO Customer_Benefits (mobileNo, PaymentID, walletID, start_date, expiry_date)
-VALUES
--- Customer 1 (Basic Plan)
-('01010101010', 1, 1, '2025-01-01', '2025-04-01'),
--- Customer 2 (Standard Plan)
-('01020202020', 2, 2, '2025-01-01', '2025-04-01'),
--- Customer 3 (Premium Plan)
-('01030303030', 3, 3, '2025-01-01', '2025-04-01'),
--- Customer 4 (Unlimited Plan)
-('01040404040', 4, 4, '2025-01-01', '2025-04-01');
-
-INSERT INTO Customer_Points (benefitID, points_offered)
-VALUES
--- Customer 1 (Basic Plan)
-(1, 50), 
--- Customer 2 (Standard Plan)
-(2, 50), 
--- Customer 3 (Premium Plan)
-(3, 50), 
--- Customer 4 (Unlimited Plan)
-(4, 50);
-
-INSERT INTO Customer_Cashback (benefitID,cashback_percentage, amount_earned)
-VALUES
--- Customer 1 (Basic Plan)
-(1, 5, 5.0),
--- Customer 2 (Standard Plan)
-(2, 10, 10.0),
--- Customer 3 (Premium Plan)
-(3, 20, 40.0),
--- Customer 4 (Unlimited Plan)
-(4, 20, 60.0);
-
-INSERT INTO Customer_Exclusive_Offers (benefitID, data_offered, minutes_offered, SMS_offered)
-VALUES
--- Customer 1 (Basic Plan)
-(1, 0, 0, 100), -- Free 100 SMS Bundle
--- Customer 2 (Standard Plan)
-(2, 1024, 100, 0), -- Bonus 100 Minutes + Extra 1GB internet
--- Customer 3 (Premium Plan)
-(3, 1024, 100, 0), -- Bonus 100 Minutes + Extra 1GB internet
--- Customer 4 (Unlimited Plan)
-(4, 1024, 100, 0); -- Free 100 SMS Bundle + Bonus 100 Minutes + Extra 1GB internet
-
-INSERT INTO Benefit_Usage (benefitID, points_used, data_used, minutes_used, SMS_used, usage_date)
-VALUES
--- Customer 1 (Basic Plan)
-(1, 10, 0, 0, 20, '2023-10-15'), 
--- Customer 2 (Standard Plan)
-(2, 25, 420, 30, 0, '2023-10-15'), 
--- Customer 3 (Premium Plan)
-(3, 30, 310, 15, 0, '2023-10-15'),
--- Customer 4 (Unlimited Plan)
-(4, 60, 250, 25, 30, '2023-10-15');
-
-
+    
 INSERT INTO Voucher (value, expiry_date, points, mobileNo, shopID, redeem_date)
 VALUES
 (50, '2025-05-02', 50, '01010101010', 2, NULL),
@@ -2534,49 +2185,3 @@ VALUES
 ('01161616161', 'Account frozen due to suspicious activity', 1, 'In Progress', CURRENT_TIMESTAMP),
 ('01171717171', 'Mobile number transfer issue', 2, 'In Progress', CURRENT_TIMESTAMP),
 ('01181818181', 'No internet access', 1, 'In Progress', CURRENT_TIMESTAMP);
-
-SELECT * FROM Customer_profile;
-SELECT * FROM Customer_Account;
-SELECT * FROM Service_Plan;
-SELECT * FROM Subscription;
-SELECT * FROM Plan_Usage;
-SELECT * FROM Payment;
-SELECT * FROM Process_Payment;
-SELECT * FROM Wallet;
-SELECT * FROM Transfer_money;
-SELECT * FROM Benefits;
-SELECT * FROM Customer_Benefits;
-SELECT * FROM Customer_Points
-SELECT * FROM Customer_Cashback
-SELECT * FROM Customer_Exclusive_Offers
-SELECT * FROM Points_Group;
-SELECT * FROM Exclusive_Offer;
-SELECT * FROM Cashback;
-SELECT * FROM Benefit_Usage;
-SELECT * FROM Plan_Provides_Benefits;
-SELECT * FROM Shop;
-SELECT * FROM Physical_Shop;
-SELECT * FROM E_SHOP;
-SELECT * FROM Voucher;
-SELECT * FROM Technical_Support_Ticket;
-
--- Tested Successfully:
-
----- recharge balance
---EXEC Initiate_balance_payment @mobile_num = '01010101010', @amount = 50.0, @payment_method = 'credit';
----- redeem voucher
---EXEC Redeem_voucher_points @mobile_num = '01010101010', @voucher_id = 2;
----- wallet transfer money
---EXEC Wallet_transfer @mobile_num1 = '01010101010', @mobile_num2 = '01050505050', @amount = 100.00;
----- subscribe/renew the plan
---EXEC renew_or_subscribe_plan @mobile_num = '01010101010', @plan_id = 3;
----- consume resources
---EXEC Consume_Resources_With_Exclusive_Offers_And_Plans 
---    @mobile_num = '01010101010', 
---    @data_consumed = 500,  -- 500MB data consumed
---    @minutes_used = 50,    -- 50 minutes used
---    @SMS_sent = 0;        -- 0 SMS sent
----- delete benefits for a specific user & plan
---EXEC Benefits_Account @mobile_num = '01010101010', @plan_id = 3;
----- Delete Expired points and remove the rest from the customer's points if exists
---EXEC Handle_Expired_Points;

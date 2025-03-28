@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Web.Services.Description;
-using System.Web.UI;
-using System.Windows.Forms;
 
 namespace Telecom_Customer_Application.CustomerDashboard
 {
@@ -28,9 +25,6 @@ namespace Telecom_Customer_Application.CustomerDashboard
                 int smsSent = int.Parse(Request.Form["smsCounter"] ?? "0");
                 int minutesUsed = int.Parse(Request.Form["minutesCounter"] ?? "0");
                 int dataConsumed = int.Parse(Request.Form["dataCounter"] ?? "0");
-                System.Diagnostics.Debug.WriteLine("smsSent: " + smsSent);
-                System.Diagnostics.Debug.WriteLine("minutesUsed: " + minutesUsed);
-                System.Diagnostics.Debug.WriteLine("dataConsumed: " + dataConsumed);
 
                 if (smsSent < 0 || minutesUsed < 0 || dataConsumed < 0)
                 {

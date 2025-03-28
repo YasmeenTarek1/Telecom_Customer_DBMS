@@ -61,6 +61,13 @@
         text-decoration: none;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+    .button:hover {
+        background-color: #002366; 
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(7, 156, 255, 0.5);
+    }
+
 </style>
 
 </head>

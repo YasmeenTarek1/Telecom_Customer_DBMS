@@ -4,6 +4,7 @@ body {
     background-color: #f5f5f5;
     color: #333;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* Entire page scrollbar */
@@ -2031,7 +2032,6 @@ label {
     grid-template-columns: repeat(3, 1fr);
     gap: 40px;
     max-width: 900px;
-    width: 100%;
     margin: 10% 16% 6% 16%;
 }
 
@@ -2066,20 +2066,30 @@ label {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 9px 16ypx;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
     border-radius: 5px;
-    font-size: 1.3em;
+    font-size: 1.5em;
 }
 
 .counter button:hover {
     background-color: #0056b3;
 }
 
-.counter span {
-    font-size: 1.5em;
-    min-width: 40px;
+.counter input {
+    width: 50px;
+    height: 35px;
     text-align: center;
+    font-size: 18px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.counter input:focus {
+    border-color: #007bff; 
 }
 
 .submit-btn {

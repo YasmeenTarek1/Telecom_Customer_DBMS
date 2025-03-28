@@ -21,7 +21,7 @@
                     <p>SMS</p>
                     <div class="counter">
                         <button type="button" onclick="updateCounter('sms', -1)">-</button>
-                        <span id="smsCounter">0</span>
+                        <input type="number" id="smsCounter" value="0" min="0" oninput="handleManualInput('sms')" />
                         <button type="button" onclick="updateCounter('sms', 1)">+</button>
                     </div>
                     <input type="hidden" id="smsHidden" name="smsCounter" value="0" />
@@ -31,7 +31,7 @@
                     <p>Minutes</p>
                     <div class="counter">
                         <button type="button" onclick="updateCounter('minutes', -1)">-</button>
-                        <span id="minutesCounter">0</span>
+                        <input type="number" id="minutesCounter" value="0" min="0" oninput="handleManualInput('minutes')" />
                         <button type="button" onclick="updateCounter('minutes', 1)">+</button>
                     </div>
                     <input type="hidden" id="minutesHidden" name="minutesCounter" value="0" />
@@ -41,7 +41,7 @@
                     <p>Data (GB)</p>
                     <div class="counter">
                         <button type="button" onclick="updateCounter('data', -1)">-</button>
-                        <span id="dataCounter">0</span>
+                        <input type="number" id="dataCounter" value="0" min="0" oninput="handleManualInput('data')" />
                         <button type="button" onclick="updateCounter('data', 1)">+</button>
                     </div>
                     <input type="hidden" id="dataHidden" name="dataCounter" value="0" />
@@ -53,10 +53,23 @@
             function updateCounter(type, change) {
                 const counter = document.getElementById(type + 'Counter');
                 const hiddenInput = document.getElementById(type + 'Hidden');
-                let value = parseInt(counter.textContent);
-                value = Math.max(0, value + change); 
-                counter.textContent = value;
-                hiddenInput.value = value; 
+
+                let value = parseInt(counter.value) || 0;
+                value = Math.max(0, value + change);
+
+                counter.value = value;
+                hiddenInput.value = value;
+            }
+
+            function handleManualInput(type) {
+                const counter = document.getElementById(type + 'Counter');
+                const hiddenInput = document.getElementById(type + 'Hidden');
+
+                let value = parseInt(counter.value) || 0;
+                value = Math.max(0, value);
+
+                counter.value = value;
+                hiddenInput.value = value;
             }
         </script>
     </form>
