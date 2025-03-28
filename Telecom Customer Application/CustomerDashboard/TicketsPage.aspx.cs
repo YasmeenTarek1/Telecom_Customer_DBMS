@@ -16,19 +16,15 @@ namespace Telecom_Customer_Application.CustomerDashboard
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+            try
+            { 
+                MobileNo = Session["MobileNo"].ToString();
+                BindTickets();
+                HiddenMobileNo.Value = MobileNo?? string.Empty;
+            }
+            catch (Exception ex)
             {
-                try
-                { 
-                    MobileNo = Session["MobileNo"].ToString();
-                    BindTickets();
-                    HiddenMobileNo.Value = MobileNo?? string.Empty;
-                }
-                catch (Exception ex)
-                {
-                    HiddenMobileNo.Value = string.Empty;
-                }
-
+                HiddenMobileNo.Value = string.Empty;
             }
         }
 

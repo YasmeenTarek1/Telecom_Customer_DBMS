@@ -1854,6 +1854,7 @@ label {
     background: linear-gradient(135deg, #4CAF50, #2E7D32);
     color: white;
 }
+
 .action-box.recharge-box1 {
     background: linear-gradient(135deg, #2196F3, #1565C0);
     transform: translateX(35px);
@@ -1877,6 +1878,30 @@ label {
     height: 85px;
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
+}
+
+.issue-ticket-button {
+    position: absolute;
+    top: 52px;
+    right: 135px;
+    font-size: 42px;
+    margin-right: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2196F3, #1565C0);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.issue-ticket-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 8px 15px rgba(21, 101, 192, 0.3);
 }
 
 .action-text h3 {
@@ -2107,11 +2132,13 @@ label {
 .submit-btn:hover {
     background-color: #218838;
 }
+
 .backButton {
     color: #03184c ;
-    font-size: 50px;
+    font-size: 25px;
     display: inline-block;
     vertical-align: middle;
-    margin-left: 35px; 
     margin-top: 14px;
+    margin-right: 8px;
+    margin-left: 5px;
 }

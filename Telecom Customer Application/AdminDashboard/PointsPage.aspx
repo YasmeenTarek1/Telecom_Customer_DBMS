@@ -18,12 +18,11 @@
 
             <div id="sharedContent" class="tab-content">
 
-              
                 <div style="display: flex; align-items: center;">
-                    <h3 id="TabHeading" class="tab-heading">Points</h3>
                     <a href="~/AdminDashboard/BenefitsPage.aspx" runat="server" class="backButton">
-                        <i class="fa-solid fa-right-from-bracket sidebar-icon"></i>
+                         <i class="fa-solid fa-angle-left"></i>
                     </a>
+                    <h3 id="TabHeading" class="tab-heading">Points</h3>
                 </div>
 
                 <div class="cardBox">

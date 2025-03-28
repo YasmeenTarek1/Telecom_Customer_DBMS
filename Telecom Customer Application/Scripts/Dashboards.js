@@ -1063,36 +1063,36 @@ function fetchCustomerData(mobileNo) {
         },
         body: JSON.stringify({ mobileNo: mobileNo })
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.d) {
-                const customerData = JSON.parse(data.d);
-                if (!customerData.error) {
-                    updateCreditCard(customerData.first_name, customerData.last_name, customerData.mobileNo);
-                    updateStats(
-                        customerData.balance || 0,
-                        customerData.cashback || 0,
-                        customerData.sentTransactions || 0,
-                        customerData.receivedTransactions || 0
-                    );
-                } else {
-                    throw new Error(customerData.error);
-                }
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.d) {
+            const customerData = JSON.parse(data.d);
+            if (!customerData.error) {
+                updateCreditCard(customerData.first_name, customerData.last_name, customerData.mobileNo);
+                updateStats(
+                    customerData.balance || 0,
+                    customerData.cashback || 0,
+                    customerData.sentTransactions || 0,
+                    customerData.receivedTransactions || 0
+                );
             } else {
-                throw new Error('Invalid response format');
+                throw new Error(customerData.error);
             }
-        })
-        .catch(error => {
-            updateCreditCard('Unknown', 'User', mobileNo);
-            updateStats(0, 0, 0, 0);
-            console.error('Fetch error:', error);
-            storeAlertMessage(error.message, "alert-danger");
-        });
+        } else {
+            throw new Error('Invalid response format');
+        }
+    })
+    .catch(error => {
+        updateCreditCard('Unknown', 'User', mobileNo);
+        updateStats(0, 0, 0, 0);
+        console.error('Fetch error:', error);
+        storeAlertMessage(error.message, "alert-danger");
+    });
 }
 
 function updateCreditCard(firstName, lastName, mobileNo) {
@@ -1124,30 +1124,30 @@ function rechargeBalance(mobileNo, amount, paymentMethod) {
             paymentMethod: paymentMethod
         })
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.d && JSON.parse(data.d).success) {
-                document.getElementById('rechargeDialog').classList.remove('active');
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.d && JSON.parse(data.d).success) {
+            document.getElementById('rechargeDialog').classList.remove('active');
 
-                // Store alert before refresh
-                storeAlertMessage("Balance recharged successfully", "alert-success");
+            // Store alert before refresh
+            storeAlertMessage("Balance recharged successfully", "alert-success");
 
-                // Update the balance in UI
-                const currentBalance = parseFloat(document.getElementById('balance').textContent.replace('$', '').replace(',', ''));
-                document.getElementById('balance').textContent = `$${(currentBalance + parseFloat(amount)).toLocaleString()}`;
-            } else {
-                throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
-            }
-        })
-        .catch(error => {
-            console.error('Error recharging balance:', error);
-            storeAlertMessage(error.message, "alert-danger");
-        });
+            // Update the balance in UI
+            const currentBalance = parseFloat(document.getElementById('balance').textContent.replace('$', '').replace(',', ''));
+            document.getElementById('balance').textContent = `$${(currentBalance + parseFloat(amount)).toLocaleString()}`;
+        } else {
+            throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error recharging balance:', error);
+        storeAlertMessage(error.message, "alert-danger");
+    });
 }
 
 // Function to transfer money
@@ -1164,32 +1164,32 @@ function transferMoney(senderMobile, recipientMobile, amount) {
             amount: amount
         })
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.d && JSON.parse(data.d).success) {
-                document.getElementById('transferDialog').classList.remove('active');
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.d && JSON.parse(data.d).success) {
+            document.getElementById('transferDialog').classList.remove('active');
 
-                // Store alert before refresh
-                storeAlertMessage("Money transferred successfully!", "alert-success");
+            // Store alert before refresh
+            storeAlertMessage("Money transferred successfully!", "alert-success");
 
-                // Update the balance and sent transactions in UI
-                const currentBalance = parseFloat(document.getElementById('balance').textContent.replace('$', '').replace(',', ''));
-                const currentSent = parseFloat(document.getElementById('sent').textContent.replace('$', '').replace(',', ''));
-                document.getElementById('balance').textContent = `$${(currentBalance - parseFloat(amount)).toLocaleString()}`;
-                document.getElementById('sent').textContent = `$${(currentSent + parseFloat(amount)).toLocaleString()}`;
-            } else {
-                throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
-            }
-        })
-        .catch(error => {
-            console.error('Error transferring money:', error);
-            storeAlertMessage(error.message, "alert-danger");
-        });
+            // Update the balance and sent transactions in UI
+            const currentBalance = parseFloat(document.getElementById('balance').textContent.replace('$', '').replace(',', ''));
+            const currentSent = parseFloat(document.getElementById('sent').textContent.replace('$', '').replace(',', ''));
+            document.getElementById('balance').textContent = `$${(currentBalance - parseFloat(amount)).toLocaleString()}`;
+            document.getElementById('sent').textContent = `$${(currentSent + parseFloat(amount)).toLocaleString()}`;
+        } else {
+            throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error transferring money:', error);
+        storeAlertMessage(error.message, "alert-danger");
+    });
 }
 
 // Store alert message before refresh
@@ -1280,67 +1280,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-function submitTicket(mobileNo, description, priority) {
-    // Basic validation
-    if (!description) {
-        storeAlertMessage('Please enter a ticket description', "alert-danger");
-        return;
-    }
-
-    // Prepare ticket data
-    const ticketData = {
-        mobileNo: mobileNo,
-        description: description,
-        priority: parseInt(priority) // Convert to integer
-        // submissionDate will be set server-side
-    };
-
-    fetch('TicketsPage.aspx/SubmitTicket', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache' // Match rechargeBalance
-        },
-        body: JSON.stringify(ticketData)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.d && JSON.parse(data.d).success) { // Match rechargeBalance parsing
-                document.getElementById('rechargeDialog').classList.remove('active');
-
-                // Store alert before any potential refresh (similar to rechargeBalance)
-                storeAlertMessage("Ticket submitted successfully!", "alert-success");
-
-       
-            } else {
-                throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
-            }
-        })
-        .catch(error => {
-            console.error('Error submitting ticket:', error);
-            storeAlertMessage(error.message, "alert-danger");
-        });
-}
-
-// Updated initializeTicketsPage to use submitTicket
 function initializeTicketsPage() {
-    const rechargeBox = document.getElementById('rechargeBox');
-    if (rechargeBox) {
-        rechargeBox.addEventListener('click', function () {
-            document.getElementById('rechargeDialog').classList.add('active');
+    const IssueTicketButton = document.getElementById('IssueTicketButton');
+    if (IssueTicketButton) {
+        IssueTicketButton.addEventListener('click', function () {
+            document.getElementById('IssueTicketDialog').classList.add('active');
         });
     } else {
-        console.error('rechargeBox not found');
+        console.error('IssueTicketButton not found');
     }
 
     document.querySelectorAll('.close-dialog, .cancel-btn').forEach(function (element) {
         element.addEventListener('click', function () {
-            document.getElementById('rechargeDialog').classList.remove('active');
+            document.getElementById('IssueTicketDialog').classList.remove('active');
         });
     });
 
@@ -1350,8 +1302,6 @@ function initializeTicketsPage() {
             const description = document.getElementById('ticketDescription').value;
             const priority = document.getElementById('ticketPriority').value;
             const mobileNo = document.getElementById('HiddenMobileNo')?.value;
-
-            // Call the new function
             submitTicket(mobileNo, description, priority);
         });
     } else {
@@ -1359,5 +1309,48 @@ function initializeTicketsPage() {
     }
 }
 
-// Call the function when the page loads
 document.addEventListener('DOMContentLoaded', initializeTicketsPage);
+function submitTicket(mobileNo, description, priority) {
+    if (!description) {
+        storeAlertMessage('Please enter a ticket description', "alert-danger");
+        return;
+    }
+
+    // Prepare ticket data
+    const ticketData = {
+        mobileNo: mobileNo,
+        description: description,
+        priority: parseInt(priority)
+        // submissionDate will be set server-side
+    };
+
+    fetch('TicketsPage.aspx/SubmitTicket', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify(ticketData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.d && JSON.parse(data.d).success) {
+            document.getElementById('IssueTicketDialog').classList.remove('active');
+
+            // Store alert before any potential refresh
+            storeAlertMessage("Ticket issued successfully!", "alert-success");
+
+        } else {
+            throw new Error(data.d ? JSON.parse(data.d).error : 'Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting ticket:', error);
+        storeAlertMessage(error.message, "alert-danger");
+    });
+}

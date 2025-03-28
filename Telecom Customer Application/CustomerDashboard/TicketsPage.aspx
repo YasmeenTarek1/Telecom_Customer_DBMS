@@ -14,22 +14,15 @@
             <uc:Sidebar runat="server" />
             <div id="sharedContent" class="tab-content">
 
-                <h3 id="TabHeading" class="tab-heading" style="margin: 30px auto 30px auto; font-size: 34px;">Tickets</h3>
+                <h3 id="TabHeading" class="tab-heading" style="margin: 40px auto 30px auto; font-size: 34px;">Tickets</h3>
 
-                <!-- Issue a ticket Box -->
-                <div class="action-container">
-                    <div class="action-box recharge-box1" id="rechargeBox">
-                        <div class="action-icon">
-                            <i class="fas fa-ticket-alt"></i>
-                        </div>
-                        <div class="action-text">
-                            <h3>Issue a Ticket</h3>
-                            <p>Submit a new support request</p>
-                        </div>
-                    </div>
+                <!-- Issue a ticket Button -->
+                <div id="IssueTicketButton" class="issue-ticket-button">
+                    <i class="fa-solid fa-circle-plus"></i>
                 </div>
 
-                <div class="dialog-overlay" id="rechargeDialog">
+
+                <div class="dialog-overlay" id="IssueTicketDialog">
                     <div class="dialog-content">
                         <div class="dialog-header">
                             <h3>Issue a New Ticket</h3>
@@ -55,6 +48,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="tickets-container">
                     <div class="ticket-list" id="TicketList" runat="server">
                         <!-- Tickets will be dynamically bound here -->
@@ -69,9 +63,10 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-  <asp:HiddenField ID="HiddenMobileNo" runat="server" />
+        <asp:HiddenField ID="HiddenMobileNo" runat="server" />
     </form>
 </body>
 </html>
