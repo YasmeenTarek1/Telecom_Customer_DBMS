@@ -987,7 +987,7 @@ function initializeWalletPage() {
     });
 
     // Styling Due Amount
-    const dueAmountCells = document.querySelectorAll('#TableBody2 tr td:nth-child(2)');
+    const dueAmountCells = document.querySelectorAll('#TableBody2 tr td:nth-child(3)');
     dueAmountCells.forEach(cell => {
         const dueAmountText = cell.textContent.trim();
         const amountValue = parseFloat(dueAmountText.replace(' egp', ''));

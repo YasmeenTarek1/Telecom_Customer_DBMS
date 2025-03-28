@@ -161,13 +161,13 @@
                  </div>
                 <div class="table-responsive">
                     <table>
-                        <caption>Plan Renewals/Subscriptions Payments</caption>
+                        <caption>Plan Renewals/Subscriptions</caption>
                         <tbody id="TableBody2" runat="server"></tbody>
                     </table>
                 </div>
                 <div class="table-responsive">
                     <table>
-                        <caption>Recharge Balance Payments</caption>
+                        <caption>Balance Recharges</caption>
                         <tbody id="TableBody3" runat="server"></tbody>
                     </table>
                 </div>

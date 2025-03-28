@@ -391,7 +391,6 @@ BEGIN
     DROP PROCEDURE IF EXISTS Wallet_transfer;
     DROP PROCEDURE IF EXISTS Recharge_Balance;
     DROP PROCEDURE IF EXISTS GetCustomerWalletInfo;
-    DROP PROCEDURE IF EXISTS LoadCustomerPayments;
     DROP PROCEDURE IF EXISTS LoadWalletTransfers;
     DROP PROCEDURE IF EXISTS LoadAccountCashbacks;
     DROP PROCEDURE IF EXISTS LoadAccountPlanPayments;
@@ -787,6 +786,20 @@ BEGIN
     INNER JOIN Customer_profile CP ON CA.nationalID = CP.nationalID
     ORDER BY CB.start_date DESC; 
 END;
+
+-- CashbackPage 
+GO
+--Fetch number of cashback transactions per each wallet.
+CREATE VIEW Num_of_cashback As
+    Select CB.walletID, CP.first_name, CP.last_name, count(*) AS 'count of transactions', SUM(CH.amount_earned) AS 'Amount of cashback'
+    From Customer_Cashback CH
+    INNER JOIN Customer_Benefits CB
+    ON CH.benefitID = CB.benefitID
+    INNER JOIN Customer_Account CA
+    ON CA.mobileNo = CB.mobileNo
+    INNER JOIN Customer_profile CP
+    ON CP.nationalID = CA.nationalID
+    Group by CB.walletID, CP.first_name, CP.last_name;
 
 
 -- CashbackPage 
@@ -1486,30 +1499,6 @@ END
 
 -- WalletPage 
 GO
-CREATE PROCEDURE LoadCustomerPayments
-@mobile_num CHAR(11)
-AS
-BEGIN
-SELECT 
-    p.paymentID,
-    p.amount,
-    p.date_of_payment,
-    p.payment_method,
-    p.status,
-    p.mobileNo
-FROM Payment p
-WHERE p.mobileNo = @mobile_num
-ORDER BY 
-    CASE 
-        WHEN p.status = 'successful' THEN 1
-        WHEN p.status = 'pending' THEN 2
-        ELSE 3
-    END;
-END;
-
-
--- WalletPage 
-GO
 CREATE PROCEDURE LoadWalletTransfers
 @mobile_num CHAR(11)
 AS
@@ -1557,7 +1546,7 @@ CREATE PROCEDURE LoadAccountCashbacks
 AS
 BEGIN
     
-    SELECT CONCAT(CH.amount_earned, ' egp') AS 'Cashback Amount', SP.name AS 'Plan Name', CONCAT(SP.price, ' egp') AS 'Plan Price', CONCAT(CH.cashback_percentage, '%') AS 'Cashback Percentage', CB.start_date AS 'Credit Date'
+    SELECT SP.name AS 'Plan Name', CONCAT(CH.amount_earned, ' egp') AS 'Cashback Amount', CONCAT(SP.price, ' egp') AS 'Plan Price', CONCAT(CH.cashback_percentage, '%') AS 'Cashback Percentage', CB.start_date AS 'Credit Date'
     FROM Customer_Cashback CH
     INNER JOIN Customer_Benefits CB
     ON CB.benefitID = CH.benefitID
@@ -1577,7 +1566,7 @@ AS
 BEGIN
 
     -- Plan Renewals/ Subscriptions
-    SELECT CONCAT(P.amount, ' egp') AS 'Paid Amount' , CONCAT(PP.remaining_balance, ' egp') AS 'Due Amount', SP.name AS 'Plan Name', CONCAT(SP.price, ' egp') AS 'Amount To Pay', P.payment_method, P.date_of_payment, P.status
+    SELECT SP.name AS 'Plan Name', CONCAT(P.amount, ' egp') AS 'Paid Amount' , CONCAT(PP.remaining_balance, ' egp') AS 'Due Amount', P.payment_method, P.date_of_payment, P.status
     FROM Payment P
     INNER JOIN Process_Payment PP
     ON PP.paymentID = P.paymentID
