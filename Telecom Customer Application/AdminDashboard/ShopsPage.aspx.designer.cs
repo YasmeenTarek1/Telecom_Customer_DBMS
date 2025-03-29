@@ -4,5 +4,6 @@
     {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl TableBody;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl TabHeading;
     }
 }

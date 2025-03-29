@@ -1194,7 +1194,6 @@ AS
     AND transfer_date BETWEEN @start_date AND @end_date
     Order by transfer_date DESC;
 
-
 -- AccountUsagePage
 Go
 --Retrieve the total usage of the input account on each subscribed plan from a given input date.
@@ -1202,10 +1201,12 @@ CREATE FUNCTION Account_Usage_Plan(@mobile_num char(11), @start_date date)
 RETURNS TABLE
 AS
     RETURN( 
-        Select U.planID, SUM(U.data_consumption) AS 'total data', SUM(U.minutes_used) AS 'total mins', SUM(U.SMS_sent) AS 'total SMS'
+        Select SP.name AS 'plan name' , SUM(U.data_consumption) AS 'total data consumed', SUM(U.minutes_used) AS 'total mins consumed', SUM(U.SMS_sent) AS 'total SMS conusmed'
         From Plan_Usage U 
+        INNER JOIN Service_Plan SP
+        ON SP.planID = U.planID
         Where U.mobileNo = @mobile_num AND U.start_date >= @start_date
-        Group By U.planID
+        Group By SP.name
     );
 
 

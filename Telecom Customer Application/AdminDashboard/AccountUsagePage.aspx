@@ -25,15 +25,16 @@
 
                  <div id="TextBoxContainer" runat="server" class="input-container">
                     <label for="MobileEditText" class="input-label">Mobile Number:</label>
-                    <asp:TextBox ID="MobileEditText" runat="server" CssClass="styled-input" placeholder="Enter Mobile Number"></asp:TextBox>
+                    <asp:TextBox ID="MobileEditText" runat="server" CssClass="styled-input" placeholder="Enter Mobile Number" Style="width: 17%;"></asp:TextBox>
                 </div>
 
                  <div class="button-container">
-                     <asp:Button ID="SearchButton" runat="server" CssClass="styled-button" Text="Search" OnClick="SearchButton_Click" />
+                     <asp:Button ID="SearchButton" runat="server" CssClass="styled-button" Text="Search" OnClick="SearchButton_Click" style="margin-top:10px;"/>
                  </div>
-                 <!-- Data Tables -->
+
                  <div class="table-responsive">
                      <table>
+                         <caption>Total Usage per Subscribed Plan for the Selected Account</caption>
                          <tbody id="TableBody" runat="server"></tbody>
                      </table>
                  </div>

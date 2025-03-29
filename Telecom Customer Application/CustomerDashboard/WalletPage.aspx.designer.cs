@@ -9,18 +9,13 @@
 
 namespace Telecom_Customer_Application.CustomerDashboard
 {
-
-
     public partial class WalletPage
     {
-
-        /// <summary>
-        /// form1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl TableBody1;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl TableBody2;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl TableBody3;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl TableBody4;
+        protected global::System.Web.UI.WebControls.HiddenField HiddenMobileNo;
     }
 }

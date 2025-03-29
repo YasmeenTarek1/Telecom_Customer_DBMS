@@ -9,18 +9,20 @@
 
 namespace Telecom_Customer_Application.CustomerDashboard
 {
-
-
     public partial class VouchersPage
     {
-
-        /// <summary>
-        /// form1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.WebControls.HiddenField HiddenVoucherIdPhysical;
+        protected global::System.Web.UI.WebControls.HiddenField HiddenVoucherIdEshop;
+        protected global::System.Web.UI.WebControls.HiddenField HiddenVoucherIdRedeemed;
+        protected global::System.Web.UI.WebControls.HiddenField HiddenVoucherIdExpired;
+        protected global::System.Web.UI.WebControls.Button RedeemButtonPhysical;
+        protected global::System.Web.UI.WebControls.Button RedeemButtonEshop;
+        protected global::System.Web.UI.WebControls.Button RedeemButtonRedeemed;
+        protected global::System.Web.UI.WebControls.Button RedeemButtonExpired;
+        protected global::System.Web.UI.WebControls.Repeater PhysicalVouchers;
+        protected global::System.Web.UI.WebControls.Repeater EshopVouchers;
+        protected global::System.Web.UI.WebControls.Repeater RedeemedVouchers;
+        protected global::System.Web.UI.WebControls.Repeater ExpiredVouchers;
     }
 }

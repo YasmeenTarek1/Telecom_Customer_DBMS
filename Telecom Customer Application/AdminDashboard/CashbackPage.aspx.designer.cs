@@ -13,14 +13,10 @@ namespace Telecom_Customer_Application.AdminDashboard
 
     public partial class CashbackPage
     {
-
-        /// <summary>
-        /// form1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.WebControls.Label cashbackCount;
+        protected global::System.Web.UI.WebControls.Label paymentCount;
+        protected global::System.Web.UI.WebControls.PlaceHolder TableBody1;
+        protected global::System.Web.UI.WebControls.PlaceHolder TableBody2;
     }
 }
