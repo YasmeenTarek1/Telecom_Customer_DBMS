@@ -9,7 +9,15 @@ namespace Telecom_Customer_Application.AdminDashboard
 {
     public partial class PlansPage : System.Web.UI.Page
     {
-        private  int SelectedPlan
+        private static readonly Dictionary<int, string> PlanNames = new Dictionary<int, string>
+        {
+            { 1, "Basic Plan" },
+            { 2, "Standard Plan" },
+            { 3, "Premium Plan" },
+            { 4, "Unlimited Plan" }
+        };
+
+        private int SelectedPlan
         {
             get
             {
@@ -23,40 +31,55 @@ namespace Telecom_Customer_Application.AdminDashboard
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                string query = "GetAllSubscribers";
+                PageUtilities.ExecuteQueryWithHandling(query, TableBody, form1);
+            }
+
             string eventTarget = Request.Form["__EVENTTARGET"];
             string eventArgument = Request.Form["__EVENTARGUMENT"];
 
             if (eventTarget == "PlanClicked")
             {
-                // eventArgument will contain the plan ID sent from the client
-                int planId = int.Parse(eventArgument);
-                SelectedPlan = planId;  // Update SelectedPlan based on clicked plan ID
-                Subscribers_for_plan(eventArgument);  // Fetch subscribers for the selected plan
+                int planId = int.Parse(eventArgument); // eventArgument -> plan ID sent from the client
+                SelectedPlan = planId;  
+                Subscribers_for_plan(eventArgument);  
             }
 
             DataTable subscriptionsStatus = PageUtilities.GetData("GetSubscriptionStatistics");
             string subscriptionsStatusJson = JsonConvert.SerializeObject(subscriptionsStatus);
 
             // Pass the JSON data to the front end
-            ScriptManager.RegisterStartupScript(this, GetType(), "subscriptionsData", $"var subscriptionsData = {subscriptionsStatusJson};", true);
-            
+            ScriptManager.RegisterStartupScript(this, GetType(), "subscriptionsData",$"var subscriptionsData = {subscriptionsStatusJson};", true);
+
+            if (SelectedPlan > 0)
+            {
+                ScriptManager.RegisterStartupScript(this, GetType(), "updatePlanSelection",$"updatePlanSelection({SelectedPlan});", true);
+            }
         }
 
         private void Subscribers_for_plan(string planId)
         {
             try
             {
-
                 using (SqlConnection connection = new SqlConnection(PageUtilities.connectionString))
                 {
                     connection.Open();
                     SqlCommand cmd = new SqlCommand("GetSubscribersForPlan", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@PlanID", SqlDbType.Int) { Value = int.Parse(planId) });
+
+                    string planName = PlanNames.ContainsKey(int.Parse(planId)) ? PlanNames[int.Parse(planId)]: "Selected Plan";
+
                     PageUtilities.LoadData(cmd, TableBody);
-                    filterOption1.Style["display"] = "block";
-                    filterOption2.Style["display"] = "block";
-                    filterOption3.Style["display"] = "block";
+
+                    // update table caption
+                    ScriptManager.RegisterStartupScript(this, GetType(), "updateTableCaption",$"document.getElementById('TableCaption').innerText = 'Subscribers for {planName}';", true);
+
+                    filterOption1.Style["display"] = "flex";
+                    filterOption2.Style["display"] = "flex";
+                    filterOption3.Style["display"] = "flex";
                 }
             }
             catch (Exception ex)
@@ -69,7 +92,6 @@ namespace Telecom_Customer_Application.AdminDashboard
         {
             DateTime subscriptionDate;
             DateTime.TryParse(SubscriptionDateFilter.Text, out subscriptionDate);
-
             string subscriptionStatus = SubscriptionStatusFilter.SelectedValue;
 
             using (SqlConnection connection = new SqlConnection(PageUtilities.connectionString))
@@ -79,10 +101,9 @@ namespace Telecom_Customer_Application.AdminDashboard
                     connection.Open();
                     SqlCommand cmd = new SqlCommand("GetSubscriptions", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
-
                     cmd.Parameters.Add(new SqlParameter("@FilterDate", SqlDbType.Date) { Value = subscriptionDate });
                     cmd.Parameters.AddWithValue("@SubscriptionStatus", subscriptionStatus);
-                    cmd.Parameters.AddWithValue("@SelectedPlan", SelectedPlan+1);
+                    cmd.Parameters.AddWithValue("@SelectedPlan", SelectedPlan);
 
                     PageUtilities.LoadData(cmd, TableBody);
                 }

@@ -830,9 +830,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+function triggerPostback(planId, clickedElement) {
+    const planCards = document.querySelectorAll('.plan-card');
+    planCards.forEach(card => card.classList.remove('plan-card-selected'));
+    clickedElement.classList.add('plan-card-selected');
 
-function triggerPostback(planId) {
-    __doPostBack('PlanClicked', planId);  // Triggers the postback with the correct event args
+    __doPostBack('PlanClicked', planId);
+}
+function updatePlanSelection(planId) {
+    const planCards = document.querySelectorAll('.plan-card');
+    planCards.forEach(card => card.classList.remove('plan-card-selected'));
+
+    const selectedCard = document.querySelector(`.plan-card:nth-child(${planId})`);
+    if (selectedCard) {
+        selectedCard.classList.add('plan-card-selected');
+    }
 }
 
 function triggerPostback2(benefitID) {

@@ -200,6 +200,12 @@
 
             vouchers.forEach(voucher => {
                 voucher.addEventListener('click', function () {
+                    // Remove selected class from all vouchers
+                    vouchers.forEach(v => v.classList.remove('selected-voucher'));
+
+                    // Add selected class to the clicked voucher
+                    this.classList.add('selected-voucher');
+
                     const voucherId = this.getAttribute('data-voucher-id');
                     const value = this.getAttribute('data-value');
                     const points = this.getAttribute('data-points');
@@ -212,6 +218,7 @@
                     const workingHours = this.getAttribute('data-working-hours');
                     const category = this.getAttribute('data-category');
 
+                    // Rest of your existing code for showing details...
                     // Clear all fields initially
                     const fields = [
                         '.detail-value', '.detail-points', '.detail-expiry',
@@ -274,6 +281,9 @@
                         const hash = sha256(data);
                         const color = '#' + hash.substring(0, 6); // Take first 6 characters for a valid hex color
                         details.style.borderColor = color;
+
+                        // Also set the selected voucher's border color to match
+                        this.style.boxShadow = `0 0 0 3px ${color}`;
                     } else {
                         details.style.borderColor = 'transparent'; // Default if no value
                     }
@@ -281,7 +291,7 @@
                     // Show the details box
                     details.classList.add('active');
 
-                    // Set data-voucher-id and hidden field 
+                    // Button visibility and ID handling code...
                     if (address) { // Non-Redeemed Physical Vouchers
                         document.getElementById('<%= RedeemButtonPhysical.ClientID %>').setAttribute('data-voucher-id', voucherId);
                         document.getElementById('<%= HiddenVoucherIdPhysical.ClientID %>').value = voucherId;
@@ -318,10 +328,16 @@
                 });
             });
 
-            // Close on click outside
+            // Handle click outside to deselect
             document.addEventListener('click', function (e) {
                 if (!details.contains(e.target) && !Array.from(vouchers).some(v => v.contains(e.target))) {
                     details.classList.remove('active');
+
+                    // Remove selected class from all vouchers when clicking outside
+                    vouchers.forEach(v => {
+                        v.classList.remove('selected-voucher');
+                        v.style.boxShadow = 'none';
+                    });
                 }
             });
         });

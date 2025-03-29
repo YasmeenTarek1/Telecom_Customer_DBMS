@@ -45,8 +45,9 @@ namespace Telecom_Customer_Application.AdminDashboard
                     cmd2.Parameters.Add(new SqlParameter("@start_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput1.Text) });
                     cmd2.Parameters.Add(new SqlParameter("@end_date", SqlDbType.Date) { Value = DateTime.Parse(DateInput2.Text) });
 
-                    AverageSentLabel.Style["display"] = "block";
-                    AverageReceivedLabel.Style["display"] = "block";
+                    AverageSentLabel.Style["display"] = "flex";
+                    AverageReceivedLabel.Style["display"] = "flex";
+                    OutputBanner.Style["display"] = "flex";
 
                     LoadLabel(cmd1, cmd2);
                 }
@@ -58,13 +59,15 @@ namespace Telecom_Customer_Application.AdminDashboard
         }
         protected void LoadLabel(SqlCommand cmd1, SqlCommand cmd2)
         {
-            object result = cmd1.ExecuteScalar();
-            int data = Convert.ToInt32(result);
-            AverageSentLabel.Text = $"Average Sent Transactions: {data}";
+            object result1 = cmd1.ExecuteScalar();
+            object result2 = cmd2.ExecuteScalar();
 
-            result = cmd2.ExecuteScalar();
-            data = Convert.ToInt32(result);
-            AverageReceivedLabel.Text = $"Average Received Transactions: {data}";
+            int avgSent = result1 != DBNull.Value ? Convert.ToInt32(result1) : 0;
+            int avgReceived = result2 != DBNull.Value ? Convert.ToInt32(result2) : 0;
+
+            AverageSentLabel.Text = $"📤 Average Sent Transactions: {avgSent}";
+            AverageReceivedLabel.Text = $"📥 Average Received Transactions: {avgReceived}";
         }
+
     }
 }

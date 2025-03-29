@@ -595,6 +595,30 @@ END
 
 -- PlansPage 
 Go
+CREATE PROCEDURE GetAllSubscribers
+AS
+BEGIN
+    SELECT 
+        c.nationalID, 
+        c.first_name,
+        c.last_name, 
+        s.mobileNo,
+        ca.account_type,
+        s.subscription_date,
+        s.status AS 'Subscription Status'
+    FROM 
+        Subscription s
+    INNER JOIN 
+        Customer_Account ca ON s.mobileNo = ca.mobileNo
+    INNER JOIN 
+        Customer_profile c ON ca.nationalID = c.nationalID
+    ORDER BY 
+        s.subscription_date DESC;
+END
+
+
+-- PlansPage 
+Go
 CREATE PROCEDURE GetSubscribersForPlan
     @PlanID INT
 AS

@@ -23,7 +23,7 @@
                 <div id="PlanCardsContainer" runat="server">
                     <div class="PlanCardsContainer">
                         <!-- Basic Plan Card -->
-                        <div class="plan-card basic-plan" runat="server" onclick="triggerPostback('1')">
+                        <div id="BasicPlanCard" class="plan-card basic-plan" runat="server" onclick="triggerPostback('1', this)">
                             <i class="fas fa-user"></i>
                             <div class="plan-name">Basic Plan</div>
                             <div class="plan-id">Plan ID: 1</div>
@@ -32,7 +32,7 @@
                         </div>
 
                         <!-- Standard Plan Card -->
-                        <div class="plan-card standard-plan" runat="server" onclick="triggerPostback('2')">
+                        <div id="StandardPlanCard" class="plan-card standard-plan" runat="server" onclick="triggerPostback('2', this)">
                             <i class="fas fa-users"></i>
                             <div class="plan-name">Standard Plan</div>
                             <div class="plan-id">Plan ID: 2</div>
@@ -41,7 +41,7 @@
                         </div>
 
                         <!-- Premium Plan Card -->
-                        <div class="plan-card premium-plan" runat="server" onclick="triggerPostback('3')">
+                        <div id="PremiumPlanCard" class="plan-card premium-plan" runat="server" onclick="triggerPostback('3', this)">
                             <i class="fas fa-star"></i>
                             <div class="plan-name">Premium Plan</div>
                             <div class="plan-id">Plan ID: 3</div>
@@ -50,7 +50,7 @@
                         </div>
 
                         <!-- Unlimited Plan Card -->
-                        <div class="plan-card unlimited-plan" runat="server" onclick="triggerPostback('4')">
+                        <div id="UnlimitedPlanCard" class="plan-card unlimited-plan" runat="server" onclick="triggerPostback('4', this)">
                             <i class="fas fa-infinity"></i>
                             <div class="plan-name">Unlimited Plan</div>
                             <div class="plan-id">Plan ID: 4</div>
@@ -61,11 +61,12 @@
                 </div>
 
                 <div id="FilterContainer" runat="server" class="filter-container">
-                    <div id="filterOption1" runat="server" style="display: none;">
+                    <div id="filterOption1" runat="server" class="filter-group" style="display: none;">
                         <label for="SubscriptionDateFilter" class="filter-label">Subscription Since:</label>
                         <asp:TextBox ID="SubscriptionDateFilter" runat="server" CssClass="filter-input" TextMode="Date"></asp:TextBox>
                     </div>
-                    <div id="filterOption2" runat="server" style="display: none;">
+
+                    <div id="filterOption2" runat="server" class="filter-group" style="display: none;">
                         <label for="SubscriptionStatusFilter" class="filter-label">Subscription Status:</label>
                         <asp:DropDownList ID="SubscriptionStatusFilter" runat="server" CssClass="filter-dropdown">
                             <asp:ListItem Text="All" Value="All" Selected="True"></asp:ListItem>
@@ -73,13 +74,15 @@
                             <asp:ListItem Text="onhold" Value="onhold"></asp:ListItem>
                         </asp:DropDownList>
                     </div>
+
                     <div id="filterOption3" runat="server" style="display: none;">
-                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="styled-button" Text="Apply" OnClick="ApplyFilterButton_Click" Style="font-size: 12px;" />
+                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="styled-button" Text="Apply" OnClick="ApplyFilterButton_Click" style="margin-left: 850px; margin-right: 0px;"/>
                     </div>
                 </div>
 
                 <div class="table-responsive">
                     <table>
+                        <caption id="TableCaption">Subscribers for all plans</caption>
                         <tbody id="TableBody" runat="server"></tbody>
                     </table>
                 </div>

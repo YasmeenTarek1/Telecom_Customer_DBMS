@@ -98,7 +98,7 @@ public class PageUtilities
                                 case "open":
                                 case "expired": statusClass = "status-onhold"; break;
                                 case "pending":
-                                case "in progress": statusClass = "status -pending"; break;
+                                case "in progress": statusClass = "status-pending"; break;
                             };
 
                             string formattedStatus = statusValue.Equals("onhold", StringComparison.OrdinalIgnoreCase)
