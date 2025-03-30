@@ -22,7 +22,7 @@ namespace Telecom_Customer_Application.CustomerDashboard
                 BindTickets();
                 HiddenMobileNo.Value = MobileNo?? string.Empty;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 HiddenMobileNo.Value = string.Empty;
             }

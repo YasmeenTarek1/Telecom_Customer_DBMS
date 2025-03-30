@@ -1274,7 +1274,7 @@ CREATE PROCEDURE LoadSubscribedPlans
 @mobileNo CHAR(11)
 AS
 BEGIN
-SELECT sp.planID, sp.name, sp.SMS_offered, sp.minutes_offered, sp.data_offered, pu.SMS_sent, pu.minutes_used, pu.data_consumption
+SELECT sp.planID, sp.name, sp.SMS_offered, sp.minutes_offered, sp.data_offered, pu.SMS_sent, pu.minutes_used, pu.data_consumption, s.status
                     FROM Subscription s
                     JOIN Service_Plan sp ON s.planID = sp.planID
                     LEFT JOIN Plan_Usage pu ON s.planID = pu.planID AND s.mobileNo = pu.mobileNo
@@ -1878,7 +1878,8 @@ CREATE PROCEDURE Consume_Resources_With_Exclusive_Offers_And_Plans
     @mobile_num CHAR(11),
     @data_consumed INT = 0,  -- Amount of data consumed (in GB)
     @minutes_used INT = 0,   -- Amount of minutes used
-    @SMS_sent INT = 0        -- Number of SMS sent
+    @SMS_sent INT = 0,       -- Number of SMS sent
+    @message NVARCHAR(100) OUTPUT
 AS
 BEGIN
     BEGIN TRANSACTION;
@@ -1900,11 +1901,15 @@ BEGIN
 
         -- Retrieve all active exclusive offers for the customer, ordered by expiry_date (earliest first)
         DECLARE exclusive_offer_cursor CURSOR FOR
+
         SELECT EO.offerID, EO.data_offered, EO.minutes_offered, EO.SMS_offered, BU.data_used, BU.minutes_used, BU.SMS_used
         FROM Customer_Exclusive_Offers EO
         INNER JOIN Customer_Benefits CB ON EO.benefitID = CB.benefitID
         INNER JOIN Benefit_Usage BU ON CB.benefitID = BU.benefitID
-        WHERE CB.mobileNo = @mobile_num AND CB.expiry_date >= CURRENT_TIMESTAMP -- Ensure the benefit is active
+        INNER JOIN Payment P ON P.paymentID = CB.PaymentID
+        INNER JOIN Process_Payment PP ON PP.paymentID = P.paymentID
+        INNER JOIN Subscription S ON PP.planID = S.planID AND S.mobileNo = CB.mobileNo
+        WHERE CB.mobileNo = @mobile_num AND S.status = 'active' -- Ensure the benefit is active
         ORDER BY CB.expiry_date;
 
         OPEN exclusive_offer_cursor;
@@ -2041,6 +2046,11 @@ BEGIN
             CLOSE service_plan_cursor;
             DEALLOCATE service_plan_cursor;
         END
+
+        IF @RemainingData > 0 OR @RemainingMinutes > 0 OR @RemainingSMS > 0
+            SET @message = 'Resources consumed successfully but some resources were not available.';
+        ELSE
+            SET @message = 'Resources consumed successfully.';
 
         COMMIT TRANSACTION;
     END TRY

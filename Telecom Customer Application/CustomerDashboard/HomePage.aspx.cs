@@ -42,13 +42,14 @@ namespace Telecom_Customer_Application.CustomerDashboard
                         int smsUsed = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
                         int minutesUsed = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
                         int dataUsed = reader.IsDBNull(7) ? 0 : reader.GetInt32(7);
+                        string planStatus = reader.GetString(8);
 
                         // Plan Card
-                        fullHtml += GeneratePlanCard(planID, planName);
+                        fullHtml += GeneratePlanCard(planID, planName, planStatus);
 
                         // Plan Usage
                         fullHtml += $@"
-                        <div class='mainContainer'>
+                        <div class='mainContainer' style='{(planStatus == "onhold" ? "opacity: 0.5;" : "")}' >
                             <h3 class='tab-heading' style='margin: 0px auto 40px auto; font-size: 26px;'>Plan Usage</h3>
                             <div class='UsagesContainer'>
                                 {GenerateUsageElement(planID, "SMS", smsUsed, smsOffered)}
@@ -58,7 +59,7 @@ namespace Telecom_Customer_Application.CustomerDashboard
                         </div>";
 
                         // Plan Benefits
-                        fullHtml += LoadPlanBenefits(planID);
+                        fullHtml += LoadPlanBenefits(planID, planStatus);
                     }
                 }
 
@@ -68,7 +69,7 @@ namespace Telecom_Customer_Application.CustomerDashboard
         }
 
 
-        private string LoadPlanBenefits(int planID)
+        private string LoadPlanBenefits(int planID, string planStatus)
         {
             using (SqlConnection conn = new SqlConnection(PageUtilities.connectionString))
             {
@@ -82,7 +83,7 @@ namespace Telecom_Customer_Application.CustomerDashboard
                 conn.Open();
 
                 string benefitsHTML = $@"
-                <div class='mainContainer'>
+                <div class='mainContainer' style='{(planStatus == "onhold" ? "opacity: 0.5;" : "")}'>
                     <h3 class='tab-heading' style='margin: 0px auto 40px auto; font-size: 26px;'>Benefits Usage</h3>
                     <div class='UsagesContainer'>";
 
@@ -142,12 +143,13 @@ namespace Telecom_Customer_Application.CustomerDashboard
             }
         }
 
-        private string GeneratePlanCard(int planID, string planName)
+        private string GeneratePlanCard(int planID, string planName, string planStatus)
         {
             string planClass = GetPlanColorClass(planID);
             string icon = "";
             string details = "";
             string price = "";
+            string tooltipAttributes = planStatus == "onhold" ? "data-bs-toggle='tooltip' data-bs-placement='top' title='This plan is on hold. Complete payment to use it.'" : "";
 
             switch (planID)
             {
@@ -174,7 +176,7 @@ namespace Telecom_Customer_Application.CustomerDashboard
             }
 
             return $@"
-                <div class='plan-card {planClass}' style='width: 500px; margin: 200px 450px 150px 870px; transform: scale(1.4);'>
+                <div class='plan-card {planClass}' style='width: 500px; margin: 200px 450px 150px 870px; transform: scale(1.4); {(planStatus == "onhold" ? "opacity: 0.5;" : "")}' {tooltipAttributes}>
                     <i class='fas {icon}'></i>
                     <div class='plan-name'>{planName}</div>
                     <div class='plan-id'>Plan ID: {planID}</div>

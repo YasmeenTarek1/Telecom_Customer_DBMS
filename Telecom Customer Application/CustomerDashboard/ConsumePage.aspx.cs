@@ -42,12 +42,24 @@ namespace Telecom_Customer_Application.CustomerDashboard
                         cmd.Parameters.AddWithValue("@minutes_used", minutesUsed);
                         cmd.Parameters.AddWithValue("@SMS_sent", smsSent);
 
-                        cmd.ExecuteNonQuery();
-                    }
-                }
+                        SqlParameter messageParam = cmd.Parameters.Add("@message", System.Data.SqlDbType.NVarChar, 100);
+                        messageParam.Direction = System.Data.ParameterDirection.Output;
 
-                Session["AlertMessage"] = "Resources consumed successfully!";
-                Session["AlertType"] = "alert-success";                
+                        cmd.ExecuteNonQuery();
+
+                        string message = messageParam.Value.ToString();
+                        if (message.Contains("available"))
+                        {
+                            Session["AlertMessage"] = message;
+                            Session["AlertType"] = "alert-warning";
+                        }
+                        else
+                        {
+                            Session["AlertMessage"] = message;
+                            Session["AlertType"] = "alert-success";
+                        }
+                    }
+                }             
             }
             catch (Exception ex)
             {

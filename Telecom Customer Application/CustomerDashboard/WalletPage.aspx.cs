@@ -19,7 +19,7 @@ namespace Telecom_Customer_Application.CustomerDashboard
                     mobileNum = Session["MobileNo"].ToString();
                     HiddenMobileNo.Value = mobileNum ?? string.Empty;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     HiddenMobileNo.Value = string.Empty;
                 }
