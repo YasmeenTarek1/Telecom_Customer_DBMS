@@ -81,6 +81,8 @@
     <Content Include="AdminDashboard\TicketsPage.aspx" />
     <Content Include="AdminDashboard\TransactionsPage.aspx" />
     <Content Include="AdminDashboard\WalletsPage.aspx" />
+    <Content Include="assets\admin_dashboard.mp4" />
+    <Content Include="assets\customer_dashboard.mp4" />
     <Content Include="Controls\AdminSidebar.ascx" />
     <Content Include="Controls\CustomerSidebar.ascx" />
     <Content Include="CustomerDashboard\ConsumePage.aspx" />
