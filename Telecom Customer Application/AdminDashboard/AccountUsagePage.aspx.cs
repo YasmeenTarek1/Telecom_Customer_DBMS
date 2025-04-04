@@ -14,6 +14,8 @@ namespace Telecom_Customer_Application.AdminDashboard
 
                 try
                 {
+                    tableCaption.Style["display"] = "block";
+
                     string mobileNo = MobileEditText.Text;
                     PageUtilities.checkValidMobileNum(mobileNo);
                     cmd.Parameters.Add(new SqlParameter("@mobile_num", SqlDbType.Char, 11) { Value = mobileNo });

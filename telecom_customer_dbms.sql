@@ -523,7 +523,6 @@ END;
 ---------------------------- Admin Dashboard ------------------------------------
 
 
-
 -- CustomersPage 
 GO
 CREATE PROCEDURE allCustomerAccounts
@@ -541,13 +540,13 @@ BEGIN
         a.account_type,
         a.status AS 'Account_Status',
         CAST(a.start_date AS CHAR(10)) AS start_date,
-        w.current_balance AS 'Balance',
+        COALESCE(w.current_balance, 0) AS 'Balance',  
         a.points,
         dbo.Wallet_MobileNo(a.mobileNo) AS 'Has Wallet'
     FROM Customer_profile p
     INNER JOIN Customer_Account a 
     ON p.nationalID = a.nationalID
-    INNER JOIN Wallet w
+    LEFT JOIN Wallet w
     ON w.mobileNo = a.mobileNo
     ORDER BY Account_Status;
 END;
@@ -955,7 +954,11 @@ CREATE VIEW UsedPoints As
 GO
 CREATE VIEW ExpiredPoints AS
 SELECT 
-    (TP.[Total Points] - (UP.[Used Points] + AP.[Active Points])) AS 'Expired Points'
+    CASE 
+        WHEN (TP.[Total Points] - (UP.[Used Points] + AP.[Active Points])) < 0 
+        THEN 0 
+        ELSE (TP.[Total Points] - (UP.[Used Points] + AP.[Active Points])) 
+    END AS 'Expired Points'
 FROM 
     TotalPoints TP,
     UsedPoints UP,
@@ -1266,7 +1269,6 @@ DECLARE @Out int
 
     RETURN @Out
 END;
-
 
 -- HomePage 
 GO

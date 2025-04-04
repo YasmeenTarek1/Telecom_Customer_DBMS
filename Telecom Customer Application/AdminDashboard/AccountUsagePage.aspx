@@ -32,7 +32,7 @@
                      <asp:Button ID="SearchButton" runat="server" CssClass="styled-button" Text="Search" OnClick="SearchButton_Click" style="margin-top:10px;"/>
                  </div>
 
-                 <div class="table-responsive">
+                 <div id="tableCaption" class="table-responsive" runat="server" style="display: none;">
                      <table>
                          <caption>Total Usage per Subscribed Plan for the Selected Account</caption>
                          <tbody id="TableBody" runat="server"></tbody>

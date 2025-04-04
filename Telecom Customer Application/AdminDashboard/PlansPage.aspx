@@ -76,7 +76,7 @@
                     </div>
 
                     <div id="filterOption3" runat="server" style="display: none;">
-                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="styled-button" Text="Apply" OnClick="ApplyFilterButton_Click" style="margin-left: 850px; margin-right: 0px;"/>
+                        <asp:Button ID="ApplyFilterButton" runat="server" CssClass="styled-button" Text="Apply" OnClick="ApplyFilterButton_Click" style="margin-left: 840px; margin-right: 0px;"/>
                     </div>
                 </div>
 
