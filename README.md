@@ -2,12 +2,16 @@
 
 Welcome to Telesphere, a cutting-edge web application designed to revolutionize telecom customer management with powerful dashboards for both admins and customers. This platform streamlines everything from customer profiles, service plans, and payments to benefits and vouchers, empowering administrators with seamless oversight and access to a wealth of statistics for informed decision-making, while providing customers an intuitive interface to effortlessly manage their telecom services. Telesphere is your all-in-one solution for efficient and user-friendly telecom data management.
 
+---
+
 ## 🌟 Features
 - **Secure Authentication:** Robust login validation for both customers and admins, ensuring safe and authorized access to their respective dashboards.
 - **Admin Dashboard:** Powerful tools empowering administrators to efficiently manage telecom operations and enhance customer satisfaction.
 - **Customer Dashboard:** A seamless interface enabling users to effortlessly oversee their telecom services and rewards.
 - **Real-Time Analytics:** Dynamic visualizations using Chart.js, including interactive charts and tables, to highlight subscription trends, benefit usage, and transaction patterns for actionable insights.
 - **Scalable Design:** A well-structured, normalized database with stored procedures, functions, and views, ensuring efficient and reliable data management as the system grows.
+
+---
 
 ## 📋 Table of Contents
 - [🛠️ Tech Stack](#-tech-stack)
@@ -18,12 +22,14 @@ Welcome to Telesphere, a cutting-edge web application designed to revolutionize 
   - [Relational Schema](#relational-schema)
 - [⚙️ Installation](#-installation--setup)
 
+---
 
 ## 🛠️ Tech Stack
 - **Backend:** ASP.NET (C#)
 - **Database:** Microsoft SQL Server
 - **Frontend:** HTML, CSS, JavaScript
 
+---
 
 ## 📊 Admin Dashboard
 
@@ -113,13 +119,13 @@ The **Benefits Page** serves as a central hub for managing customer rewards, cat
 - **Features:**
   - Show all support tickets with priority, status, and description.
 
+---
 
 ## 👥 Customer Dashboard
 
 The Customer Dashboard offers a streamlined, user-centric interface for managing telecom services.
 
-| ![Customer Dashboard Video] (https://raw.githubusercontent.com/YasmeenTarek1/Telecom_Customer_DBMS/main/Telecom%20Customer%20Application/assets/customer_dashboard.mp4) |
-|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+https://raw.githubusercontent.com/YasmeenTarek1/Telecom_Customer_DBMS/main/Telecom%20Customer%20Application/assets/customer_dashboard.mp4
 
 ### Home Page
 - **Features:**
@@ -159,6 +165,7 @@ The Customer Dashboard offers a streamlined, user-centric interface for managing
   - The system intelligently consumes resources by first using exclusive offers—a type of benefit with an expiry date—before tapping into your plan’s core services, which don’t expire, seamlessly switching to the next available resource if one is depleted, ensuring you make the most of your time-sensitive benefits.
   - Receive a clear success message or a notification if you’ve used more resources than available, keeping you informed of your consumption status.
 
+---
 
 ## 🧠 Database Design
 
@@ -267,6 +274,7 @@ The **EERD** was converted into a **Relational Schema**, representing all tables
 - **Technical_Support_Ticket** (**ticketID: int IDENTITY(1,1)**, **mobileNo: char(11)**, Issue_description: varchar(50), priority_level: int, status: varchar(50), submissionDate: date)
   - Technical_Support_Ticket.mobileNo references Customer_Account.mobileNo
 
+---
 
 ## 📦 Installation & Setup
 Get Telesphere up and running in no time:
