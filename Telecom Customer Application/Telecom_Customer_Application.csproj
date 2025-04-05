@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -53,6 +54,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -67,27 +69,178 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AdminDashboard.aspx" />
-    <Content Include="CustomerDashboard.aspx" />
+    <Content Include="AdminDashboard\AccountUsagePage.aspx" />
+    <Content Include="AdminDashboard\BenefitsPage.aspx" />
+    <Content Include="AdminDashboard\CashbackPage.aspx" />
+    <Content Include="AdminDashboard\CustomersPage.aspx" />
+    <Content Include="AdminDashboard\ExclusiveOffersPage.aspx" />
+    <Content Include="AdminDashboard\PaymentsPage.aspx" />
+    <Content Include="AdminDashboard\PlansPage.aspx" />
+    <Content Include="AdminDashboard\PointsPage.aspx" />
+    <Content Include="AdminDashboard\ShopsPage.aspx" />
+    <Content Include="AdminDashboard\TicketsPage.aspx" />
+    <Content Include="AdminDashboard\TransactionsPage.aspx" />
+    <Content Include="AdminDashboard\WalletsPage.aspx" />
+    <Content Include="assets\admin_dashboard.mp4" />
+    <Content Include="assets\customer_dashboard.mp4" />
+    <Content Include="Controls\AdminSidebar.ascx" />
+    <Content Include="Controls\CustomerSidebar.ascx" />
+    <Content Include="CustomerDashboard\ConsumePage.aspx" />
+    <Content Include="CustomerDashboard\HomePage.aspx" />
+    <Content Include="CustomerDashboard\PlansPage.aspx" />
+    <Content Include="CustomerDashboard\TicketsPage.aspx" />
+    <Content Include="CustomerDashboard\VouchersPage.aspx" />
+    <Content Include="CustomerDashboard\WalletPage.aspx" />
     <Content Include="CustomerLogin.aspx" />
     <Content Include="AdminLogin.aspx" />
+    <Content Include="Scripts\Dashboards.js" />
+    <Content Include="Scripts\Logins.js" />
+    <Content Include="Styles\Dashboards.css" />
+    <Content Include="Styles\Logins.css" />
     <Content Include="Web.config" />
     <Content Include="WelcomePage.aspx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminDashboard.aspx.cs">
-      <DependentUpon>AdminDashboard.aspx</DependentUpon>
+    <Compile Include="AdminDashboard\AccountUsagePage.aspx.cs">
+      <DependentUpon>AccountUsagePage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="AdminDashboard.aspx.designer.cs">
-      <DependentUpon>AdminDashboard.aspx</DependentUpon>
+    <Compile Include="AdminDashboard\AccountUsagePage.aspx.designer.cs">
+      <DependentUpon>AccountUsagePage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="CustomerDashboard.aspx.cs">
-      <DependentUpon>CustomerDashboard.aspx</DependentUpon>
+    <Compile Include="AdminDashboard\BenefitsPage.aspx.cs">
+      <DependentUpon>BenefitsPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CustomerDashboard.aspx.designer.cs">
-      <DependentUpon>CustomerDashboard.aspx</DependentUpon>
+    <Compile Include="AdminDashboard\BenefitsPage.aspx.designer.cs">
+      <DependentUpon>BenefitsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\CashbackPage.aspx.cs">
+      <DependentUpon>CashbackPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\CashbackPage.aspx.designer.cs">
+      <DependentUpon>CashbackPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\CustomersPage.aspx.cs">
+      <DependentUpon>CustomersPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\CustomersPage.aspx.designer.cs">
+      <DependentUpon>CustomersPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\ExclusiveOffersPage.aspx.cs">
+      <DependentUpon>ExclusiveOffersPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\ExclusiveOffersPage.aspx.designer.cs">
+      <DependentUpon>ExclusiveOffersPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\PaymentsPage.aspx.cs">
+      <DependentUpon>PaymentsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\PaymentsPage.aspx.designer.cs">
+      <DependentUpon>PaymentsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\PlansPage.aspx.cs">
+      <DependentUpon>PlansPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\PlansPage.aspx.designer.cs">
+      <DependentUpon>PlansPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\PointsPage.aspx.cs">
+      <DependentUpon>PointsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\PointsPage.aspx.designer.cs">
+      <DependentUpon>PointsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\ShopsPage.aspx.cs">
+      <DependentUpon>ShopsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\ShopsPage.aspx.designer.cs">
+      <DependentUpon>ShopsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\TicketsPage.aspx.cs">
+      <DependentUpon>TicketsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\TicketsPage.aspx.designer.cs">
+      <DependentUpon>TicketsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\TransactionsPage.aspx.cs">
+      <DependentUpon>TransactionsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\TransactionsPage.aspx.designer.cs">
+      <DependentUpon>TransactionsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDashboard\WalletsPage.aspx.cs">
+      <DependentUpon>WalletsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminDashboard\WalletsPage.aspx.designer.cs">
+      <DependentUpon>WalletsPage.aspx</DependentUpon>
+    </Compile>
+    <Content Include="App_Code\PageUtilities.cs" />
+    <Compile Include="Controls\AdminSidebar.ascx.cs">
+      <DependentUpon>AdminSidebar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\AdminSidebar.ascx.designer.cs">
+      <DependentUpon>AdminSidebar.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CustomerSidebar.ascx.cs">
+      <DependentUpon>CustomerSidebar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\CustomerSidebar.ascx.designer.cs">
+      <DependentUpon>CustomerSidebar.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerDashboard\ConsumePage.aspx.cs">
+      <DependentUpon>ConsumePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerDashboard\ConsumePage.aspx.designer.cs">
+      <DependentUpon>ConsumePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerDashboard\HomePage.aspx.cs">
+      <DependentUpon>HomePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerDashboard\HomePage.aspx.designer.cs">
+      <DependentUpon>HomePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerDashboard\PlansPage.aspx.cs">
+      <DependentUpon>PlansPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerDashboard\PlansPage.aspx.designer.cs">
+      <DependentUpon>PlansPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerDashboard\TicketsPage.aspx.cs">
+      <DependentUpon>TicketsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerDashboard\TicketsPage.aspx.designer.cs">
+      <DependentUpon>TicketsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerDashboard\VouchersPage.aspx.cs">
+      <DependentUpon>VouchersPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerDashboard\VouchersPage.aspx.designer.cs">
+      <DependentUpon>VouchersPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerDashboard\WalletPage.aspx.cs">
+      <DependentUpon>WalletPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerDashboard\WalletPage.aspx.designer.cs">
+      <DependentUpon>WalletPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="CustomerLogin.aspx.cs">
       <DependentUpon>CustomerLogin.aspx</DependentUpon>
@@ -121,6 +274,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

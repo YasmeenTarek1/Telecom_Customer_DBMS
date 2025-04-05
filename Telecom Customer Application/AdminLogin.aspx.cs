@@ -1,6 +1,4 @@
-﻿using Microsoft.SqlServer.Server;
-using System;
-using System.Web.UI.WebControls;
+﻿using System;
 
 namespace Telecom_Customer_Application
 {
@@ -21,54 +19,20 @@ namespace Telecom_Customer_Application
             string enteredPassword = txtPassword.Text.Trim();
             try
             {
-
-
                 // Check if entered credentials match the hardcoded ones
                 if (enteredID == AdminID && enteredPassword == AdminPassword)
                 {
-                    // Go to the Dashboard
-                    Response.Redirect("AdminDashboard.aspx");
+                    Response.Redirect("AdminDashboard/CustomersPage.aspx");
                 }
                 else
                 {
-                    // Display error message
                     throw new Exception("Invalid Admin ID or Password.");
-
                 }
             }
             catch (Exception ex)
             {
-                // Use the DisplayAlert method to show the error message
-                DisplayAlert(ex);
+                PageUtilities.DisplayAlert(ex, form1);
             }
         }
-
-        protected void DisplayAlert(Exception ex)
-        {
-            string errorMessage = $@"
-                <div id='errorAlert' class='alert alert-danger' role='alert'>{ex.Message}</div>
-                <script>
-                    var alertBox = document.getElementById('errorAlert');
-                    if (alertBox) {{
-                        alertBox.style.cssText = 'opacity: 1; transition: opacity 0.5s ease-out;';
-                        setTimeout(function() {{
-                            alertBox.style.opacity = '0';
-                            setTimeout(function() {{
-                                alertBox.style.visibility = 'hidden';
-                            }}, 500);
-                        }}, 2500);
-                    }}
-                </script>
-        ";
-
-            form1.Controls.Add(new Literal { Text = errorMessage });
-
-        }
-        protected void BackButton_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("WelcomePage.aspx");
-
-        }
-
     }
 }

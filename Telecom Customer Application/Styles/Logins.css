@@ -1,0 +1,318 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    min-height: 110vh;
+    flex-direction: column;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, rgba(229, 232, 239, 1), #03184c), radial-gradient(circle at 20% 80%, rgba(255, 190, 0, 0.7), transparent 60%), radial-gradient(circle at 70% 20%, rgba(76, 198, 110, 0.6), transparent 70%), radial-gradient(circle at 50% 50%, rgba(255, 216, 12, 0.6), transparent 80%), radial-gradient(circle at 90% 90%, rgba(178, 68, 241, 0.5), transparent 80%);
+    background-blend-mode: screen, overlay, multiply;
+}
+
+.alert {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    background-color: #dc3545;
+    border: 1px solid #dc3545;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 70%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    background-color: #03184c;
+    color: #f5f5f5;
+}
+
+.header img {
+    height: 50px;
+    margin-right: 10px;
+}
+
+.header h2 {
+    font-size: 24px;
+    color: #ffffff; 
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.nav {
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 20px;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #ffffff; 
+    font-size: 18px;
+    font-family: 'Arial', sans-serif;
+    transition: color 0.3s;
+}
+
+.nav a:hover {
+    color: rgba(255, 255, 0, 0.8); 
+}
+
+.container {
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    width: 1300px;
+    margin: 135px auto;
+}
+
+.image-section {
+    margin-top: 0px;
+    width: 975px;
+    height: 650px;
+    align-content: center;
+    background: linear-gradient(#03184c, rgba(3, 24, 76, 0.3)); 
+    background-size: cover;
+    background-blend-mode: overlay; 
+    filter: brightness(0.9) saturate(1); 
+}
+.image-section1 {
+    margin-top: 0px;
+    width: 712px;
+    height: 650px;
+    align-content: center;
+    background: linear-gradient(#03184c, rgba(3, 24, 76, 0.3)); 
+    background-size: cover;
+    background-blend-mode: overlay; 
+    filter: brightness(0.9) saturate(1); 
+}
+
+.form-section {
+    margin-top: 100px;
+    flex: 1;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif; 
+}
+
+.form-section h2 {
+    margin-bottom: 30px;
+    color: #03184c; 
+    font-size: 32px;
+    margin-right: 30px;
+}
+
+.form-group {
+    width: 350px;
+    margin-bottom: 20px;
+    margin-right: 30px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.form-group input {
+    width: 350px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 5px #4A90E2;
+}
+
+.error-message {
+    color: #FF6B6B;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.btn {
+    margin-right: 30px;
+    display: inline-block;
+    width: 350px;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #03184c; 
+    color: #FFFFFF;
+    font-size: 18px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #002366; 
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(7, 156, 255, 0.5);
+}
+
+.top-left-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top-left-button::before {
+    content: "\f0a8";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: #03184c; 
+    font-size: 20px; 
+    margin-right: 8px;
+}
+
+.top-left-button:hover::before {
+    color: #002366; 
+}
+
+#togglePassword {
+    color: #999;
+    transition: color 0.3s ease;
+}
+
+#togglePassword:hover {
+    color: #007bff;
+}
+
+#txtPassword {
+    padding-right: 40px;
+}
+
+.footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #03184c;
+    color: #f5f5f5;
+    padding: 40px 20px;
+    text-align: left;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+footer.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.footer-section h2 {
+    margin-bottom: 10px;
+}
+
+.footer-section p {
+    margin-bottom: 15px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.hero-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    min-height: 100vh;
+    color: #03184c;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.hero-section h1,
+.hero-section p,
+.hero-section h2 {
+    margin: 0;
+}
+
+.hero-section h1 {
+    font-size: 50px;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    text-shadow: 2px 2px 6px rgba(7, 156, 255, 0.3);
+    color: #03184c;
+}
+
+.hero-section p {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #03184c;
+}
+
+.hero-section h2 {
+    font-size: 24px;
+    margin-bottom: 40px;
+    color: rgba(7, 156, 255, 0.6);
+    font-family: 'Poppins', sans-serif;
+    color: #03184c;
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 160px;
+    margin-top: 20px;
+}
+
+.icon-item {
+    text-align: center;
+}
+
+.icon-item img {
+    width: 175px;
+    height: 175px;
+    margin-bottom: 10px;
+}
+
+form {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
