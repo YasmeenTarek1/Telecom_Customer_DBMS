@@ -35,9 +35,7 @@ Welcome to Telesphere, a cutting-edge web application designed to revolutionize 
 
 The Admin Dashboard equips telecom administrators with comprehensive oversight and control over operational data.
 
-| ![Admin Dashboard Video] (https://raw.githubusercontent.com/YasmeenTarek1/Telecom_Customer_DBMS/main/Telecom%20Customer%20Application/assets/admin_dashboard.mp4) |
-|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-
+[https://github.com/user-attachments/assets/e5ddd31e-8290-4727-90bf-16963215ed27](https://github.com/user-attachments/assets/1257c313-9a08-41fc-a014-66e15eade548)
 ### Customers Page
 - **Features:**
   - Display a detailed, structured table of all customer accounts with essential details
@@ -125,7 +123,7 @@ The **Benefits Page** serves as a central hub for managing customer rewards, cat
 
 The Customer Dashboard offers a streamlined, user-centric interface for managing telecom services.
 
-https://raw.githubusercontent.com/YasmeenTarek1/Telecom_Customer_DBMS/main/Telecom%20Customer%20Application/assets/customer_dashboard.mp4
+[https://raw.githubusercontent.com/YasmeenTarek1/Telecom_Customer_DBMS/main/Telecom%20Customer%20Application/assets/customer_dashboard.mp4](https://github.com/user-attachments/assets/dfeba994-8ac6-4493-ace5-45af6f276be0)
 
 ### Home Page
 - **Features:**
