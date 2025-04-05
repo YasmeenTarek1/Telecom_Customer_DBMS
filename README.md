@@ -172,8 +172,8 @@ https://raw.githubusercontent.com/YasmeenTarek1/Telecom_Customer_DBMS/main/Telec
 ### EERD Diagram
 The following **Enhanced Entity-Relationship Diagram (EERD)** illustrates the database structure and relationships. This diagram was created using **draw.io**:
 
-| ![EERD Diagram](assets/EERD.png) |
-|:--------------------------------:|
+![EERD Diagram](https://github.com/YasmeenTarek1/Telecom_Customer_DBMS/raw/main/Telecom%20Customer%20Application/assets/EERD.png)
+
 
 ### Relational Schema
 The **EERD** was converted into a **Relational Schema**, representing all tables and their relationships:
