@@ -791,6 +791,33 @@ AS
 BEGIN
     BEGIN TRANSACTION;
 
+    DECLARE @used_points INT;
+    DECLARE @total_points INT;
+    DECLARE @unused_points INT;
+
+    SELECT @used_points = BU.points_used
+    FROM Benefit_Usage BU
+    Inner Join Customer_Benefits CB
+    ON CB.benefitID = BU.benefitID
+    Where CB.mobileNo = @mobile_num;
+
+
+    SELECT @total_points = CP.points_offered   
+    From Customer_Benefits CB
+    Inner Join Customer_Points CP
+    ON CB.benefitID = CP.benefitID
+    Inner Join Payment P
+    On P.paymentID = CB.PaymentID
+    Inner Join Process_Payment PP
+    ON PP.paymentID = P.paymentID
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
+
+    SET @unused_points = @total_points - @used_points;
+
+    Update Customer_Account
+    Set points = points - @unused_points
+    Where mobileNo = @mobile_num;
+
     DELETE BU
     FROM Benefit_Usage BU
     Inner Join Customer_Benefits CB
@@ -799,7 +826,7 @@ BEGIN
     On P.paymentID = CB.PaymentID
     Inner Join Process_Payment PP
     ON PP.paymentID = P.paymentID
-    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num;
+    Where PP.planID = @plan_id AND CB.mobileNo = @mobile_num
 
     DELETE CP
     From Customer_Points CP
@@ -2190,24 +2217,24 @@ VALUES
 
 INSERT INTO Customer_Account (mobileNo, pass, account_type, start_date, status, points, nationalID)
 VALUES
-('01010101010', 'pass123', 'Post Paid', '2023-01-01', 'active', 10, 101),
-('01020202020', 'securepass', 'Prepaid', '2023-06-01', 'active', 5, 102),
+('01010101010', 'pass123', 'Post Paid', '2023-01-01', 'active', 0, 101),
+('01020202020', 'securepass', 'Prepaid', '2023-06-01', 'active', 0, 102),
 ('01030303030', 'mypassword', 'Pay as you go', '2023-07-15', 'onhold', 0, 103),
-('01040404040', 'bobpass', 'Post Paid', '2023-08-01', 'active', 20, 104),
-('01050505050', 'charliepass', 'Prepaid', '2023-09-01', 'active', 15, 105),
-('01060606060', 'evepass', 'Post Paid', '2023-10-01', 'onhold', 30, 106),
-('01070707070', 'frankpass', 'Prepaid', '2023-11-01', 'active', 25, 107),
-('01080808080', 'gracepass', 'Pay as you go', '2023-12-01', 'active', 8, 108),
-('01090909090', 'hankpass', 'Post Paid', '2023-01-15', 'active', 12, 109),
-('01101010101', 'ivypass', 'Prepaid', '2023-02-01', 'active', 18, 110),
-('01111111111', 'jackpass', 'Post Paid', '2023-03-01', 'active', 22, 111),
-('01121212121', 'kathy123', 'Pay as you go', '2023-04-01', 'active', 9, 112),
-('01131313131', 'liampass', 'Post Paid', '2023-05-01', 'onhold', 10, 113),
-('01141414141', 'monapass', 'Prepaid', '2023-06-01', 'active', 5, 114),
+('01040404040', 'bobpass', 'Post Paid', '2023-08-01', 'active', 0, 104),
+('01050505050', 'charliepass', 'Prepaid', '2023-09-01', 'active', 0, 105),
+('01060606060', 'evepass', 'Post Paid', '2023-10-01', 'onhold', 0, 106),
+('01070707070', 'frankpass', 'Prepaid', '2023-11-01', 'active', 0, 107),
+('01080808080', 'gracepass', 'Pay as you go', '2023-12-01', 'active', 0, 108),
+('01090909090', 'hankpass', 'Post Paid', '2023-01-15', 'active', 0, 109),
+('01101010101', 'ivypass', 'Prepaid', '2023-02-01', 'active', 0, 110),
+('01111111111', 'jackpass', 'Post Paid', '2023-03-01', 'active', 0, 111),
+('01121212121', 'kathy123', 'Pay as you go', '2023-04-01', 'active', 0, 112),
+('01131313131', 'liampass', 'Post Paid', '2023-05-01', 'onhold', 0, 113),
+('01141414141', 'monapass', 'Prepaid', '2023-06-01', 'active', 0, 114),
 ('01151515151', 'ninapass', 'Pay as you go', '2023-07-01', 'onhold', 0, 115),
-('01161616161', 'oscarpass', 'Post Paid', '2023-08-01', 'active', 40, 116),
-('01171717171', 'paulpass', 'Prepaid', '2023-09-01', 'active', 35, 117),
-('01181818181', 'quincy123', 'Post Paid', '2023-10-01', 'active', 18, 118);
+('01161616161', 'oscarpass', 'Post Paid', '2023-08-01', 'active', 0, 116),
+('01171717171', 'paulpass', 'Prepaid', '2023-09-01', 'active', 0, 117),
+('01181818181', 'quincy123', 'Post Paid', '2023-10-01', 'active', 0, 118);
 
 INSERT INTO Wallet (current_balance, currency, last_modified_date, nationalID, mobileNo)
 VALUES
